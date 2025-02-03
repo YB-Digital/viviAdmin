@@ -1,0 +1,36 @@
+.inputComponent {
+    width: 100%;
+    border: 1px solid #A4A4A4;
+    border-radius: 0.208vw;
+    overflow: hidden;
+    padding: 1.17vw 3.33vw 1.17vw 1.25vw;
+    position: relative;
+    margin-bottom: 2.5vw;
+
+    &.extraPad {
+        padding: 1.17vw 1.25vw 1.17vw 3.33vw;
+    }
+
+    .leftImage {
+        width: 1.25vw;
+        height: auto;
+        position: absolute;
+        left: 1.25vw;
+        top: 50%;
+        transform: translate(0, -50%);
+    }
+
+    .rightImage {
+        width: 1.25vw;
+        height: auto;
+        position: absolute;
+        right: 1.25vw;
+        top: 50%;
+        transform: translate(0, -50%);
+        cursor: pointer;
+    }
+
+    input {
+        width: 100%;
+    }
+}
