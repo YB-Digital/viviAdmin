@@ -12,7 +12,7 @@ import user from "@/image/inputUserIcon.svg";
 import lock from "@/image/inputLockIcon.svg";
 
 export default function Page() {
-  const [formData, setFormData] = useState({ username: "", password: "" });
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [isClient, setIsClient] = useState(false);
 
