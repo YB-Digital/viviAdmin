@@ -67,7 +67,7 @@ export default function Page() {
             type="email"
             placeholder="Email"
             leftImage={user}
-            value={formData.username}
+            value={formData.email}
             onChange={handleInputChange}
           />
           <InputComponent
