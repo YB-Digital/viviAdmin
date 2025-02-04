@@ -1,0 +1,36 @@
+.layoutComponent {
+    width: 15.625vw;
+    padding: 1.5625vw 0;
+    background: #EFEFEF;
+    min-height: 100vh;
+
+    .layoutLinks {
+        padding: 1.667vw 0;
+
+        >a,
+        >button {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 1.25vw;
+            padding: 0.625vw 1.25vw;
+            margin-bottom: 1.67vw;
+
+            img {
+                width: 1.25vw;
+                height: auto;
+            }
+
+            p {
+                font-size: 0.833vw;
+                font-weight: 700;
+                line-height: 1vw;
+                color: #6C6C6C;
+            }
+
+            &.active {
+                background: #D2D2D2;
+            }
+        }
+    }
+}
