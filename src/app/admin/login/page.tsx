@@ -29,7 +29,7 @@ export default function Page() {
     setError(""); 
 
     try {
-      const response = await fetch("http://localhost/viviAcademy/vivi_backend/login_control.php", {
+      const response = await fetch("https://ybdigitalx.com/viviAdmin_backend/login.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,9 +63,9 @@ export default function Page() {
         <h3 className='font-montserrat'>Log In</h3>
         <form onSubmit={handleLogin}>
           <InputComponent
-            name="username"
-            type="text"
-            placeholder="Admin name"
+            name="email"
+            type="email"
+            placeholder="Email"
             leftImage={user}
             value={formData.username}
             onChange={handleInputChange}
