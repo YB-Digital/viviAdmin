@@ -1,0 +1,30 @@
+header{
+    width: 100%;
+    background: #EFEFEF;
+
+    .container{
+        margin: auto;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+
+        >img{
+            width: 10.4vw;
+            height: auto;
+        }
+        
+        .icons{
+            display: flex;
+            flex-direction: row;
+            gap: 2.5vw;
+
+
+            img{
+                width: 2.5vw;
+                height: auto;
+                cursor: pointer;
+            }
+        }
+    }
+}

@@ -9,3 +9,10 @@
     text-decoration: none;
     outline: none;
 }
+
+
+@media (min-width:900px) {
+    .container{
+        width: 83.7vw !important;
+    }
+}
