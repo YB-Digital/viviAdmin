@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import LayoutComponent from "@/component/layoutComponent";
+import Header from "@/component/header";
 
 export const metadata: Metadata = {
     title: "Create Next App",
@@ -7,8 +9,7 @@ export const metadata: Metadata = {
 
 //style
 import '@/style/globals.scss'
-import Header from "@/component/header";
-import LayoutComponent from "@/component/layoutComponent";
+import './adminLayout.scss'
 
 export default function Layout({
     children,
@@ -18,7 +19,7 @@ export default function Layout({
     return (
         <div>
             <Header />
-            <div>
+            <div className="adminLayout">
                 <LayoutComponent />
                 {children}
             </div>

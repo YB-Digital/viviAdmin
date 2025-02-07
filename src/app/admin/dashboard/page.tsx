@@ -1,7 +1,12 @@
-import React from 'react'
+import InformationBoxes from '@/component/informationBoxes'
 
-export default function page() {
+//style
+import './dashboard.scss'
+
+export default function Page() {
   return (
-    <div>page</div>
+    <div className='dashboardPage'>
+      <InformationBoxes />
+    </div>
   )
 }
