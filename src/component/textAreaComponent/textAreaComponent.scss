@@ -1,0 +1,16 @@
+.textAreaComponent {
+    width: 100%;
+    border: 1px solid #A4A4A4;
+    border-radius: 0.208vw;
+    padding: 1.17vw 1.25vw;
+    margin-bottom: 2.5vw;
+
+    textarea {
+        width: 100%;
+        height: 7.8125vw;
+        border: none;
+        outline: none;
+        font-size: 1rem;
+        resize: none;
+    }
+}

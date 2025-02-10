@@ -13,7 +13,14 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   disabled?: boolean;
 }
 
-export default function InputComponent({ rightImage, visible, leftImage, type, disabled = false, ...props }: InputProps) {
+export default function InputComponent({
+  rightImage,
+  visible,
+  leftImage,
+  type = "text",
+  disabled = false,
+  ...props
+}: InputProps) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const isPasswordField = type === "password";
 
@@ -21,7 +28,12 @@ export default function InputComponent({ rightImage, visible, leftImage, type, d
     <div className={`inputComponent ${leftImage ? "extraPad" : ""}`}>
       {leftImage && <Image className="leftImage" src={leftImage} alt="icon" />}
 
-      <input {...props} type={isPasswordField && isPasswordVisible ? "text" : type} required disabled={disabled} />
+      <input
+        {...props}
+        type={isPasswordField && isPasswordVisible ? "text" : type}
+        required
+        disabled={disabled}
+      />
 
       {isPasswordField && rightImage && (
         <Image

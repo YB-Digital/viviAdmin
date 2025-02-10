@@ -1,0 +1,37 @@
+.videoUpload {
+    padding: 3.54vw 0;
+
+    form {
+        padding: 0 3.9vw;
+        width: 76.5625vw;
+        margin: auto;
+
+        >div {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+
+            .inputComponents {
+                width: 31.25vw;
+
+                .formGroup {
+                    label {
+                        display: block;
+                        padding: 0.52vw;
+                        margin-bottom: 1.25vw;
+                        font-weight: 700;
+                        font-size: 1.1458vw;
+                        line-height: 1.39vw;
+                    }
+                }
+            }
+
+            .files{
+                display: flex;
+                flex-direction: row;
+                gap: 1.875vw;
+            }
+        }
+    }
+}
