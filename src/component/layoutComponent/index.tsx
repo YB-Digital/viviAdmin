@@ -13,6 +13,7 @@ import dashboard from '@/image/dahsboard.svg'
 import video from '@/image/videoManagament.svg'
 import services from '@/image/services.svg'
 import logout from '@/image/logOut.svg'
+import certificate from '@/image/certificate.svg'
 
 export default function LayoutComponent() {
     const pathname = usePathname();
@@ -65,9 +66,13 @@ export default function LayoutComponent() {
                     <Image src={video} alt="icon" />
                     <p className="font-inter">Video Management</p>
                 </Link>
-                <Link href='/profile/services' className={pathname === '/profile/services' ? 'active' : ''}>
+                <Link href='/profile/addservice' className={pathname === '/profile/addservice' ? 'active' : ''}>
                     <Image src={services} alt="icon" />
-                    <p className="font-inter">My Courses</p>
+                    <p className="font-inter">Services</p>
+                </Link>
+                <Link href='/profile/certificate' className={pathname === '/profile/services' ? 'active' : ''}>
+                    <Image src={certificate} alt="icon" />
+                    <p className="font-inter">Certificate</p>
                 </Link>
                 <button onClick={handleLogout} className="logoutButton">
                     <Image src={logout} alt="icon" />
