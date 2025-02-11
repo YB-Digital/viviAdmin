@@ -1,0 +1,58 @@
+.addServiceForm {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+
+    form {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+
+        .inputFields {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5vw;
+            width: 31.25vw;
+
+            .formGroup {
+                label {
+                    display: block;
+                    margin-bottom: 0.8vw;
+                    font-weight: 700;
+                    font-size: 1.1458vw;
+                }
+            }
+
+            .saveButton {
+                background-color: #e70bbb;
+                width: 10.4vw;
+                color: white;
+                padding: 0.8vw 1.5vw;
+                font-size: 1vw;
+                border: none;
+                border-radius: 0.5vw;
+                cursor: pointer;
+            }
+        }
+
+        .imageUpload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 25.625vw;
+
+            .addPhotoButton {
+                background-color: #e70bbb;
+                color: white;
+                padding: 0.8vw 1.5vw;
+                font-size: 1vw;
+                border: none;
+                border-radius: 0.5vw;
+                cursor: pointer;
+                margin-top: 1vw;
+            }
+        }
+
+    }
+}
