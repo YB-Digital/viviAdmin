@@ -1,0 +1,58 @@
+.dashboardUserTable {
+    width: 52vw;
+    border: 1px solid #D2D2D2;
+    margin: auto;
+
+    >div {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 2.5vw;
+        width: 100%;
+        padding: 1.04vw 1.56vw 1.04vw 0.52vw;
+        border-bottom: 1px solid #D2D2D2;
+
+        >div,
+        >a {
+            font-size: 0.83vw;
+            font-weight: 500;
+            line-height: 1.008vw;
+        }
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        &.title {
+            background: #EFEFEF;
+            padding: 0.96vw 1.56vw 1.04vw 0.52vw;
+
+            >div {
+                font-size: 0.9375vw;
+                font-weight: 700;
+                line-height: 1.134375vw;
+                letter-spacing: 0.04em;
+            }
+        }
+
+        .userId {
+            width: 4vw;
+        }
+
+        .userName {
+            width: 12.3vw;
+        }
+
+        .userEmail {
+            width: 13vw;
+        }
+
+        .userMessage {
+            width: 15vw;
+        }
+
+        .userCheck {
+            width: 5vw;
+        }
+    }
+}
