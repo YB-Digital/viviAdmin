@@ -93,7 +93,6 @@ export default function AddServiceForm() {
 
         <div className="imageUpload">
           <FileComponent label="Drag & Drop or Upload Photo" accept="image/*" onFileChange={handleFileChange} />
-          <button type="button" className="addPhotoButton">Add Photo</button>
         </div>
       </form>
       {message && <p className="responseMessage">{message}</p>}

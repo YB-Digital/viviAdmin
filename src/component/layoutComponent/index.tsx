@@ -66,11 +66,11 @@ export default function LayoutComponent() {
                     <Image src={video} alt="icon" />
                     <p className="font-inter">Video Management</p>
                 </Link>
-                <Link href='/profile/addservice' className={pathname === '/profile/addservice' ? 'active' : ''}>
+                <Link href='/admin/addservice' className={pathname === '/profile/addservice' ? 'active' : ''}>
                     <Image src={services} alt="icon" />
                     <p className="font-inter">Services</p>
                 </Link>
-                <Link href='/profile/certificate' className={pathname === '/profile/services' ? 'active' : ''}>
+                <Link href='/admin/certificate' className={pathname === '/profile/services' ? 'active' : ''}>
                     <Image src={certificate} alt="icon" />
                     <p className="font-inter">Certificate</p>
                 </Link>
