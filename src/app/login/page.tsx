@@ -29,7 +29,7 @@ export default function Page() {
     setError(""); 
 
     try {
-      const response = await fetch("https://ybdigitalx.com/viviAdmin_backend/login.php", {
+      const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/login.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

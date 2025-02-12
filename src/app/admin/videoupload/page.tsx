@@ -17,6 +17,9 @@ export default function Page() {
         videoFile: null as File | null,
     });
 
+    const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState<string | null>(null);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
 
@@ -37,9 +40,48 @@ export default function Page() {
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Form Data:", formData);
+        setLoading(true);
+        setMessage(null);
+
+        const formDataToSend = new FormData();
+        formDataToSend.append("title", formData.title);
+        formDataToSend.append("price", formData.price);
+        formDataToSend.append("contents", formData.contents);
+        
+        if (formData.imageFile) {
+            formDataToSend.append("image", formData.imageFile);
+        }
+        if (formData.videoFile) {
+            formDataToSend.append("video", formData.videoFile);
+        }
+
+        try {
+            const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/video_upload.php", {
+                method: "POST",
+                body: formDataToSend,
+            });
+
+            const data = await response.json();
+            if (data.status === "success") {
+                setMessage("Video uploaded successfully!");
+                setFormData({
+                    title: "",
+                    price: "",
+                    contents: "",
+                    imageFile: null,
+                    videoFile: null,
+                });
+            } else {
+                setMessage("Error while uploading video.");
+            }
+        } catch (error) {
+            console.error("Error submitting form:", error);
+            setMessage("An unexpected error occurred.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -72,8 +114,11 @@ export default function Page() {
                         <FileComponent label="Image" accept="image/*" onFileChange={(file) => handleFileChange(file, "imageFile")} />
                     </div>
                 </div>
-                <button type="submit">Submit</button>
+                <button type="submit" disabled={loading}>
+                    {loading ? "Uploading..." : "Save"}
+                </button>
             </form>
+            {message && <p className="responseMessage">{message}</p>}
         </div>
     );
 }

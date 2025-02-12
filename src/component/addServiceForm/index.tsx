@@ -46,7 +46,7 @@ export default function AddServiceForm() {
     }
 
     try {
-      const response = await fetch("http://localhost/viviAdmin/vivi_backend/add_service.php", {
+      const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/add_service.php", {
         method: "POST",
         body: formDataToSend,
       });

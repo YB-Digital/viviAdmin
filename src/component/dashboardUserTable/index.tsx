@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
+
+//style
 import "./dashboardUserTable.scss";
 
 interface User {
@@ -9,7 +10,7 @@ interface User {
   name: string;
   email: string;
   message: string;
-  check: boolean; // `true` ise bakıldı, `false` ise bakılmadı
+  check: boolean;
 }
 
 export default function DashboardUserTable() {
@@ -17,7 +18,7 @@ export default function DashboardUserTable() {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    fetch("http://localhost/viviAdmin/vivi_backend/dashboard_table.php")
+    fetch("https://ybdigitalx.com/vivi_Adminbackend/dashboard_table.php")
       .then((response) => response.json())
       .then((data) => {
         if (data.status === "success" && Array.isArray(data.contacts) && data.contacts.length > 0) {
@@ -35,7 +36,7 @@ export default function DashboardUserTable() {
       )
     );
 
-    fetch("http://localhost/viviAdmin/vivi_backend/update_check_status.php", {
+    fetch("https://ybdigitalx.com/vivi_Adminbackend/update_check_status.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: userId, check: true }),

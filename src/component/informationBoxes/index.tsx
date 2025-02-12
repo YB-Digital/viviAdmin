@@ -21,7 +21,7 @@ export default function InformationBoxes() {
   });
 
   useEffect(() => {
-    fetch("http://localhost/viviAdmin/vivi_backend/dashboard_box.php")
+    fetch("https://ybdigitalx.com/vivi_Adminbackend/dashboard_box.php")
       .then((response) => response.json())
       .then((data) => {
         if (data) {
