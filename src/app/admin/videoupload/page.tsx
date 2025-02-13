@@ -44,26 +44,27 @@ export default function Page() {
         e.preventDefault();
         setLoading(true);
         setMessage(null);
-
+    
         const formDataToSend = new FormData();
         formDataToSend.append("title", formData.title);
         formDataToSend.append("price", formData.price);
         formDataToSend.append("contents", formData.contents);
         
         if (formData.imageFile) {
-            formDataToSend.append("image", formData.imageFile);
+            formDataToSend.append("imageFile", formData.imageFile);
         }
         if (formData.videoFile) {
-            formDataToSend.append("video", formData.videoFile);
+            formDataToSend.append("videoFile", formData.videoFile);
         }
-
+    
         try {
             const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/video_upload.php", {
                 method: "POST",
                 body: formDataToSend,
             });
-
+    
             const data = await response.json();
+            console.log(data);
             if (data.status === "success") {
                 setMessage("Video uploaded successfully!");
                 setFormData({
@@ -76,13 +77,16 @@ export default function Page() {
             } else {
                 setMessage("Error while uploading video.");
             }
-        } catch (error) {
+        } 
+        catch (error) {
             console.error("Error submitting form:", error);
             setMessage("An unexpected error occurred.");
-        } finally {
+        } 
+        finally {
             setLoading(false);
         }
     };
+    
 
     return (
         <div className="videoUpload">
