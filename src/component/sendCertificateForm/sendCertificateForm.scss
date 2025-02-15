@@ -1,0 +1,59 @@
+.sendCertificateForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    
+    h2 {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 1.5rem;
+    }
+    
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 400px;
+      
+      .formGroup {
+        width: 100%;
+        margin-bottom: 1rem;
+        
+        label {
+          font-size: 1rem;
+          font-weight: bold;
+          display: block;
+          margin-bottom: 0.5rem;
+        }
+      }
+      
+      .fileUpload {
+        width: 100%;
+        margin-bottom: 1rem;
+      }
+      
+      .sendButton {
+        background-color: #e70bbb;
+        color: white;
+        font-size: 1rem;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        
+        &:hover {
+          background-color: #c609a3;
+        }
+      }
+    }
+    
+    .responseMessage {
+      margin-top: 1rem;
+      font-size: 1rem;
+      color: #333;
+    }
+  }
