@@ -25,7 +25,7 @@ export default function DashboardUserTable() {
           setUsers(
             data.contacts.map((user: any) => ({
               ...user,
-              check: user.check === "✔" || user.check === "1", // API'den gelen değeri boolean'a çevir
+              check: user.check === "✔" || user.check === "1", 
             }))
           );
         }
@@ -37,14 +37,12 @@ export default function DashboardUserTable() {
   const toggleCheck = (userId: number, currentCheck: boolean) => {
     const newCheck = !currentCheck;
 
-    // Öncelikle UI'da güncelle
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
         user.id === userId ? { ...user, check: newCheck } : user
       )
     );
 
-    // API'ye gönderilecek check değeri "1" veya "0" olmalı
     fetch("https://ybdigitalx.com/vivi_Adminbackend/update_check_status.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

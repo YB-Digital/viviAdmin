@@ -3,19 +3,24 @@
 import React, { useState } from "react";
 import InputComponent from "@/component/inputComponent";
 import FileComponent from "@/component/fileComponent";
+
+//style
 import "./sendCertificateForm.scss";
 
 export default function SendCertificateForm() {
   const [formData, setFormData] = useState({
     email: "",
     certificateFile: null as File | null,
+    course_id: "",
+    user_id: "",
   });
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, email: e.target.value }));
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFileChange = (file: File | null) => {
@@ -29,12 +34,14 @@ export default function SendCertificateForm() {
 
     const formDataToSend = new FormData();
     formDataToSend.append("email", formData.email);
+    formDataToSend.append("course_id", formData.course_id);
+    formDataToSend.append("user_id", formData.user_id);
     if (formData.certificateFile) {
-      formDataToSend.append("certificate", formData.certificateFile);
+      formDataToSend.append("pdf", formData.certificateFile);
     }
 
     try {
-      const response = await fetch("https://your-api-endpoint.com/send_certificate", {
+      const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/send_certificate.php", {
         method: "POST",
         body: formDataToSend,
       });
@@ -42,9 +49,9 @@ export default function SendCertificateForm() {
       const data = await response.json();
       if (data.status === "success") {
         setMessage("Certificate sent successfully!");
-        setFormData({ email: "", certificateFile: null });
+        setFormData({ email: "", certificateFile: null, course_id: "", user_id: "" });
       } else {
-        setMessage("Error while sending certificate.");
+        setMessage(data.message || "Error while sending certificate.");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -61,6 +68,14 @@ export default function SendCertificateForm() {
         <div className="formGroup">
           <label>Email</label>
           <InputComponent name="email" value={formData.email} onChange={handleChange} />
+        </div>
+        <div className="formGroup">
+          <label>Course ID</label>
+          <InputComponent name="course_id" value={formData.course_id} onChange={handleChange} />
+        </div>
+        <div className="formGroup">
+          <label>User ID</label>
+          <InputComponent name="user_id" value={formData.user_id} onChange={handleChange} />
         </div>
         <div className="fileUpload">
           <FileComponent label="Drag & Drop or Click to Upload" accept="application/pdf" onFileChange={handleFileChange} />
