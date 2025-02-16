@@ -22,25 +22,41 @@ export default function DashboardUserTable() {
       .then((response) => response.json())
       .then((data) => {
         if (data.status === "success" && Array.isArray(data.contacts) && data.contacts.length > 0) {
-          setUsers(data.contacts.map((user: any) => ({ ...user, check: user.check === "✔" })));
+          setUsers(
+            data.contacts.map((user: any) => ({
+              ...user,
+              check: user.check === "✔" || user.check === "1", // API'den gelen değeri boolean'a çevir
+            }))
+          );
         }
       })
       .catch((error) => console.error("Error fetching data:", error))
       .finally(() => setLoading(false));
   }, []);
 
-  const toggleCheck = (userId: number) => {
+  const toggleCheck = (userId: number, currentCheck: boolean) => {
+    const newCheck = !currentCheck;
+
+    // Öncelikle UI'da güncelle
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
-        user.id === userId ? { ...user, check: !user.check } : user
+        user.id === userId ? { ...user, check: newCheck } : user
       )
     );
 
+    // API'ye gönderilecek check değeri "1" veya "0" olmalı
     fetch("https://ybdigitalx.com/vivi_Adminbackend/update_check_status.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: userId, check: true }),
-    }).catch((error) => console.error("Error updating check status:", error));
+      body: JSON.stringify({ id: userId, check: newCheck ? "1" : "0" }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status !== "success") {
+          console.error("Error updating check status:", data.message);
+        }
+      })
+      .catch((error) => console.error("Error updating check status:", error));
   };
 
   return (
@@ -64,7 +80,7 @@ export default function DashboardUserTable() {
             <div className="userMessage font-inter">{user.message}</div>
             <div
               className={`userCheck font-inter ${user.check ? "checked" : "unchecked"}`}
-              onClick={() => toggleCheck(user.id)}
+              onClick={() => toggleCheck(user.id, user.check)}
             >
               {user.check ? "✔" : "✖"}
             </div>
