@@ -1,0 +1,41 @@
+.sendCertificateTable {
+  padding: 2rem;
+
+  .tableContainer {
+    width: 45vw;
+    margin: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f9f9f9;
+  }
+
+  .titleRow,
+  .dataRow {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding: 12px 0;
+  }
+
+  .titleRow {
+    background: #efefef;
+    font-weight: bold;
+  }
+
+  .column {
+    flex: 1;
+    text-align: left;
+    padding: 0 12px;
+  }
+
+  .action {
+    display: flex;
+    justify-content: center;
+  }
+
+  .editIcon {
+    color: #007bff;
+    cursor: pointer;
+  }
+}

@@ -1,23 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import InputComponent from "@/component/inputComponent";
 import FileComponent from "@/component/fileComponent";
 
 //style
 import "./sendCertificateForm.scss";
 
-export default function SendCertificateForm() {
-  const [formData, setFormData] = useState({
-    email: "",
-    certificateFile: null as File | null,
-    course_id: "",
-    user_id: "",
-  });
+interface SendCertificateFormProps {
+  formData: {
+    email: string;
+    certificateFile: File | null;
+    course_id: string;
+    user_id: string;
+  };
+  setFormData: React.Dispatch<React.SetStateAction<{ email: string; certificateFile: File | null; course_id: string; user_id: string }>>;
+  handleFormSubmit: (e: React.FormEvent) => void;
+  loading: boolean;
+  message: string | null;
+}
 
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
-
+export default function SendCertificateForm({ formData, setFormData, handleFormSubmit, loading, message }: SendCertificateFormProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -27,55 +30,21 @@ export default function SendCertificateForm() {
     setFormData((prev) => ({ ...prev, certificateFile: file }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage(null);
-
-    const formDataToSend = new FormData();
-    formDataToSend.append("email", formData.email);
-    formDataToSend.append("course_id", formData.course_id);
-    formDataToSend.append("user_id", formData.user_id);
-    if (formData.certificateFile) {
-      formDataToSend.append("pdf", formData.certificateFile);
-    }
-
-    try {
-      const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/send_certificate.php", {
-        method: "POST",
-        body: formDataToSend,
-      });
-
-      const data = await response.json();
-      if (data.status === "success") {
-        setMessage("Certificate sent successfully!");
-        setFormData({ email: "", certificateFile: null, course_id: "", user_id: "" });
-      } else {
-        setMessage(data.message || "Error while sending certificate.");
-      }
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      setMessage("An unexpected error occurred.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="sendCertificateForm">
-      <h2>SEND CERTIFICATE</h2>
-      <form onSubmit={handleSubmit}>
+      <h2>Send Certificate</h2>
+      <form onSubmit={handleFormSubmit} className="certificateForm">
         <div className="formGroup">
           <label>Email</label>
-          <InputComponent name="email" value={formData.email} onChange={handleChange} />
+          <InputComponent name="email" value={formData.email} onChange={handleChange} required />
         </div>
         <div className="formGroup">
           <label>Course ID</label>
-          <InputComponent name="course_id" value={formData.course_id} onChange={handleChange} />
+          <InputComponent name="course_id" value={formData.course_id} onChange={handleChange} required />
         </div>
         <div className="formGroup">
           <label>User ID</label>
-          <InputComponent name="user_id" value={formData.user_id} onChange={handleChange} />
+          <InputComponent name="user_id" value={formData.user_id} onChange={handleChange} required />
         </div>
         <div className="fileUpload">
           <FileComponent label="Drag & Drop or Click to Upload" accept="application/pdf" onFileChange={handleFileChange} />
