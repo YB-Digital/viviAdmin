@@ -1,0 +1,81 @@
+.categoryList {
+    width: 26vw;
+    margin: auto;
+    border: 1px solid #D2D2D2;
+    border-radius: 0.5vw;
+    overflow: hidden;
+
+    .titleRow {
+        display: flex;
+        background: #EFEFEF;
+        padding: 1vw;
+        font-size: 0.9375vw;
+        font-weight: 700;
+    }
+
+    .categoryRow {
+        display: flex;
+        align-items: center;
+        padding: 1vw;
+        border-bottom: 1px solid #D2D2D2;
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+
+    .loading, .noData {
+        text-align: center;
+        padding: 2vw;
+        font-size: 1vw;
+        font-weight: 600;
+    }
+
+    .column {
+        font-size: 0.83vw;
+        padding: 0.5vw 1vw;
+        display: flex;
+        align-items: center;
+        
+        &.no {
+            width: 5vw;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        &.categoryName {
+            flex: 1;
+            text-align: left;
+        }
+
+        &.actions {
+            width: 8vw;
+            display: flex;
+            gap: 1vw;
+            justify-content: flex-end;
+        }
+    }
+
+    .editBtn, .deleteBtn {
+        background: none;
+        border: none;
+        font-size: 1vw;
+        cursor: pointer;
+    }
+
+    .editBtn {
+        color: #007BFF;
+
+        &:hover {
+            color: #0056b3;
+        }
+    }
+
+    .deleteBtn {
+        color: #E70BBB;
+
+        &:hover {
+            color: #C5099B;
+        }
+    }
+}

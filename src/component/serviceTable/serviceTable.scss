@@ -1,0 +1,100 @@
+.serviceTable {
+    width: 40vw;
+    margin: auto;
+    border: 1px solid #D2D2D2;
+    border-radius: 0.5vw;
+    overflow: hidden;
+    
+    .titleRow {
+        display: flex;
+        background: #EFEFEF;
+        padding: 1vw;
+        font-size: 0.9375vw;
+        font-weight: 700;
+    }
+
+    .serviceRow {
+        display: flex;
+        align-items: center;
+        padding: 1vw;
+        border-bottom: 1px solid #D2D2D2;
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+
+    .loading, .noData {
+        text-align: center;
+        padding: 2vw;
+        font-size: 1vw;
+        font-weight: 600;
+    }
+
+    .column {
+        font-size: 0.83vw;
+        padding: 0.5vw 1vw;
+        display: flex;
+        align-items: center;
+
+        &.no {
+            width: 4vw;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        &.image {
+            width: 8.3vw;
+            display: flex;
+            justify-content: center;
+
+            img {
+                width: 100%;
+                height: 5.2vw;
+                object-fit: cover;
+                border-radius: 0.3vw;
+            }
+        }
+
+        &.serviceName {
+            width: 15vw;
+            font-weight: 600;
+        }
+
+        &.description {
+            flex: 1;
+            font-size: 0.75vw;
+            color: #666;
+        }
+
+        &.actions {
+            width: 8vw;
+            display: flex;
+            gap: 1vw;
+            justify-content: center;
+        }
+    }
+
+    .editBtn, .deleteBtn {
+        background: none;
+        border: none;
+        font-size: 1vw;
+        cursor: pointer;
+    }
+
+    .editBtn {
+        color: #007BFF;
+
+        &:hover {
+            color: #0056b3;
+        }
+    }
+
+    .deleteBtn {
+        color: #E70BBB;
+
+        &:hover {
+            color: #C5099B;
+        }
+    }
+}
