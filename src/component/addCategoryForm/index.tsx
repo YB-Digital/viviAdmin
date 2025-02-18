@@ -3,15 +3,52 @@
 import { useState } from "react";
 
 //style
-import './addCategoryFrom.scss'
+import "./addCategoryFrom.scss";
 
 export default function AddCategoryForm() {
   const [categoryName, setCategoryName] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Category submitted:", categoryName);
-    setCategoryName("");
+
+    if (!categoryName.trim()) {
+      alert("Please enter a category name.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/category_registration.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: categoryName }),
+      });
+
+      console.log("Response Status:", response.status);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Response Data:", data);
+
+      if (data.status === "success") {
+        alert("Category added successfully!");
+        setCategoryName(""); // Input sıfırlanıyor
+      } else {
+        alert(`Error: ${data.message}`);
+      }
+    } catch (error) {
+      console.error("Category submission failed:", error);
+      alert("An error occurred while adding the category.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -26,10 +63,11 @@ export default function AddCategoryForm() {
             value={categoryName}
             onChange={(e) => setCategoryName(e.target.value)}
             required
+            disabled={loading}
           />
         </div>
-        <button type="submit" className="saveButton">
-          Save
+        <button type="submit" className="saveButton" disabled={loading}>
+          {loading ? "Saving..." : "Save"}
         </button>
       </form>
     </div>

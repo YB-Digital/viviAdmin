@@ -24,7 +24,7 @@ export default function LayoutComponent() {
         const fetchUserData = async () => {
             if (userId) {
                 try {
-                    const response = await fetch(`http://localhost/viviAcademy/vivi_backend/getUser.php`, {
+                    const response = await fetch(`https://ybdigitalx.com/vivi_Adminbackend/getUser.php`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
