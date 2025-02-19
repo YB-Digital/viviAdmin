@@ -5,62 +5,83 @@ import { FaEdit } from "react-icons/fa";
 import "./sendCertificateTable.scss";
 
 interface User {
-  id: number;
-  name: string;
+  user_id: number;
+  fullname: string;
   email: string;
-  training: string;
+  course_name: string;
+  course_id: string;
 }
 
 interface SendCertificateTableProps {
-  setFormData: React.Dispatch<React.SetStateAction<{ email: string; course_id: string; user_id: string; certificateFile: File | null }>>;
+  setFormData: React.Dispatch<
+    React.SetStateAction<{
+      email: string;
+      course_id: string;
+      user_id: string;
+      certificateFile: File | null;
+    }>
+  >;
+  handleFormSubmit: () => void;
 }
 
-export default function SendCertificateTable({ setFormData }: SendCertificateTableProps) {
+export default function SendCertificateTable({ setFormData, handleFormSubmit }: SendCertificateTableProps) {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    fetch("https://ybdigitalx.com/vivi_Adminbackend/dashboard_table.php")
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.status === "success" && Array.isArray(data.contacts) && data.contacts.length > 0) {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/certificate_table.php");
+        const data = await response.json();
+        if (Array.isArray(data) && data.length > 0) {
           setUsers(
-            data.contacts.map((user: any) => ({
-              id: user.id,
-              name: user.name,
+            data.map((user: any) => ({
+              user_id: Number(user.user_id),
+              fullname: `${user.first_name} ${user.last_name}`,
               email: user.email,
-              training: user.message,
+              course_name: user.course_name,
+              course_id: user.course_id,
             }))
           );
         }
-      })
-      .catch((error) => console.error("Error fetching data:", error))
-      .finally(() => setLoading(false));
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUsers();
   }, []);
 
   const handleUserSelect = (user: User) => {
-    setFormData((prev) => ({ ...prev, email: user.email, user_id: String(user.id) }));
+    setFormData({
+      email: user.email,
+      user_id: String(user.user_id),
+      course_id: String(user.course_id),
+      certificateFile: null,
+    });
+    handleFormSubmit();
   };
 
   return (
     <div className="sendCertificateTable">
       <div className="tableContainer">
         <div className="titleRow">
-          <div className="column title">No.</div>
-          <div className="column title">Name Surname</div>
-          <div className="column title">Email Address</div>
-          <div className="column title">Completed Training</div>
-          <div className="column title">Actions</div>
+          <div className="column index">No.</div>
+          <div className="column name">Full Name</div>
+          <div className="column email">Email Address</div>
+          <div className="column course">Completed Training</div>
+          <div className="column action">Actions</div>
         </div>
         {loading ? (
           <p className="loading">Loading...</p>
         ) : users.length > 0 ? (
-          users.map((user) => (
-            <div key={user.id} className="dataRow">
-              <div className="column">{user.id}</div>
-              <div className="column">{user.name}</div>
-              <div className="column">{user.email}</div>
-              <div className="column">{user.training}</div>
+          users.map((user, index) => (
+            <div key={user.user_id} className="dataRow">
+              <div className="column index">{index + 1}</div>
+              <div className="column name">{user.fullname}</div>
+              <div className="column email">{user.email}</div>
+              <div className="column course">{user.course_name}</div>
               <div className="column action">
                 <FaEdit className="editIcon" onClick={() => handleUserSelect(user)} />
               </div>

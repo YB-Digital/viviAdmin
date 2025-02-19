@@ -38,14 +38,6 @@ export default function SendCertificateForm({ formData, setFormData, handleFormS
           <label>Email</label>
           <InputComponent name="email" value={formData.email} onChange={handleChange} required />
         </div>
-        <div className="formGroup">
-          <label>Course ID</label>
-          <InputComponent name="course_id" value={formData.course_id} onChange={handleChange} required />
-        </div>
-        <div className="formGroup">
-          <label>User ID</label>
-          <InputComponent name="user_id" value={formData.user_id} onChange={handleChange} required />
-        </div>
         <div className="fileUpload">
           <FileComponent label="Drag & Drop or Click to Upload" accept="application/pdf" onFileChange={handleFileChange} />
         </div>

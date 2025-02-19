@@ -12,12 +12,11 @@ export default function SendCertificatePage() {
     certificateFile: null as File | null,
   });
 
-  // Eksik olan state'leri ekleyelim
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  const handleFormSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Formun default submit işlemini engelle
+  const handleFormSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     setLoading(true);
     setMessage(null);
 
@@ -51,7 +50,7 @@ export default function SendCertificatePage() {
   };
 
   return (
-    <div>
+    <div className="sendCertificatePage">
       <SendCertificateForm 
         formData={formData} 
         setFormData={setFormData} 
@@ -59,7 +58,7 @@ export default function SendCertificatePage() {
         loading={loading} 
         message={message} 
       />
-      <SendCertificateTable setFormData={setFormData} />
+      <SendCertificateTable setFormData={setFormData} handleFormSubmit={handleFormSubmit} />
     </div>
   );
 }
