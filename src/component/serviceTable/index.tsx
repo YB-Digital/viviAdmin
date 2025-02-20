@@ -70,11 +70,11 @@ export default function ServiceTable({ onEdit, services, refreshServices }: Serv
                         <div className="column image">
                             <img src={service.image} alt={service.name} />
                         </div>
-                        <div className="column serviceName">
+                        <div className="column serviceName" title={service.name}>
                             {service.name.length > 10 ? `${service.name.substring(0, 10)}...` : service.name}
                         </div>
-                        <div className="column description">
-                            {service.description.length > 200 ? `${service.description.substring(0, 200)}...` : service.description}
+                        <div className="column description" title={service.description}>
+                            {service.description.length > 200 ? `${service.description.substring(0, 25)}...` : service.description}
                         </div>
                         <div className="column actions">
                             <button className="editBtn" onClick={() => onEdit(service)}>

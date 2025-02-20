@@ -38,7 +38,7 @@
         align-items: center;
 
         &.no {
-            width: 4vw;
+            flex: 0.5;
             text-align: left;
             font-weight: bold;
         }
@@ -57,18 +57,18 @@
         }
 
         &.serviceName {
-            width: 15vw;
+            flex: 1.5;
             font-weight: 600;
         }
 
         &.description {
-            flex: 1;
+            flex: 2.5;
             font-size: 0.75vw;
             color: #666;
         }
 
         &.actions {
-            width: 8vw;
+            flex: 0.5;
             display: flex;
             gap: 1vw;
             justify-content: center;

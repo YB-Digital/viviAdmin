@@ -29,7 +29,7 @@ export default function Page() {
     setError(""); 
 
     try {
-      const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/login.php", {
+      const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/login_control.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,7 +48,7 @@ export default function Page() {
       } else {
         if (isClient) {
           window.localStorage.setItem("userId", data.id);
-          window.location.href = "/admin/dashboard"; 
+          window.location.href = "/admin"; 
         }
       }
     } catch (error) {

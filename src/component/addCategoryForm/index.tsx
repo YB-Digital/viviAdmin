@@ -23,10 +23,15 @@ export default function AddCategoryForm() {
       const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/category_registration.php", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: JSON.stringify({ name: categoryName }),
+        body: new URLSearchParams({
+          id: "", // Boş id gönder
+          name: categoryName, // Kategori ismi gönder
+        }).toString(),
       });
+      
+      
 
       console.log("Response Status:", response.status);
 
@@ -39,7 +44,7 @@ export default function AddCategoryForm() {
 
       if (data.status === "success") {
         alert("Category added successfully!");
-        setCategoryName(""); // Input sıfırlanıyor
+        setCategoryName(""); 
       } else {
         alert(`Error: ${data.message}`);
       }
