@@ -7,40 +7,27 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import "./serviceTable.scss";
 
 interface Service {
-    id: number;
+    id: string;
     image: string;
     name: string;
     description: string;
 }
 
-export default function ServiceTable() {
-    const [services, setServices] = useState<Service[]>([]);
+interface ServiceTableProps {
+    onEdit: (service: Service) => void;
+    services: Service[];
+    refreshServices: () => void;
+}
+
+export default function ServiceTable({ onEdit, services, refreshServices }: ServiceTableProps) {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>("");
 
     useEffect(() => {
-        fetch("https://ybdigitalx.com/vivi_backend/list_service.php")
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Failed to fetch data.");
-                }
-                return response.json();
-            })
-            .then((data) => {
-                if (Array.isArray(data)) {
-                    setServices(data);
-                } else {
-                    setError("Invalid data format received.");
-                }
-            })
-            .catch((err) => {
-                console.error("Error fetching services:", err);
-                setError("Error fetching data.");
-            })
-            .finally(() => setLoading(false));
-    }, []);
+        setLoading(false);
+    }, [services]);
 
-    const handleDelete = (serviceId: number) => {
+    const handleDelete = (serviceId: string) => {
         if (!confirm("Are you sure you want to delete this service?")) return;
 
         fetch("https://ybdigitalx.com/vivi_backend/delete_service.php", {
@@ -51,7 +38,7 @@ export default function ServiceTable() {
             .then((response) => response.json())
             .then((data) => {
                 if (data.status === "success") {
-                    setServices((prev) => prev.filter((service) => service.id !== serviceId));
+                    refreshServices();
                 } else {
                     setError("Failed to delete the service.");
                 }
@@ -83,10 +70,14 @@ export default function ServiceTable() {
                         <div className="column image">
                             <img src={service.image} alt={service.name} />
                         </div>
-                        <div className="column serviceName">{service.name}</div>
-                        <div className="column description">{service.description}</div>
+                        <div className="column serviceName">
+                            {service.name.length > 10 ? `${service.name.substring(0, 10)}...` : service.name}
+                        </div>
+                        <div className="column description">
+                            {service.description.length > 200 ? `${service.description.substring(0, 200)}...` : service.description}
+                        </div>
                         <div className="column actions">
-                            <button className="editBtn">
+                            <button className="editBtn" onClick={() => onEdit(service)}>
                                 <FaEdit />
                             </button>
                             <button className="deleteBtn" onClick={() => handleDelete(service.id)}>
