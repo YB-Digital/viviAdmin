@@ -117,9 +117,16 @@ export default function CourseTable({ onEdit, courses, refreshCourses }: CourseT
                         <div className="column no">{index + 1}</div>
                         <div className="column image">
                             <img 
-                                src={course.image ? `https://ybdigitalx.com/vivi_Adminbackend${course.image}` : "/default-image.png"}
+                                src={course.image && !course.image.includes("default-image.png") 
+                                    ? `https://ybdigitalx.com/vivi_Adminbackend${course.image}` 
+                                    : "/default-image.png"
+                                }
                                 alt="Course Image"
-                                onError={(e) => (e.currentTarget.src = "/default-image.png")}
+                                onError={(e) => {
+                                    if (e.currentTarget.src !== window.location.origin + "/default-image.png") {
+                                        e.currentTarget.src = "/default-image.png";
+                                    }
+                                }}
                             />
                         </div>
                         <div className="column courseName" title={course.course_name}>
@@ -170,9 +177,16 @@ export default function CourseTable({ onEdit, courses, refreshCourses }: CourseT
                             <label>Current Image:</label>
                             <div className="currentMedia">
                                 <img 
-                                    src={editingCourse.image ? `https://ybdigitalx.com/vivi_Adminbackend${editingCourse.image}` : "/default-image.png"}
+                                    src={editingCourse.image && !editingCourse.image.includes("default-image.png") 
+                                        ? `https://ybdigitalx.com/vivi_Adminbackend${editingCourse.image}` 
+                                        : "/default-image.png"
+                                    }
                                     alt="Course Image"
-                                    onError={(e) => (e.currentTarget.src = "/default-image.png")}
+                                    onError={(e) => {
+                                        if (e.currentTarget.src !== window.location.origin + "/default-image.png") {
+                                            e.currentTarget.src = "/default-image.png";
+                                        }
+                                    }}
                                 />
                             </div>
                             <FileComponent label="New Image" accept="image/*" onFileChange={setImageFile} />
