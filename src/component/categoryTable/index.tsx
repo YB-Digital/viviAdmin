@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
+
+// Stil dosyası
 import "./categoryTable.scss";
 
 interface Category {
@@ -54,12 +56,16 @@ export default function CategoryList() {
     }
   };
 
+  // Edit Modunu Açma
+  const handleEditClick = (category: Category) => {
+    setEditingCategory(category);
+  };
+
   // Kategori Güncelleme
   const handleSaveEdit = async () => {
-    if (!editingCategory) return;
+    if (!editingCategory || !editingCategory.id) return;
 
-    let payload: any = { name: editingCategory.name };
-    if (editingCategory.id) payload.id = editingCategory.id;
+    let payload = { id: editingCategory.id, name: editingCategory.name };
 
     try {
       const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/category_registration.php", {
@@ -84,30 +90,55 @@ export default function CategoryList() {
 
   return (
     <div className="categoryList">
+      {/* Başlık Satırı */}
       <div className="titleRow">
         <div className="column no">No.</div>
         <div className="column categoryName">Category Name</div>
         <div className="column actions">Actions</div>
       </div>
 
+      {/* Kategori Listesi */}
       {loading ? (
-        <div>Loading...</div>
-      ) : (
+        <div className="loading">Loading...</div>
+      ) : categories.length > 0 ? (
         categories.map((category, index) => (
           <div key={category.id} className="categoryRow">
-            <div>{index + 1}</div>
-            <div>{category.name}</div>
-            <button onClick={() => setEditingCategory(category)}><FaEdit /></button>
-            <button onClick={() => handleDelete(category.id)}><FaTrash /></button>
+            <div className="column no">{index + 1}</div>
+            <div className="column categoryName">{category.name}</div>
+            <div className="column actions">
+              <button className="editBtn" onClick={() => handleEditClick(category)}>
+                <FaEdit />
+              </button>
+              <button className="deleteBtn" onClick={() => handleDelete(category.id)}>
+                <FaTrash />
+              </button>
+            </div>
           </div>
         ))
+      ) : (
+        <div className="noData">No categories found.</div>
       )}
 
+      {/* Edit Modal */}
       {editingCategory && (
-        <div>
-          <input type="text" value={editingCategory.name} onChange={(e) =>
-            setEditingCategory({ ...editingCategory, name: e.target.value })} />
-          <button onClick={handleSaveEdit}>Save</button>
+        <div className="editModal">
+          <div className="modalContent">
+            <h3>Edit Category</h3>
+            <label>ID:</label>
+            <input type="text" value={editingCategory.id} disabled />
+            <label>Name:</label>
+            <input
+              type="text"
+              value={editingCategory.name}
+              onChange={(e) =>
+                setEditingCategory({ ...editingCategory, name: e.target.value })
+              }
+            />
+            <div className="modalActions">
+              <button onClick={handleSaveEdit}>Save</button>
+              <button onClick={() => setEditingCategory(null)}>Cancel</button>
+            </div>
+          </div>
         </div>
       )}
     </div>

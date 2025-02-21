@@ -1,19 +1,21 @@
 "use client";
 
-import  { useState , useEffect } from "react";
+import { useState, useEffect } from "react";
 import InputComponent from "@/component/inputComponent";
 import TextAreaComponent from "@/component/textAreaComponent";
 import FileComponent from "@/component/fileComponent";
+import SelectComponent from "@/component/selectComponent"; // Kategori için yeni bileşen
+import CourseTable from "@/component/courseTable";
 
 //style
 import "./videoUpload.scss";
-import CourseTable from "@/component/courseTable";
 
 export default function Page() {
     const [formData, setFormData] = useState({
         title: "",
         price: "",
         contents: "",
+        category: "", // Kategori
         imageFile: null as File | null,
         videoFile: null as File | null,
     });
@@ -21,11 +23,14 @@ export default function Page() {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
     const [courses, setCourses] = useState([]);
+    const [categories, setCategories] = useState<{ id: number; name: string }[]>([]);
 
     useEffect(() => {
         fetchCourses();
+        fetchCategories();
     }, []);
 
+    // Kursları API'den çek
     const fetchCourses = async () => {
         try {
             const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/course_table.php");
@@ -37,7 +42,19 @@ export default function Page() {
         }
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    // Kategorileri API'den çek
+    const fetchCategories = async () => {
+        try {
+            const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/category_table.php");
+            const data = await response.json();
+            setCategories(data);
+        } catch (error) {
+            console.error("Error fetching categories:", error);
+            setMessage("Failed to load categories.");
+        }
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
 
         if (name === "price" && !/^\d*$/.test(value)) {
@@ -61,25 +78,26 @@ export default function Page() {
         e.preventDefault();
         setLoading(true);
         setMessage(null);
-    
+
         const formDataToSend = new FormData();
         formDataToSend.append("title", formData.title);
         formDataToSend.append("price", formData.price);
         formDataToSend.append("contents", formData.contents);
-        
+        formDataToSend.append("category", formData.category); // Kategori ekleniyor
+
         if (formData.imageFile) {
             formDataToSend.append("imageFile", formData.imageFile);
         }
         if (formData.videoFile) {
             formDataToSend.append("videoFile", formData.videoFile);
         }
-    
+
         try {
             const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/video_upload.php", {
                 method: "POST",
                 body: formDataToSend,
             });
-    
+
             const data = await response.json();
             if (data.status === "success") {
                 setMessage("Video uploaded successfully!");
@@ -87,10 +105,11 @@ export default function Page() {
                     title: "",
                     price: "",
                     contents: "",
+                    category: "",
                     imageFile: null,
                     videoFile: null,
                 });
-                fetchCourses(); // Listeyi güncelle
+                fetchCourses();
             } else {
                 setMessage("Error while uploading video.");
             }
@@ -108,11 +127,11 @@ export default function Page() {
             title: course.course_name,
             price: course.price,
             contents: course.description,
-            imageFile: null, // Görsel düzenleme burada desteklenmiyor
+            category: course.category_id.toString(), // Kategori
+            imageFile: null,
             videoFile: null,
         });
     };
-    
 
     return (
         <div className="videoUpload">
@@ -130,6 +149,20 @@ export default function Page() {
                                 Price
                             </label>
                             <InputComponent name="price" value={formData.price} onChange={handleChange} />
+                        </div>
+                        <div className="formGroup">
+                            <label className="font-inter" htmlFor="category">
+                                Category Name
+                            </label>
+                            <SelectComponent
+                                name="category"
+                                value={formData.category}
+                                onChange={handleChange}
+                                options={categories.map((cat) => ({
+                                    value: cat.id,
+                                    label: cat.name,
+                                }))}
+                            />
                         </div>
                         <div className="formGroup">
                             <label className="font-inter" htmlFor="contents">
@@ -150,9 +183,7 @@ export default function Page() {
             </form>
             {message && <p className="responseMessage">{message}</p>}
 
-
             <CourseTable courses={courses} refreshCourses={fetchCourses} onEdit={handleEdit} />
-        
         </div>
     );
 }

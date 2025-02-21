@@ -1,0 +1,37 @@
+.selectWrapper {
+    position: relative;
+    width: 100%;
+    border: 1px solid #A4A4A4;
+    border-radius: 8px;
+    padding: 12px 16px;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-family: "Inter", sans-serif;
+    margin-bottom: 2.5vw;
+
+    select {
+        width: 100%;
+        border: none;
+        outline: none;
+        font-size: 14px;
+        background: transparent;
+        appearance: none;
+        cursor: pointer;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .dropdownIcon {
+        position: absolute;
+        right: 16px;
+        color: #e6007e; 
+        font-size: 12px;
+        pointer-events: none;
+    }
+
+    option {
+        width: 100%;
+    }
+}
