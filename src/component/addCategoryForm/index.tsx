@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-
-//style
 import "./addCategoryFrom.scss";
 
 export default function AddCategoryForm() {
@@ -22,16 +20,9 @@ export default function AddCategoryForm() {
     try {
       const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/category_registration.php", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-          id: "", // Boş id gönder
-          name: categoryName, // Kategori ismi gönder
-        }).toString(),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: categoryName }), // ID gönderilmiyor, backend yeni kayıt olarak algılar
       });
-      
-      
 
       console.log("Response Status:", response.status);
 
@@ -44,7 +35,7 @@ export default function AddCategoryForm() {
 
       if (data.status === "success") {
         alert("Category added successfully!");
-        setCategoryName(""); 
+        setCategoryName("");
       } else {
         alert(`Error: ${data.message}`);
       }

@@ -19,6 +19,11 @@ interface ServiceTableProps {
     refreshServices: () => void;
 }
 
+// Metni belirli bir uzunluğa göre kesen yardımcı fonksiyon
+const truncateText = (text: string, maxLength: number) => {
+    return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+};
+
 export default function ServiceTable({ onEdit, services, refreshServices }: ServiceTableProps) {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>("");
@@ -71,16 +76,16 @@ export default function ServiceTable({ onEdit, services, refreshServices }: Serv
                             <img src={service.image} alt={service.name} />
                         </div>
                         <div className="column serviceName" title={service.name}>
-                            {service.name.length > 10 ? `${service.name.substring(0, 10)}...` : service.name}
+                            {truncateText(service.name, 10)}
                         </div>
                         <div className="column description" title={service.description}>
-                            {service.description.length > 200 ? `${service.description.substring(0, 25)}...` : service.description}
+                            {truncateText(service.description, 20)}
                         </div>
                         <div className="column actions">
-                            <button className="editBtn" onClick={() => onEdit(service)}>
+                            <button className="editBtn" onClick={() => onEdit(service)} title="Edit">
                                 <FaEdit />
                             </button>
-                            <button className="deleteBtn" onClick={() => handleDelete(service.id)}>
+                            <button className="deleteBtn" onClick={() => handleDelete(service.id)} title="Delete">
                                 <FaTrash />
                             </button>
                         </div>

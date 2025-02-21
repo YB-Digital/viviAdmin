@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import  { useState , useEffect } from "react";
 import InputComponent from "@/component/inputComponent";
 import TextAreaComponent from "@/component/textAreaComponent";
 import FileComponent from "@/component/fileComponent";
 
 //style
 import "./videoUpload.scss";
+import CourseTable from "@/component/courseTable";
 
 export default function Page() {
     const [formData, setFormData] = useState({
@@ -19,6 +20,22 @@ export default function Page() {
 
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
+    const [courses, setCourses] = useState([]);
+
+    useEffect(() => {
+        fetchCourses();
+    }, []);
+
+    const fetchCourses = async () => {
+        try {
+            const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/course_table.php");
+            const data = await response.json();
+            setCourses(data);
+        } catch (error) {
+            console.error("Error fetching courses:", error);
+            setMessage("Failed to load courses.");
+        }
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -64,7 +81,6 @@ export default function Page() {
             });
     
             const data = await response.json();
-            console.log(data);
             if (data.status === "success") {
                 setMessage("Video uploaded successfully!");
                 setFormData({
@@ -74,17 +90,27 @@ export default function Page() {
                     imageFile: null,
                     videoFile: null,
                 });
+                fetchCourses(); // Listeyi güncelle
             } else {
                 setMessage("Error while uploading video.");
             }
-        } 
-        catch (error) {
+        } catch (error) {
             console.error("Error submitting form:", error);
             setMessage("An unexpected error occurred.");
-        } 
-        finally {
+        } finally {
             setLoading(false);
         }
+    };
+
+    const handleEdit = (course: any) => {
+        console.log("Editing course:", course);
+        setFormData({
+            title: course.course_name,
+            price: course.price,
+            contents: course.description,
+            imageFile: null, // Görsel düzenleme burada desteklenmiyor
+            videoFile: null,
+        });
     };
     
 
@@ -123,6 +149,10 @@ export default function Page() {
                 </button>
             </form>
             {message && <p className="responseMessage">{message}</p>}
+
+
+            <CourseTable courses={courses} refreshCourses={fetchCourses} onEdit={handleEdit} />
+        
         </div>
     );
 }

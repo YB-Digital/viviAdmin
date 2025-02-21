@@ -1,7 +1,7 @@
 .videoUpload {
     padding: 3.54vw 0;
 
-    form {
+    >form {
         padding: 0 3.9vw;
         width: 76.5625vw;
         margin: auto;
@@ -33,10 +33,9 @@
                 gap: 1.875vw;
             }
         }
-    }
 
-    
-    button {
+           
+    >button {
         width: 10.4vw;
         font-family: Inter;
         font-size: 1.04vw;
@@ -48,5 +47,6 @@
         padding: 1.04vw;
         border-radius: 0.4167vw;
         margin-bottom: 1.77vw;
+    }
     }
 }
