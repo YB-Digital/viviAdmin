@@ -1,12 +1,11 @@
 import AddCategoryForm from '@/component/addCategoryForm'
-import CategoryTable from '@/component/categoryTable'
-import React from 'react'
+import CategoryList from '@/component/categoryTable'
 
 export default function page() {
   return (
     <div>
         <AddCategoryForm />
-        <CategoryTable />
+        <CategoryList/>
     </div>
   )
 }

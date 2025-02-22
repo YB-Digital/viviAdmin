@@ -65,13 +65,12 @@ export default function CategoryList() {
   const handleSaveEdit = async () => {
     if (!editingCategory || !editingCategory.id) return;
 
-    let payload = { id: editingCategory.id, name: editingCategory.name };
 
     try {
-      const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/category_registration.php", {
+      const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/category_update.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ id: editingCategory.id, name: editingCategory.name }),
       });
 
       const data = await response.json();

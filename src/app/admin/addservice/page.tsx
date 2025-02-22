@@ -20,10 +20,6 @@ export default function Page() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
-  const handleEdit = (service: Service) => {
-    setSelectedService(service);
-  };
-
   const handleServiceUpdate = () => {
     setSelectedService(null);
     fetchServices();
@@ -57,7 +53,7 @@ export default function Page() {
     <div className='addService'>
       {error && <div className='error'>{error}</div>}
       <AddServiceForm selectedService={selectedService} onServiceUpdate={handleServiceUpdate} />
-      <ServiceTable services={services} onEdit={handleEdit} refreshServices={fetchServices} />
+      <ServiceTable services={services} refreshServices={fetchServices} />
       {loading && <div className='loading'>Loading services...</div>}
     </div>
   );

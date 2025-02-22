@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
+
+//style
 import "./addCategoryFrom.scss";
 
 export default function AddCategoryForm() {
   const [categoryName, setCategoryName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,32 +19,37 @@ export default function AddCategoryForm() {
     }
 
     setLoading(true);
-
+    setMessage("");
     try {
-      const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/category_registration.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: categoryName }), 
-      });
+      const response = await fetch(
+        "https://ybdigitalx.com/vivi_Adminbackend/category_registration.php",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name: categoryName }),
+        }
+      );
 
-      console.log("Response Status:", response.status);
+      const contentType = response.headers.get("content-type");
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+      // Yanıtın JSON formatında olup olmadığını kontrol et
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Invalid response format. Expected JSON.");
       }
 
       const data = await response.json();
-      console.log("Response Data:", data);
 
-      if (data.status === "success") {
-        alert("Category added successfully!");
+      if (response.ok && data.status === "success") {
+        setMessage("✅ Category added successfully!");
         setCategoryName("");
       } else {
-        alert(`Error: ${data.message}`);
+        setMessage(` Error: ${data.message || "Unknown error occurred."}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Category submission failed:", error);
-      alert("An error occurred while adding the category.");
+      setMessage(`Submission error: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -65,6 +73,7 @@ export default function AddCategoryForm() {
         <button type="submit" className="saveButton" disabled={loading}>
           {loading ? "Saving..." : "Save"}
         </button>
+        {message && <p className="message">{message}</p>}
       </form>
     </div>
   );
