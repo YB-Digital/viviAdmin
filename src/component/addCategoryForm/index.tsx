@@ -21,7 +21,7 @@ export default function AddCategoryForm() {
       const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/category_registration.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: categoryName }), // ID gönderilmiyor, backend yeni kayıt olarak algılar
+        body: JSON.stringify({ name: categoryName }), 
       });
 
       console.log("Response Status:", response.status);
