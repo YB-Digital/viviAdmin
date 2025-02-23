@@ -15,7 +15,7 @@ export default function Page() {
         title: "",
         price: "",
         contents: "",
-        category: "", // Kategori
+        category: "", // Kategori ID
         imageFile: null as File | null,
         videoFile: null as File | null,
     });
@@ -83,7 +83,7 @@ export default function Page() {
         formDataToSend.append("title", formData.title);
         formDataToSend.append("price", formData.price);
         formDataToSend.append("contents", formData.contents);
-        formDataToSend.append("category", formData.category); // Kategori ekleniyor
+        formDataToSend.append("category", formData.category.toString());
 
         if (formData.imageFile) {
             formDataToSend.append("imageFile", formData.imageFile);
@@ -95,7 +95,7 @@ export default function Page() {
         try {
             const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/video_upload.php", {
                 method: "POST",
-                body: formDataToSend,
+                body: formDataToSend, // JSON.stringify kaldırıldı
             });
 
             const data = await response.json();
@@ -111,7 +111,7 @@ export default function Page() {
                 });
                 fetchCourses();
             } else {
-                setMessage("Error while uploading video.");
+                setMessage(data.message || "Error while uploading video.");
             }
         } catch (error) {
             console.error("Error submitting form:", error);
@@ -119,18 +119,6 @@ export default function Page() {
         } finally {
             setLoading(false);
         }
-    };
-
-    const handleEdit = (course: any) => {
-        console.log("Editing course:", course);
-        setFormData({
-            title: course.course_name,
-            price: course.price,
-            contents: course.description,
-            category: course.category_id.toString(), // Kategori
-            imageFile: null,
-            videoFile: null,
-        });
     };
 
     return (
@@ -159,7 +147,7 @@ export default function Page() {
                                 value={formData.category}
                                 onChange={handleChange}
                                 options={categories.map((cat) => ({
-                                    value: cat.id,
+                                    value: cat.id.toString(),
                                     label: cat.name,
                                 }))}
                             />
@@ -183,7 +171,7 @@ export default function Page() {
             </form>
             {message && <p className="responseMessage">{message}</p>}
 
-            <CourseTable courses={courses} refreshCourses={fetchCourses} onEdit={handleEdit} />
+            <CourseTable courses={courses} refreshCourses={fetchCourses} />
         </div>
     );
 }

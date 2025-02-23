@@ -23,7 +23,7 @@ export default function Header() {
       <div className="container">
         <Image src={logo} alt=''/>
         <div className="icons">
-          <Link href={'/admin/profile'}>
+          <Link href={'/admin'}>
           <Image src={user} alt='user icon'/>
           </Link>
           <Image 

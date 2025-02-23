@@ -48,7 +48,7 @@ export default function Page() {
       } else {
         if (isClient) {
           window.localStorage.setItem("userId", data.id);
-          window.location.href = "/admin"; 
+          window.location.href = "/admin/dahsboard"; 
         }
       }
     } catch (error) {

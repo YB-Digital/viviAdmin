@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import FileComponent from "@/component/fileComponent"; // Dosya yükleme bileşeni
+import FileComponent from "@/component/fileComponent";
 import "./courseTable.scss";
 
 interface Course {
@@ -15,32 +15,25 @@ interface Course {
 }
 
 interface CourseTableProps {
-    onEdit: (course: Course) => void;
     courses: Course[];
     refreshCourses: () => void;
 }
 
-// Metni belirli bir karakter uzunluğuna göre kesen yardımcı fonksiyon
 const truncateText = (text: string, maxLength: number) => {
     return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
 };
 
-export default function CourseTable({ onEdit, courses, refreshCourses }: CourseTableProps) {
-    const [loading, setLoading] = useState<boolean>(true);
+export default function CourseTable({ courses, refreshCourses }: CourseTableProps) {
     const [error, setError] = useState<string | null>(null);
     const [editingCourse, setEditingCourse] = useState<Course | null>(null);
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [videoFile, setVideoFile] = useState<File | null>(null);
 
-    useEffect(() => {
-        setLoading(false);
-    }, [courses]);
-
     const handleDelete = async (courseId: string) => {
         if (!confirm("Are you sure you want to delete this course?")) return;
 
         try {
-            const response = await fetch("https://ybdigitalx.com/vivi_backend/delete_course.php", {
+            const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/delete_course.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ id: courseId }),
@@ -48,13 +41,11 @@ export default function CourseTable({ onEdit, courses, refreshCourses }: CourseT
 
             const data = await response.json();
 
-            if (data.status === "success") {
-                refreshCourses();
-            } else {
-                setError("Failed to delete the course.");
+            if(data === 'succes'){
+                console.log('done')
             }
+
         } catch (error) {
-            console.error("Error deleting course:", error);
             setError("An error occurred while deleting the course.");
         }
     };
@@ -71,27 +62,24 @@ export default function CourseTable({ onEdit, courses, refreshCourses }: CourseT
         if (imageFile) {
             formData.append("image", imageFile);
         }
-
         if (videoFile) {
             formData.append("videos", videoFile);
         }
 
         try {
-            const response = await fetch("https://ybdigitalx.com/vivi_backend/update_course.php", {
+            const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/update_course.php", {
                 method: "POST",
                 body: formData,
             });
 
             const data = await response.json();
-
             if (data.status === "success") {
                 refreshCourses();
-                setEditingCourse(null); // Modalı kapat
+                setEditingCourse(null);
             } else {
                 setError("Failed to update the course.");
             }
         } catch (error) {
-            console.error("Error updating course:", error);
             setError("An error occurred while updating the course.");
         }
     };
@@ -109,48 +97,33 @@ export default function CourseTable({ onEdit, courses, refreshCourses }: CourseT
                 <div className="column actions">Actions</div>
             </div>
 
-            {loading ? (
-                <div className="loading">Loading...</div>
-            ) : courses.length > 0 ? (
-                courses.map((course, index) => (
-                    <div key={course.id} className="courseRow">
-                        <div className="column no">{index + 1}</div>
-                        <div className="column image">
-                            <img 
-                                src={course.image && !course.image.includes("default-image.png") 
-                                    ? `https://ybdigitalx.com/vivi_Adminbackend${course.image}` 
-                                    : "/default-image.png"
-                                }
-                                alt="Course Image"
-                                onError={(e) => {
-                                    if (e.currentTarget.src !== window.location.origin + "/default-image.png") {
-                                        e.currentTarget.src = "/default-image.png";
-                                    }
-                                }}
-                            />
-                        </div>
-                        <div className="column courseName" title={course.course_name}>
-                            {truncateText(course.course_name, 10)}
-                        </div>
-                        <div className="column description" title={course.description}>
-                            {truncateText(course.description, 20)}
-                        </div>
-                        <div className="column price">${course.price}</div>
-                        <div className="column actions">
-                            <button className="editBtn" onClick={() => setEditingCourse(course)} title="Edit">
-                                <FaEdit />
-                            </button>
-                            <button className="deleteBtn" onClick={() => handleDelete(course.id)} title="Delete">
-                                <FaTrash />
-                            </button>
-                        </div>
+            {courses.map((course, index) => (
+                <div key={course.id} className="courseRow">
+                    <div className="column no">{index + 1}</div>
+                    <div className="column image">
+                        <img
+                            src={course.image ? `https://ybdigitalx.com/vivi_Adminbackend${course.image}` : ''}
+                            alt="Course Image"
+                        />
                     </div>
-                ))
-            ) : (
-                <div className="noData">No courses found.</div>
-            )}
+                    <div className="column courseName" title={course.course_name}>
+                        {truncateText(course.course_name, 15)}
+                    </div>
+                    <div className="column description" title={course.description}>
+                        {truncateText(course.description, 20)}
+                    </div>
+                    <div className="column price">${course.price}</div>
+                    <div className="column actions">
+                        <button className="editBtn" onClick={() => setEditingCourse(course)} title="Edit">
+                            <FaEdit />
+                        </button>
+                        <button className="deleteBtn" onClick={() => handleDelete(course.id)} title="Delete">
+                            <FaTrash />
+                        </button>
+                    </div>
+                </div>
+            ))}
 
-            {/* Edit Modal */}
             {editingCourse && (
                 <div className="editModal">
                     <div className="modalContent">
@@ -172,36 +145,8 @@ export default function CourseTable({ onEdit, courses, refreshCourses }: CourseT
                             value={editingCourse.price}
                             onChange={(e) => setEditingCourse({ ...editingCourse, price: e.target.value })}
                         />
-
-                        <div className="fileUpload">
-                            <label>Current Image:</label>
-                            <div className="currentMedia">
-                                <img 
-                                    src={editingCourse.image && !editingCourse.image.includes("default-image.png") 
-                                        ? `https://ybdigitalx.com/vivi_Adminbackend${editingCourse.image}` 
-                                        : "/default-image.png"
-                                    }
-                                    alt="Course Image"
-                                    onError={(e) => {
-                                        if (e.currentTarget.src !== window.location.origin + "/default-image.png") {
-                                            e.currentTarget.src = "/default-image.png";
-                                        }
-                                    }}
-                                />
-                            </div>
-                            <FileComponent label="New Image" accept="image/*" onFileChange={setImageFile} />
-                        </div>
-
-                        <div className="fileUpload">
-                            <label>Current Video:</label>
-                            <div className="currentMedia">
-                                <video controls>
-                                    <source src={`https://ybdigitalx.com/vivi_Adminbackend${editingCourse.videos}`} type="video/mp4" />
-                                </video>
-                            </div>
-                            <FileComponent label="New Video" accept="video/*" onFileChange={setVideoFile} />
-                        </div>
-
+                        <FileComponent label="New Image" accept="image/*" onFileChange={setImageFile} />
+                        <FileComponent label="New Video" accept="video/*" onFileChange={setVideoFile} />
                         <div className="modalActions">
                             <button className="saveBtn" onClick={handleSaveEdit}>Save</button>
                             <button className="cancelBtn" onClick={() => setEditingCourse(null)}>Cancel</button>

@@ -58,7 +58,7 @@ export default function SendCertificatePage() {
         loading={loading} 
         message={message} 
       />
-      <SendCertificateTable setFormData={setFormData} handleFormSubmit={handleFormSubmit} />
+      <SendCertificateTable setFormData={setFormData}  />
     </div>
   );
 }

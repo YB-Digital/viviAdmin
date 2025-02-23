@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
+
+//style
 import "./sendCertificateTable.scss";
 
 interface User {
@@ -21,10 +23,9 @@ interface SendCertificateTableProps {
       certificateFile: File | null;
     }>
   >;
-  handleFormSubmit: () => void;
 }
 
-export default function SendCertificateTable({ setFormData, handleFormSubmit }: SendCertificateTableProps) {
+export default function SendCertificateTable({ setFormData }: SendCertificateTableProps) {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -60,7 +61,6 @@ export default function SendCertificateTable({ setFormData, handleFormSubmit }: 
       course_id: String(user.course_id),
       certificateFile: null,
     });
-    handleFormSubmit();
   };
 
   return (
