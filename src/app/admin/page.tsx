@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; 
+import { useRouter } from 'next/navigation';
 import InputComponent from '@/component/inputComponent';
 
 //style
@@ -10,12 +10,13 @@ import './profile.scss';
 export default function Page() {
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [formData, setFormData] = useState({
-    name: '',
-    surname: '',
+    fullName: '',
     email: '',
-    phone: ''
   });
-  const router = useRouter(); 
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const router = useRouter();
 
   useEffect(() => {
     fetchProfileData();
@@ -23,73 +24,71 @@ export default function Page() {
 
   const fetchProfileData = async () => {
     if (typeof window === "undefined") return;
-    
-    const userId = localStorage.getItem("userId");
-    if (!userId) {
-      router.push('/login');
+
+    const adminId = localStorage.getItem("adminId");
+    if (!adminId) {
+      setError("Unauthorized access. Redirecting to login...");
+      setTimeout(() => router.push('/login'), 2000);
       return;
     }
 
     try {
       const response = await fetch('https://ybdigitalx.com/vivi_Adminbackend/profile.php', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({ userId }).toString(),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ adminId }),
       });
 
-      const data = await response.text();
-      const profileData = data.split('|');
+      const data = await response.json();
 
-      if (profileData.length >= 4) {
+      if (data.status === "success" && data.data) {
         setFormData({
-          name: profileData[0] || '',
-          surname: profileData[1] || '',
-          email: profileData[2] || '',
-          phone: profileData[3] || ''
+          fullName: data.data.fullName || '',
+          email: data.data.email || '',
         });
       } else {
-        console.error('Unexpected profile data format:', data);
+        setError(data.message || "Failed to load profile.");
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
+      setError("Network error. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleSave = async () => {
     if (typeof window === "undefined") return;
 
-    const userId = localStorage.getItem("userId");
-    if (!userId) {
-      router.push('/login');
+    const adminId = localStorage.getItem("adminId");
+    if (!adminId) {
+      setError("Unauthorized action.");
       return;
     }
 
     try {
       const response = await fetch('https://ybdigitalx.com/vivi_Adminbackend/profile_update.php', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          userId,
-          name: formData.name,
-          surname: formData.surname,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id:adminId, 
+          fullName: formData.fullName,
           email: formData.email,
-          phone: formData.phone,
-        }).toString(),
+        }),
       });
 
-      const result = await response.text();
-      if (result === 'success') {
-        setIsEditable(false); 
-        fetchProfileData(); 
+      const data = await response.json();
+
+      if (data.status === "success") {
+        setIsEditable(false);
+        setSuccess("Profile updated successfully!");
+        fetchProfileData();
       } else {
-        alert('Error updating profile');
+        setError(data || "Error updating profile.");
       }
     } catch (error) {
       console.error('Error saving profile:', error);
+      setError("Network error. Please try again later.");
     }
   };
 
@@ -98,6 +97,7 @@ export default function Page() {
       handleSave();
     } else {
       setIsEditable(true);
+      setSuccess(null);
     }
   };
 
@@ -105,55 +105,43 @@ export default function Page() {
     <div className="profilePage">
       <h3 className="font-montserrat">My Profile</h3>
 
-      <form>
-        <div className="information">
-          <h4 className="font-inter">Profile Information</h4>
-          <p className="font-inter editButton" onClick={toggleEdit}>
-            {isEditable ? 'Save' : 'Edit'}
-          </p>
-        </div>
+      {loading ? (
+        <p className="loadingMessage">Loading profile...</p>
+      ) : error ? (
+        <p className="errorMessage">{error}</p>
+      ) : (
+        <form>
+          <div className="information">
+            <h4 className="font-inter">Profile Information</h4>
+            <p className="font-inter editButton" onClick={toggleEdit}>
+              {isEditable ? 'Save' : 'Edit'}
+            </p>
+          </div>
 
-        <div className="formGroup">
-          <label htmlFor="name" className="font-inter">Name:</label>
-          <InputComponent
-            name="name"
-            value={formData.name}
-            placeholder="Enter your name"
-            disabled={!isEditable}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          />
-        </div>
-        <div className="formGroup">
-          <label htmlFor="surname" className="font-inter">Surname:</label>
-          <InputComponent
-            name="surname"
-            value={formData.surname}
-            placeholder="Enter your surname"
-            disabled={!isEditable}
-            onChange={(e) => setFormData({ ...formData, surname: e.target.value })}
-          />
-        </div>
-        <div className="formGroup">
-          <label htmlFor="email" className="font-inter">Email:</label>
-          <InputComponent
-            name="email"
-            value={formData.email}
-            placeholder="Enter your email"
-            disabled={!isEditable}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          />
-        </div>
-        <div className="formGroup">
-          <label htmlFor="phone" className="font-inter">Phone number:</label>
-          <InputComponent
-            name="phone"
-            value={formData.phone}
-            placeholder="Enter your phone number"
-            disabled={!isEditable}
-            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-          />
-        </div>
-      </form>
+          <div className="formGroup">
+            <label htmlFor="name" className="font-inter">Full Name:</label>
+            <InputComponent
+              name="fullName"
+              value={formData.fullName}
+              placeholder="Enter your full name"
+              disabled={!isEditable}
+              onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+            />
+          </div>
+          <div className="formGroup">
+            <label htmlFor="email" className="font-inter">Email:</label>
+            <InputComponent
+              name="email"
+              value={formData.email}
+              placeholder="Enter your email"
+              disabled={!isEditable}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            />
+          </div>
+
+          {success && <p className="successMessage">{success}</p>}
+        </form>
+      )}
     </div>
   );
 }

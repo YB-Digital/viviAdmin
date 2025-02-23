@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
 
 //style
 import "./verifyResetPasswordCode.scss";
@@ -11,15 +11,15 @@ import "./verifyResetPasswordCode.scss";
 import cancel from "@/image/codePageCancel.svg";
 
 interface VerifyCodeProps {
-    onClose: () => void; 
+    onClose: () => void;
 }
 
 export default function VerifyResetPasswordCode({ onClose }: VerifyCodeProps) {
     const router = useRouter();
     const inputRefs = useRef<HTMLInputElement[]>([]);
     const [code, setCode] = useState(["", "", "", "", "", ""]);
-    const [email, setEmail] = useState(""); 
-    const [error, setError] = useState("");
+    const [email, setEmail] = useState("");
+    const [error, setError] = useState<string | null>(null);
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -64,20 +64,16 @@ export default function VerifyResetPasswordCode({ onClose }: VerifyCodeProps) {
             return;
         }
 
-        setError("");
+        setError(null);
         setMessage("Verifying...");
         setLoading(true);
 
         try {
-            const response = await fetch("https://ybdigitalx.com/vivi_backend/verify_code.php", {
+            const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/verify_code.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, code: verificationCode }), 
+                body: JSON.stringify({ email: email, code: verificationCode }),
             });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
 
             const data = await response.json();
 
@@ -86,18 +82,14 @@ export default function VerifyResetPasswordCode({ onClose }: VerifyCodeProps) {
                 setTimeout(() => {
                     router.push("/resetpassword");
                 }, 2000);
-            } 
-            else {
+            } else {
                 setError("Invalid verification code. Please try again.");
                 setMessage("");
             }
-        } 
-        catch (error: unknown) { 
-            console.error("Verification Error:", error);
-            setError(error instanceof Error ? error.message : "An unknown error occurred.");
+        } catch (error: any) {
+            setError(error.message || "An unknown error occurred.");
             setMessage("");
-        } 
-        finally {
+        } finally {
             setLoading(false);
         }
     };
@@ -110,20 +102,15 @@ export default function VerifyResetPasswordCode({ onClose }: VerifyCodeProps) {
                 </div>
                 <div className="text">
                     <p className="title font-montserrat">Verification</p>
-                    <p className="subText font-inter">
-                        Enter the 6-digit code sent to your email.
-                    </p>
+                    <p className="subText font-inter">Enter the 6-digit code sent to your email.</p>
                     <p className="user-email">Email: {email}</p>
+
                     <div className="code">
                         {code.map((digit, index) => (
                             <input
                                 key={index}
-                                ref={(el) => {
-                                    if (el) inputRefs.current[index] = el;
-                                }}
+                                ref={(el) => { if (el) inputRefs.current[index] = el; }}
                                 type="text"
-                                inputMode="numeric"
-                                pattern="[0-9]*"
                                 maxLength={1}
                                 value={digit}
                                 onChange={(e) => handleChange(index, e.target.value)}

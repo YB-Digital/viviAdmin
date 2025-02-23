@@ -1,6 +1,8 @@
 .profilePage {
     padding: 8vw 0;
-
+    width: 70vw;
+    margin: auto;
+    
     h3 {
         margin-bottom: 7.5vw;
         font-size: 6.25vw;
@@ -11,7 +13,7 @@
     }
 
     form {
-        width: 70vw;
+        width: 100%;
 
         .formGroup {
             display: flex;

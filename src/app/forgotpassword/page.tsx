@@ -13,12 +13,12 @@ import user from "@/image/inputUserIcon.svg";
 export default function Page() {
     const [email, setEmail] = useState<string>("");
     const [showVerifyCode, setShowVerifyCode] = useState<boolean>(false);
-    const [error, setError] = useState<string>("");
+    const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         if (typeof window !== "undefined") {
-            const storedEmail = localStorage.getItem("userEmail");
+            const storedEmail = localStorage.getItem("adminEmail");
             if (storedEmail) setEmail(storedEmail);
         }
     }, []);
@@ -28,7 +28,7 @@ export default function Page() {
         setEmail(newEmail);
 
         if (typeof window !== "undefined") {
-            localStorage.setItem("userEmail", newEmail);
+            localStorage.setItem("adminEmail", newEmail);
         }
     };
 
@@ -38,32 +38,34 @@ export default function Page() {
             return;
         }
 
-        setError("");
+        // Geçerli email formatı kontrolü
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            setError("Please enter a valid email address.");
+            return;
+        }
+
+        setError(null);
         setLoading(true);
 
         try {
-            const response = await fetch("https://ybdigitalx.com/vivi_backend/send_reset_code.php", {
+            const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/send_reset_code.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email }),
+                body: JSON.stringify({email: email }),
             });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
+         
 
             const data = await response.json();
 
             if (data.success) {
-                if (typeof window !== "undefined") {
-                    localStorage.setItem("userInfo", JSON.stringify({ email }));
-                }
+                localStorage.setItem("adminEmail", email);
                 setShowVerifyCode(true);
             } else {
                 setError(data.error || "Error sending reset code. Please try again.");
             }
-        } catch (error) {
-            setError("Server error. Please try again later.");
+        } catch (error: any) {
+            setError(error.message || "Server error. Please try again later.");
             console.error("Error:", error);
         } finally {
             setLoading(false);
@@ -84,7 +86,7 @@ export default function Page() {
                 onChange={handleInputChange} 
             />
 
-            {error && <p className="error">{error}</p>}
+            {error && <p className="error text-red-600">{error}</p>}
 
             <button className="font-inter" onClick={handleSendClick} disabled={loading}>
                 {loading ? "Sending..." : "Send"}

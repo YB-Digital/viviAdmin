@@ -14,6 +14,7 @@ import lock from "@/image/inputLockIcon.svg";
 export default function Page() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -27,6 +28,7 @@ export default function Page() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(""); 
+    setLoading(true);
 
     try {
       const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/login_control.php", {
@@ -47,13 +49,15 @@ export default function Page() {
         setError(data.message);
       } else {
         if (isClient) {
-          window.localStorage.setItem("userId", data.id);
-          window.location.href = "/admin/dahsboard"; 
+          window.localStorage.setItem("adminId", data.id); 
+          window.location.href = "/admin/dashboard"; 
         }
       }
     } catch (error) {
       setError("Network error. Please try again later.");
       console.error("Login error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -82,7 +86,9 @@ export default function Page() {
           <div className="forgotPass">
             <Link className="font-inter" href={'/forgotpassword'}>Forgot password</Link>
           </div>
-          <button type="submit" className="loginButton">Log In</button>
+          <button type="submit" className="loginButton" disabled={loading}>
+            {loading ? "Logging in..." : "Log In"}
+          </button>
         </form>
       </div>
     </div>
