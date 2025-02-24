@@ -30,7 +30,7 @@ export default function ServiceTable({ services, refreshServices }: ServiceTable
         setSelectedService(service);
         setTitle(service.name);
         setContents(service.description);
-        setPreviewImage(`https://ybdigitalx.com/vivi_backend/${service.image}`);
+        setPreviewImage(`https://viviacademy.de/vivi_backend/${service.image}`);
         setEditModalOpen(true);
     };
 
@@ -50,7 +50,7 @@ export default function ServiceTable({ services, refreshServices }: ServiceTable
         }
 
         try {
-            const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/update_service.php", {
+            const response = await fetch("https://viviacademy.de/vivi_Adminbackend/update_service.php", {
                 method: "POST",
                 body: formData,
             });
@@ -73,7 +73,7 @@ export default function ServiceTable({ services, refreshServices }: ServiceTable
         if (!confirmDelete) return;
 
         try {
-            const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/delete_service.php", {
+            const response = await fetch("https://viviacademy.de/vivi_Adminbackend/delete_service.php", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -111,7 +111,7 @@ export default function ServiceTable({ services, refreshServices }: ServiceTable
                 <div key={service.id} className="serviceRow">
                     <div className="column no">{index + 1}</div>
                     <div className="column image">
-                        <img src={`https://ybdigitalx.com/vivi_backend/${service.image}`} alt={service.name} />
+                        <img src={`https://viviacademy.de/vivi_backend/${service.image}`} alt={service.name} />
                     </div>
                     <div className="column serviceName" title={service.name}>
                         {truncateText(service.name, 10)}

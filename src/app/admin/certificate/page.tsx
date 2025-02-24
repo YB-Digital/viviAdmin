@@ -29,7 +29,7 @@ export default function SendCertificatePage() {
     }
 
     try {
-      const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/send_certificate.php", {
+      const response = await fetch("https://viviacademy.de/vivi_Adminbackend/send_certificate.php", {
         method: "POST",
         body: formDataToSend,
       });

@@ -69,7 +69,7 @@ export default function VerifyResetPasswordCode({ onClose }: VerifyCodeProps) {
         setLoading(true);
 
         try {
-            const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/verify_code.php", {
+            const response = await fetch("https://viviacademy.de/vivi_Adminbackend/verify_code.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: email, code: verificationCode }),

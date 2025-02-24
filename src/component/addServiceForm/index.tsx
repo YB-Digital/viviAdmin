@@ -80,7 +80,7 @@ export default function AddServiceForm({ selectedService, onServiceUpdate }: Add
     }
 
     try {
-      const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/add_service.php", {
+      const response = await fetch("https://viviacademy.de/vivi_Adminbackend/add_service.php", {
         method: "POST",
         body: formDataToSend,
       });

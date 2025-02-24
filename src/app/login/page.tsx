@@ -31,7 +31,7 @@ export default function Page() {
     setLoading(true);
 
     try {
-      const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/login_control.php", {
+      const response = await fetch("https://viviacademy.de/vivi_Adminbackend/login_control.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

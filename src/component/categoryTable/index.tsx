@@ -20,7 +20,7 @@ export default function CategoryList() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/category_table.php");
+        const response = await fetch("https://viviacademy.de/vivi_Adminbackend/category_table.php");
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const data: Category[] = await response.json();
         setCategories(data);
@@ -39,7 +39,7 @@ export default function CategoryList() {
     if (!confirm("Are you sure you want to delete this category?")) return;
 
     try {
-      const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/category_delete.php", {
+      const response = await fetch("https://viviacademy.de/vivi_Adminbackend/category_delete.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: categoryId }),
@@ -67,7 +67,7 @@ export default function CategoryList() {
 
 
     try {
-      const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/category_update.php", {
+      const response = await fetch("https://viviacademy.de/vivi_Adminbackend/category_update.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: editingCategory.id, name: editingCategory.name }),

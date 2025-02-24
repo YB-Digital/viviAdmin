@@ -32,7 +32,7 @@ export default function SendCertificateTable({ setFormData }: SendCertificateTab
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch("https://ybdigitalx.com/vivi_Adminbackend/certificate_table.php");
+        const response = await fetch("https://viviacademy.de/vivi_Adminbackend/certificate_table.php");
         const data = await response.json();
         if (Array.isArray(data) && data.length > 0) {
           setUsers(
