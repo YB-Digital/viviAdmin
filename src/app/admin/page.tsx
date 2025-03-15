@@ -23,9 +23,8 @@ export default function Page() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedAdminId = localStorage.getItem("adminId");
-      setAdminId(storedAdminId);
-
       if (storedAdminId) {
+        setAdminId(storedAdminId);
         fetchProfileData(storedAdminId);
       } else {
         setError("Unauthorized access. Redirecting to login...");
