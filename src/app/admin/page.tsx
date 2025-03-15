@@ -1,56 +1,63 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import InputComponent from '@/component/inputComponent';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import InputComponent from "@/component/inputComponent";
 
 //style
-import './profile.scss';
+import "./profile.scss";
 
 export default function Page() {
+  const router = useRouter();
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
+    fullName: "",
+    email: "",
   });
+
+  const [adminId, setAdminId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const router = useRouter();
 
   useEffect(() => {
-    fetchProfileData();
+    if (typeof window !== "undefined") {
+      const storedAdminId = localStorage.getItem("adminId");
+      setAdminId(storedAdminId);
+
+      if (!storedAdminId) {
+        setError("Unauthorized access. Redirecting to login...");
+        setTimeout(() => router.push("/login"), 2000);
+      } else {
+        fetchProfileData(storedAdminId);
+      }
+    }
   }, []);
 
-  const fetchProfileData = async () => {
-    if (typeof window === "undefined") return;
-
-    const adminId = localStorage.getItem("adminId");
-    if (!adminId) {
-      setError("Unauthorized access. Redirecting to login...");
-      setTimeout(() => router.push('/login'), 2000);
-      return;
-    }
-
+  const fetchProfileData = async (adminId: string) => {
     try {
-      const response = await fetch('https://ybdigitalx.com/vivi_backend/profile.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("https://ybdigitalx.com/vivi_backend/profile.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ adminId }),
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
 
       const data = await response.json();
 
       if (data.status === "success" && data.data) {
         setFormData({
-          fullName: data.data.fullName || '',
-          email: data.data.email || '',
+          fullName: data.data.fullName || "",
+          email: data.data.email || "",
         });
       } else {
         setError(data.message || "Failed to load profile.");
       }
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error("Error fetching profile:", error);
       setError("Network error. Please try again later.");
     } finally {
       setLoading(false);
@@ -58,36 +65,37 @@ export default function Page() {
   };
 
   const handleSave = async () => {
-    if (typeof window === "undefined") return;
-
-    const adminId = localStorage.getItem("adminId");
     if (!adminId) {
       setError("Unauthorized action.");
       return;
     }
 
     try {
-      const response = await fetch('https://ybdigitalx.com/vivi_backend/profile_update.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("https://ybdigitalx.com/vivi_backend/profile_update.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          id:adminId, 
+          id: adminId,
           fullName: formData.fullName,
           email: formData.email,
         }),
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
 
       const data = await response.json();
 
       if (data.status === "success") {
         setIsEditable(false);
         setSuccess("Profile updated successfully!");
-        fetchProfileData();
+        fetchProfileData(adminId);
       } else {
-        setError(data || "Error updating profile.");
+        setError(data.message || "Error updating profile.");
       }
     } catch (error) {
-      console.error('Error saving profile:', error);
+      console.error("Error saving profile:", error);
       setError("Network error. Please try again later.");
     }
   };
@@ -114,12 +122,14 @@ export default function Page() {
           <div className="information">
             <h4 className="font-inter">Profile Information</h4>
             <p className="font-inter editButton" onClick={toggleEdit}>
-              {isEditable ? 'Save' : 'Edit'}
+              {isEditable ? "Save" : "Edit"}
             </p>
           </div>
 
           <div className="formGroup">
-            <label htmlFor="name" className="font-inter">Full Name:</label>
+            <label htmlFor="name" className="font-inter">
+              Full Name:
+            </label>
             <InputComponent
               name="fullName"
               value={formData.fullName}
@@ -129,7 +139,9 @@ export default function Page() {
             />
           </div>
           <div className="formGroup">
-            <label htmlFor="email" className="font-inter">Email:</label>
+            <label htmlFor="email" className="font-inter">
+              Email:
+            </label>
             <InputComponent
               name="email"
               value={formData.email}
