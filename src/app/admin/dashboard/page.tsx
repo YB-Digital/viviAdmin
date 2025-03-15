@@ -1,14 +1,14 @@
-import InformationBoxes from '@/component/informationBoxes'
-import DashboardUserTable from '@/component/dashboardUserTable'
+"use client";
 
-//style
-import './dashboard.scss'
+import InformationBoxes from "@/component/informationBoxes";
+import DashboardUserTable from "@/component/dashboardUserTable";
+import "./dashboard.scss";
 
 export default function Page() {
   return (
-    <div className='dashboardPage'>
+    <div className="dashboardPage">
       <InformationBoxes />
       <DashboardUserTable />
     </div>
-  )
+  );
 }
