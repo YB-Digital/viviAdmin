@@ -48,21 +48,16 @@ export default function Page() {
   const [message, setMessage] = useState<string | null>(null);
   const [courses, setCourses] = useState<Course[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [userEmail, setUserEmail] = useState<string | null>(null); // ✅ Store email from localStorage safely
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const storedEmail = localStorage.getItem("userEmail");
-      if (storedEmail) {
-        setUserEmail(storedEmail);
-      }
       fetchCourses();
       fetchCategories();
     }
   }, []);
 
   const fetchCourses = async () => {
-    if (typeof window === "undefined") return; // ✅ Prevents server-side execution
+    if (typeof window === "undefined") return;
 
     try {
       const response = await fetch("https://ybdigitalx.com/vivi_backend/course_table.php");
