@@ -1,7 +1,8 @@
-'use client'
+'use client';
 
 import { useState, useEffect, ChangeEvent } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import Image from "next/image"; // Import Next.js Image component
 
 import "./serviceTable.scss";
 
@@ -18,13 +19,13 @@ interface ServiceTableProps {
 }
 
 const ServiceTable: React.FC<ServiceTableProps> = ({ services, refreshServices }) => {
-    const [error, setError] = useState<string>("");
     const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
     const [selectedService, setSelectedService] = useState<Service | null>(null);
     const [title, setTitle] = useState<string>("");
     const [contents, setContents] = useState<string>("");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewImage, setPreviewImage] = useState<string>("");
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         if (error) {
@@ -66,11 +67,12 @@ const ServiceTable: React.FC<ServiceTableProps> = ({ services, refreshServices }
                 refreshServices();
                 setEditModalOpen(false);
                 setSelectedService(null);
-                setError("");
+                setError(null);
             } else {
                 setError(`Error: ${data.message}`);
             }
-        } catch (error) {
+        } catch (err) {
+            console.error("Error updating service:", err);
             setError("Error updating service.");
         }
     };
@@ -89,11 +91,11 @@ const ServiceTable: React.FC<ServiceTableProps> = ({ services, refreshServices }
             const data = await response.json();
             if (data.status === "success") {
                 refreshServices();
-                setError("");
             } else {
                 setError(`Error: ${data.message}`);
             }
-        } catch {
+        } catch (err) {
+            console.error("Error deleting service:", err);
             setError("Error deleting service.");
         }
     };
@@ -117,7 +119,13 @@ const ServiceTable: React.FC<ServiceTableProps> = ({ services, refreshServices }
                 <div key={service.id} className="serviceRow">
                     <div className="column no">{index + 1}</div>
                     <div className="column image">
-                        <img src={`https://viviacademy.de/vivi_backend/${service.image}`} alt={service.name} />
+                        <Image
+                            src={`https://viviacademy.de/vivi_backend/${service.image}`}
+                            alt={service.name}
+                            width={50}
+                            height={50}
+                            priority
+                        />
                     </div>
                     <div className="column serviceName" title={service.name}>
                         {truncateText(service.name, 10)}
@@ -145,7 +153,7 @@ const ServiceTable: React.FC<ServiceTableProps> = ({ services, refreshServices }
                         <label>Description:</label>
                         <textarea value={contents} onChange={(e) => setContents(e.target.value)} />
                         <label>Current Image:</label>
-                        <img src={previewImage} alt="Preview" className="previewImage" />
+                        <Image src={previewImage} alt="Preview" width={100} height={100} priority />
                         <label>Upload New Image:</label>
                         <input type="file" accept="image/*" onChange={(e: ChangeEvent<HTMLInputElement>) => {
                             const files = e.target.files;
@@ -163,4 +171,6 @@ const ServiceTable: React.FC<ServiceTableProps> = ({ services, refreshServices }
             )}
         </div>
     );
-}
+};
+
+export default ServiceTable; // Ensure the component is properly exported
