@@ -5,7 +5,7 @@ import InputComponent from '@/component/inputComponent';
 import VerifyResetPasswordCode from '@/component/verifyResetPasswordCode';
 
 import './forgotpassword.scss';
-import user from '@/images/inputUserIcon.svg';
+import user from '@/image/inputUserIcon.svg';
 
 const Page: React.FC = () => {
     const [email, setEmail] = useState<string>('');

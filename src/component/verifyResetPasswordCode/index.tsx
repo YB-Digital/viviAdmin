@@ -4,7 +4,7 @@ import { useRouter } from "next/router"; // Correct import for Next.js router
 
 import "./verifyResetPasswordCode.scss";
 
-import cancel from "@/public/images/codePageCancel.svg"; // Corrected path assuming Next.js default public folder
+import cancel from "@/image/codePageCancel.svg"; // Corrected path assuming Next.js default public folder
 
 interface VerifyCodeProps {
     onClose: () => void;
