@@ -2,7 +2,7 @@
 
 export const dynamic = "force-dynamic"; // ✅ Prevents SSR issues by enforcing dynamic rendering.
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Swal from "sweetalert2";
 import SendCertificateForm from "@/component/sendCertificateForm";
 import SendCertificateTable from "@/component/sendCertificateTable";
