@@ -20,6 +20,7 @@ export default function DashboardUserTable() {
     if (typeof window !== "undefined") {
       const storedAdminId = localStorage.getItem("adminId") || null;
       setAdminId(storedAdminId);
+      console.log(adminId)
     }
 
     fetch("https://ybdigitalx.com/vivi_backend/dashboard_table.php")
