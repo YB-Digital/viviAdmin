@@ -1,4 +1,6 @@
-'use client'
+'use client';
+
+export const dynamic = "force-dynamic"; // ✅ Ensures the page is dynamically rendered
 
 import { useState, useEffect } from 'react';
 import AddServiceForm from '@/component/addServiceForm';
@@ -26,17 +28,24 @@ export default function Page() {
   };
 
   const fetchServices = async () => {
+    if (typeof window === "undefined") return; // ✅ Ensures this runs only in the browser
+
     try {
       setLoading(true);
       setError("");
       const response = await fetch("https://ybdigitalx.com/vivi_backend/service_table.php");
+
       if (!response.ok) {
         throw new Error("Failed to fetch data.");
       }
+
       const data = await response.json();
-      if (Array.isArray(data)) {
-        setServices(data);
+
+      if (!data || !Array.isArray(data)) {
+        throw new Error("Invalid API response.");
       }
+
+      setServices(data);
     } catch (err) {
       console.error("Error fetching services:", err);
       setError("Error fetching services. Please try again later.");
