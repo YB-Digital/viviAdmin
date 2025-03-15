@@ -41,7 +41,7 @@ export default function SendCertificateTable({ setFormData }: SendCertificateTab
     const fetchUsers = async () => {
       try {
         const response = await fetch(
-          "https://viviacademy.de/admin/vivi_Adminbackend/certificate_table.php"
+          "https://ybdigitalx.com/vivi_backend/certificate_table.php"
         );
         const data: ApiUserResponse[] = await response.json();
         if (Array.isArray(data) && data.length > 0) {

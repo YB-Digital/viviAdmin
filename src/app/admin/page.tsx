@@ -33,7 +33,7 @@ export default function Page() {
     }
 
     try {
-      const response = await fetch('https://viviacademy.de/admin/vivi_Adminbackend/profile.php', {
+      const response = await fetch('https://ybdigitalx.com/vivi_backend/profile.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ adminId }),
@@ -67,7 +67,7 @@ export default function Page() {
     }
 
     try {
-      const response = await fetch('https://viviacademy.de/admin/vivi_Adminbackend/profile_update.php', {
+      const response = await fetch('https://ybdigitalx.com/vivi_backend/profile_update.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

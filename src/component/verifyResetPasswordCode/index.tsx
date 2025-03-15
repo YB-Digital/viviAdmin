@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect, ChangeEvent, KeyboardEvent } from "react";
 import Image from "next/image";
-import { useRouter } from "next/router"; // Correct import for Next.js router
+import { useRouter } from "next/router";
 
 import "./verifyResetPasswordCode.scss";
 
-import cancel from "@/image/codePageCancel.svg"; // Corrected path assuming Next.js default public folder
+import cancel from "@/image/codePageCancel.svg";
 
 interface VerifyCodeProps {
     onClose: () => void;
@@ -57,7 +57,7 @@ export default function VerifyResetPasswordCode({ onClose }: VerifyCodeProps) {
         setLoading(true);
 
         try {
-            const response = await fetch("https://viviacademy.de/admin/vivi_Adminbackend/verify_code.php", {
+            const response = await fetch("https://ybdigitalx.com/vivi_backend/verify_code.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, code: verificationCode }),
@@ -74,7 +74,8 @@ export default function VerifyResetPasswordCode({ onClose }: VerifyCodeProps) {
                 setError("Invalid verification code. Please try again.");
                 setMessage("");
             }
-        } catch (error) {
+        } catch (err) {
+            console.error("Verification Error:", err);
             setError("An unknown error occurred. Please try again.");
             setMessage("");
         } finally {
@@ -109,7 +110,7 @@ export default function VerifyResetPasswordCode({ onClose }: VerifyCodeProps) {
                         ))}
                     </div>
 
-                    {error && <p className="error">{error}</p>}
+                    {error && <p className="error">{error}</p>} {/* ✅ Ensure error is always displayed */}
                     {message && <p className="message">{message}</p>}
 
                     <div className="button">

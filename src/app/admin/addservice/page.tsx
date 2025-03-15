@@ -29,7 +29,7 @@ export default function Page() {
     try {
       setLoading(true);
       setError("");
-      const response = await fetch("https://viviacademy.de/admin/vivi_Adminbackend/service_table.php");
+      const response = await fetch("https://ybdigitalx.com/vivi_backend/service_table.php");
       if (!response.ok) {
         throw new Error("Failed to fetch data.");
       }

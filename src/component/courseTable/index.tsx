@@ -35,7 +35,7 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
     if (!confirm("Are you sure you want to delete this course?")) return;
 
     try {
-      const response = await fetch("https://viviacademy.de/admin/vivi_Adminbackend/delete_course.php", {
+      const response = await fetch("https://ybdigitalx.com/vivi_backend/delete_course.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: courseId }),
@@ -71,7 +71,7 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
     }
 
     try {
-      const response = await fetch("https://viviacademy.de/admin/vivi_Adminbackend/update_course.php", {
+      const response = await fetch("https://ybdigitalx.com/vivi_backend/update_course.php", {
         method: "POST",
         body: formData,
       });
@@ -107,7 +107,7 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
           <div className="column no">{index + 1}</div>
           <div className="column image">
             <img
-              src={course.image ? `https://viviacademy.de/vivi_Adminbackend${course.image}` : ''}
+              src={course.image ? `https://ybdigitalx.com/vivi_backend${course.image}` : ''}
               alt="Course Image"
             />
           </div>

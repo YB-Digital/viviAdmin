@@ -62,7 +62,7 @@ export default function Page() {
         }
 
         try {
-            const response = await fetch("https://viviacademy.de/admin/vivi_Adminbackend/reset_password.php", {
+            const response = await fetch("https://ybdigitalx.com/vivi_backend/reset_password.php", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

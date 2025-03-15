@@ -37,7 +37,7 @@ const ServiceTable: React.FC<ServiceTableProps> = ({ services, refreshServices }
         setSelectedService(service);
         setTitle(service.name);
         setContents(service.description);
-        setPreviewImage(`https://viviacademy.de/vivi_backend/${service.image}`);
+        setPreviewImage(`https://ybdigitalx.com/vivi_backend/${service.image}`);
         setEditModalOpen(true);
     };
 
@@ -57,7 +57,7 @@ const ServiceTable: React.FC<ServiceTableProps> = ({ services, refreshServices }
         }
 
         try {
-            const response = await fetch("https://viviacademy.de/admin/vivi_Adminbackend/update_service.php", {
+            const response = await fetch("https://ybdigitalx.com/vivi_backend/update_service.php", {
                 method: "POST",
                 body: formData,
             });
@@ -82,7 +82,7 @@ const ServiceTable: React.FC<ServiceTableProps> = ({ services, refreshServices }
         if (!confirmDelete) return;
 
         try {
-            const response = await fetch("https://viviacademy.de/admin/vivi_Adminbackend/delete_service.php", {
+            const response = await fetch("https://ybdigitalx.com/vivi_backend/delete_service.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ id: serviceId }),
@@ -120,7 +120,7 @@ const ServiceTable: React.FC<ServiceTableProps> = ({ services, refreshServices }
                     <div className="column no">{index + 1}</div>
                     <div className="column image">
                         <Image
-                            src={`https://viviacademy.de/vivi_backend/${service.image}`}
+                            src={`https://ybdigitalx.com/vivi_backend/${service.image}`}
                             alt={service.name}
                             width={50}
                             height={50}

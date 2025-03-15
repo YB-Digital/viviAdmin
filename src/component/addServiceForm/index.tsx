@@ -78,7 +78,7 @@ const AddServiceForm: React.FC<AddServiceFormProps> = ({ selectedService, onServ
     }
 
     try {
-      const response = await fetch("https://viviacademy.de/admin/vivi_Adminbackend/add_service.php", {
+      const response = await fetch("https://ybdigitalx.com/vivi_backend/add_service.php", {
         method: "POST",
         body: formDataToSend
       });

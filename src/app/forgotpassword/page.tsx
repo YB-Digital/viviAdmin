@@ -46,7 +46,7 @@ const Page: React.FC = () => {
         setLoading(true);
 
         try {
-            const response = await fetch('https://viviacademy.de/admin/vivi_Adminbackend/send_reset_code.php', {
+            const response = await fetch('https://ybdigitalx.com/vivi_backend/send_reset_code.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: email }),

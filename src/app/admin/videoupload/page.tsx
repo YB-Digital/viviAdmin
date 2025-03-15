@@ -56,7 +56,7 @@ export default function Page() {
 
   const fetchCourses = async () => {
     try {
-      const response = await fetch("https://viviacademy.de/admin/vivi_Adminbackend/course_table.php");
+      const response = await fetch("https://ybdigitalx.com/vivi_backend/course_table.php");
       const data = await response.json();
       setCourses(data);
     } catch (error) {
@@ -67,7 +67,7 @@ export default function Page() {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch("https://viviacademy.de/admin/vivi_Adminbackend/category_table.php");
+      const response = await fetch("https://ybdigitalx.com/vivi_backend/category_table.php");
       const data = await response.json();
       setCategories(data);
     } catch (error) {
@@ -115,7 +115,7 @@ export default function Page() {
     }
 
     try {
-      const response = await fetch("https://viviacademy.de/admin/vivi_Adminbackend/video_upload.php", {
+      const response = await fetch("https://ybdigitalx.com/vivi_backend/video_upload.php", {
         method: "POST",
         body: formDataToSend,
       });

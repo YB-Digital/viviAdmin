@@ -17,7 +17,7 @@ export default function DashboardUserTable() {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    fetch("https://viviacademy.de/admin/vivi_Adminbackend/dashboard_table.php")
+    fetch("https://ybdigitalx.com/vivi_backend/dashboard_table.php")
       .then((response) => response.json())
       .then((data) => {
         if (data.status === "success" && Array.isArray(data.contacts) && data.contacts.length > 0) {
@@ -44,7 +44,7 @@ export default function DashboardUserTable() {
       )
     );
 
-    fetch("https://viviacademy.de/admin/vivi_Adminbackend/update_check_status.php", {
+    fetch("https://ybdigitalx.com/vivi_backend/update_check_status.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: userId, check: newCheck ? "1" : "0" }),

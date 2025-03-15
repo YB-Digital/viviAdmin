@@ -22,7 +22,7 @@ export default function AddCategoryForm() {
     setMessage("");
     try {
       const response = await fetch(
-        "https://viviacademy.de/admin/vivi_Adminbackend/category_registration.php",
+        "https://ybdigitalx.com/vivi_backend/category_registration.php",
         {
           method: "POST",
           headers: {
