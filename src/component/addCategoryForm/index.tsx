@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import "./addCategoryForm.scss";
+import "./addCategoryFrom.scss";
 
 export default function AddCategoryForm() {
   const [categoryName, setCategoryName] = useState("");
