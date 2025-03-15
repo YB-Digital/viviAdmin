@@ -1,9 +1,11 @@
-import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+'use client'
+
+import  { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/router';
 import InputComponent from '@/component/inputComponent';
 
 import './resetpassword.scss';
-import eye from '@/images/eyeIcon.svg';
+import eye from '@/image/eyeIcon.svg';
 
 interface FormData {
     password: string;
