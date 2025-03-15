@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
 
@@ -9,6 +7,15 @@ import "./sendCertificateTable.scss";
 interface User {
   user_id: number;
   fullname: string;
+  email: string;
+  course_name: string;
+  course_id: string;
+}
+
+interface ApiUserResponse {
+  user_id: string;
+  first_name: string;
+  last_name: string;
   email: string;
   course_name: string;
   course_id: string;
@@ -28,15 +35,18 @@ interface SendCertificateTableProps {
 export default function SendCertificateTable({ setFormData }: SendCertificateTableProps) {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch("https://viviacademy.de/vivi_Adminbackend/certificate_table.php");
-        const data = await response.json();
+        const response = await fetch(
+          "https://viviacademy.de/admin/vivi_Adminbackend/certificate_table.php"
+        );
+        const data: ApiUserResponse[] = await response.json();
         if (Array.isArray(data) && data.length > 0) {
           setUsers(
-            data.map((user: any) => ({
+            data.map((user) => ({
               user_id: Number(user.user_id),
               fullname: `${user.first_name} ${user.last_name}`,
               email: user.email,
@@ -47,6 +57,7 @@ export default function SendCertificateTable({ setFormData }: SendCertificateTab
         }
       } catch (error) {
         console.error("Error fetching data:", error);
+        setErrorMessage("Failed to load user data.");
       } finally {
         setLoading(false);
       }
@@ -75,6 +86,8 @@ export default function SendCertificateTable({ setFormData }: SendCertificateTab
         </div>
         {loading ? (
           <p className="loading">Loading...</p>
+        ) : errorMessage ? (
+          <p className="error">{errorMessage}</p>
         ) : users.length > 0 ? (
           users.map((user, index) => (
             <div key={user.user_id} className="dataRow">
@@ -83,7 +96,10 @@ export default function SendCertificateTable({ setFormData }: SendCertificateTab
               <div className="column email">{user.email}</div>
               <div className="column course">{user.course_name}</div>
               <div className="column action">
-                <FaEdit className="editIcon" onClick={() => handleUserSelect(user)} />
+                <FaEdit
+                  className="editIcon"
+                  onClick={() => handleUserSelect(user)}
+                />
               </div>
             </div>
           ))

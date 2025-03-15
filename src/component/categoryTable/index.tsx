@@ -1,9 +1,8 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
+import  { useEffect, useState, ChangeEvent } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
-// Stil dosyası
 import "./categoryTable.scss";
 
 interface Category {
@@ -11,21 +10,21 @@ interface Category {
   name: string;
 }
 
-export default function CategoryList() {
+const CategoryList: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
-  // Kategorileri API'den çek
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("https://viviacademy.de/vivi_Adminbackend/category_table.php");
+        const response = await fetch("https://viviacademy.de/admin/vivi_Adminbackend/category_table.php");
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const data: Category[] = await response.json();
         setCategories(data);
       } catch (error) {
         alert("Failed to fetch categories.");
+        console.error("Fetch error:", error);
       } finally {
         setLoading(false);
       }
@@ -34,12 +33,11 @@ export default function CategoryList() {
     fetchCategories();
   }, []);
 
-  // Kategori Silme
   const handleDelete = async (categoryId: number) => {
     if (!confirm("Are you sure you want to delete this category?")) return;
 
     try {
-      const response = await fetch("https://viviacademy.de/vivi_Adminbackend/category_delete.php", {
+      const response = await fetch("https://viviacademy.de/admin/vivi_Adminbackend/category_delete.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: categoryId }),
@@ -53,21 +51,19 @@ export default function CategoryList() {
       }
     } catch (error) {
       alert("An error occurred while deleting the category.");
+      console.error("Delete error:", error);
     }
   };
 
-  // Edit Modunu Açma
   const handleEditClick = (category: Category) => {
     setEditingCategory(category);
   };
 
-  // Kategori Güncelleme
   const handleSaveEdit = async () => {
-    if (!editingCategory || !editingCategory.id) return;
-
+    if (!editingCategory) return;
 
     try {
-      const response = await fetch("https://viviacademy.de/vivi_Adminbackend/category_update.php", {
+      const response = await fetch("https://viviacademy.de/admin/vivi_Adminbackend/category_update.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: editingCategory.id, name: editingCategory.name }),
@@ -84,19 +80,18 @@ export default function CategoryList() {
       }
     } catch (error) {
       alert("An error occurred while updating the category.");
+      console.error("Update error:", error);
     }
   };
 
   return (
     <div className="categoryList">
-      {/* Başlık Satırı */}
       <div className="titleRow">
         <div className="column no">No.</div>
         <div className="column categoryName">Category Name</div>
         <div className="column actions">Actions</div>
       </div>
 
-      {/* Kategori Listesi */}
       {loading ? (
         <div className="loading">Loading...</div>
       ) : categories.length > 0 ? (
@@ -118,7 +113,6 @@ export default function CategoryList() {
         <div className="noData">No categories found.</div>
       )}
 
-      {/* Edit Modal */}
       {editingCategory && (
         <div className="editModal">
           <div className="modalContent">
@@ -129,7 +123,7 @@ export default function CategoryList() {
             <input
               type="text"
               value={editingCategory.name}
-              onChange={(e) =>
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setEditingCategory({ ...editingCategory, name: e.target.value })
               }
             />
@@ -142,4 +136,6 @@ export default function CategoryList() {
       )}
     </div>
   );
-}
+};
+
+export default CategoryList;

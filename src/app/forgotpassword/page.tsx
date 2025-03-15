@@ -1,47 +1,42 @@
-"use client";
+import React, { useState, useEffect, ChangeEvent } from 'react';
+import InputComponent from '@/component/inputComponent';
+import VerifyResetPasswordCode from '@/component/verifyResetPasswordCode';
 
-import { useState, useEffect } from "react";
-import InputComponent from "@/component/inputComponent";
-import VerifyResetPasswordCode from "@/component/verifyResetPasswordCode";
+import './forgotpassword.scss';
+import user from '@/images/inputUserIcon.svg';
 
-//style
-import "./forgotpassword.scss";
-
-//image
-import user from "@/image/inputUserIcon.svg";
-
-export default function Page() {
-    const [email, setEmail] = useState<string>("");
+const Page: React.FC = () => {
+    const [email, setEmail] = useState<string>('');
     const [showVerifyCode, setShowVerifyCode] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         if (typeof window !== "undefined") {
-            const storedEmail = localStorage.getItem("adminEmail");
+            const storedEmail = localStorage.getItem('adminEmail');
             if (storedEmail) setEmail(storedEmail);
         }
     }, []);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
         const newEmail = e.target.value.trim();
         setEmail(newEmail);
 
         if (typeof window !== "undefined") {
-            localStorage.setItem("adminEmail", newEmail);
+            localStorage.setItem('adminEmail', newEmail);
         }
     };
 
     const handleSendClick = async () => {
         if (!email) {
-            setError("Please enter your email address.");
+            setError('Please enter your email address.');
             return;
         }
 
-        // Geçerli email formatı kontrolü
+        // Valid email format check
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            setError("Please enter a valid email address.");
+            setError('Please enter a valid email address.');
             return;
         }
 
@@ -49,24 +44,27 @@ export default function Page() {
         setLoading(true);
 
         try {
-            const response = await fetch("https://viviacademy.de/vivi_Adminbackend/send_reset_code.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({email: email }),
+            const response = await fetch('https://viviacademy.de/admin/vivi_Adminbackend/send_reset_code.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
             });
-         
 
-            const data = await response.json();
+            const data: { success: boolean; error?: string } = await response.json();
 
             if (data.success) {
-                localStorage.setItem("adminEmail", email);
+                localStorage.setItem('adminEmail', email);
                 setShowVerifyCode(true);
             } else {
-                setError(data.error || "Error sending reset code. Please try again.");
+                setError(data.error || 'Error sending reset code. Please try again.');
             }
-        } catch (error: any) {
-            setError(error.message || "Server error. Please try again later.");
-            console.error("Error:", error);
+        } catch (err) {
+            if (err instanceof Error) {
+                setError(err.message || 'Server error. Please try again later.');
+            } else {
+                setError('An unexpected error occurred. Please try again later.');
+            }
+            console.error('Error:', err);
         } finally {
             setLoading(false);
         }
@@ -95,4 +93,6 @@ export default function Page() {
             {showVerifyCode && <VerifyResetPasswordCode onClose={() => setShowVerifyCode(false)} />}
         </div>
     );
-}
+};
+
+export default Page;

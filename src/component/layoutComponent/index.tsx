@@ -24,7 +24,7 @@ export default function LayoutComponent() {
         const fetchUserData = async () => {
             if (userId) {
                 try {
-                    const response = await fetch(`https://viviacademy.de/vivi_Adminbackend/getUser.php`, {
+                    const response = await fetch(`https://viviacademy.de/admin/vivi_Adminbackend/getUser.php`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
@@ -57,6 +57,9 @@ export default function LayoutComponent() {
 
     return (
         <div className="layoutComponent">
+            <div className="layoutHeader">
+                {userName && <p className="font-inter">Welcome, {userName}!</p>}
+            </div>
             <div className="layoutLinks">
                 <Link href='/admin/dashboard' className={pathname === '/admin/dashboard' ? 'active' : ''}>
                     <Image src={dashboard} alt="icon" />

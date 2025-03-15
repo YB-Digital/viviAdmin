@@ -1,14 +1,10 @@
-"use client";
-
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, ChangeEvent, KeyboardEvent } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router"; // Correct import for Next.js router
 
-//style
 import "./verifyResetPasswordCode.scss";
 
-//image
-import cancel from "@/image/codePageCancel.svg";
+import cancel from "@/public/images/codePageCancel.svg"; // Corrected path assuming Next.js default public folder
 
 interface VerifyCodeProps {
     onClose: () => void;
@@ -16,19 +12,17 @@ interface VerifyCodeProps {
 
 export default function VerifyResetPasswordCode({ onClose }: VerifyCodeProps) {
     const router = useRouter();
-    const inputRefs = useRef<HTMLInputElement[]>([]);
-    const [code, setCode] = useState(["", "", "", "", "", ""]);
-    const [email, setEmail] = useState("");
+    const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+    const [code, setCode] = useState<string[]>(new Array(6).fill(""));
+    const [email, setEmail] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
-    const [message, setMessage] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        if (typeof window !== "undefined") {
-            const storedEmail = localStorage.getItem("userEmail");
-            if (storedEmail) {
-                setEmail(storedEmail);
-            }
+        const storedEmail = localStorage.getItem("userEmail");
+        if (storedEmail) {
+            setEmail(storedEmail);
         }
     }, []);
 
@@ -44,15 +38,9 @@ export default function VerifyResetPasswordCode({ onClose }: VerifyCodeProps) {
         }
     };
 
-    const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Backspace") {
-            if (code[index]) {
-                const newCode = [...code];
-                newCode[index] = "";
-                setCode(newCode);
-            } else if (index > 0) {
-                inputRefs.current[index - 1]?.focus();
-            }
+    const handleKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Backspace" && !code[index] && index > 0) {
+            inputRefs.current[index - 1]?.focus();
         }
     };
 
@@ -69,10 +57,10 @@ export default function VerifyResetPasswordCode({ onClose }: VerifyCodeProps) {
         setLoading(true);
 
         try {
-            const response = await fetch("https://viviacademy.de/vivi_Adminbackend/verify_code.php", {
+            const response = await fetch("https://viviacademy.de/admin/vivi_Adminbackend/verify_code.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email: email, code: verificationCode }),
+                body: JSON.stringify({ email, code: verificationCode }),
             });
 
             const data = await response.json();
@@ -86,8 +74,8 @@ export default function VerifyResetPasswordCode({ onClose }: VerifyCodeProps) {
                 setError("Invalid verification code. Please try again.");
                 setMessage("");
             }
-        } catch (error: any) {
-            setError(error.message || "An unknown error occurred.");
+        } catch (error) {
+            setError("An unknown error occurred. Please try again.");
             setMessage("");
         } finally {
             setLoading(false);
@@ -98,7 +86,7 @@ export default function VerifyResetPasswordCode({ onClose }: VerifyCodeProps) {
         <div className="verifyResetPasswordCode">
             <div className="modal">
                 <div className="cancel" onClick={onClose}>
-                    <Image src={cancel} alt="cancel" />
+                    <Image src={cancel} alt="cancel" width={24} height={24} />
                 </div>
                 <div className="text">
                     <p className="title font-montserrat">Verification</p>
@@ -113,8 +101,10 @@ export default function VerifyResetPasswordCode({ onClose }: VerifyCodeProps) {
                                 type="text"
                                 maxLength={1}
                                 value={digit}
-                                onChange={(e) => handleChange(index, e.target.value)}
-                                onKeyDown={(e) => handleKeyDown(index, e)}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(index, e.target.value)}
+                                onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => handleKeyDown(index, e)}
+                                className="digitInput"
+                                disabled={loading}
                             />
                         ))}
                     </div>

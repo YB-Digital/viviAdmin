@@ -1,8 +1,7 @@
-"use client";
+'use client'
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-//style
 import "./dashboardUserTable.scss";
 
 interface User {
@@ -18,19 +17,21 @@ export default function DashboardUserTable() {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    fetch("https://viviacademy.de/vivi_Adminbackend/dashboard_table.php")
+    fetch("https://viviacademy.de/admin/vivi_Adminbackend/dashboard_table.php")
       .then((response) => response.json())
       .then((data) => {
         if (data.status === "success" && Array.isArray(data.contacts) && data.contacts.length > 0) {
-          setUsers(
-            data.contacts.map((user: any) => ({
-              ...user,
-              check: user.check === "✔" || user.check === "1", 
-            }))
-          );
+          setUsers(data.contacts.map((user: { id: number; name: string; email: string; message: string; check: string }) => ({
+            ...user,
+            check: user.check === "✔" || user.check === "1" // converting check to boolean
+          })));
+        } else {
+          console.error("No data or incorrect data format received:", data);
         }
       })
-      .catch((error) => console.error("Error fetching data:", error))
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -43,7 +44,7 @@ export default function DashboardUserTable() {
       )
     );
 
-    fetch("https://viviacademy.de/vivi_Adminbackend/update_check_status.php", {
+    fetch("https://viviacademy.de/admin/vivi_Adminbackend/update_check_status.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: userId, check: newCheck ? "1" : "0" }),
@@ -52,6 +53,12 @@ export default function DashboardUserTable() {
       .then((data) => {
         if (data.status !== "success") {
           console.error("Error updating check status:", data.message);
+          // Optionally revert the UI change if the API call fails
+          setUsers((prevUsers) =>
+            prevUsers.map((user) =>
+              user.id === userId ? { ...user, check: currentCheck } : user
+            )
+          );
         }
       })
       .catch((error) => console.error("Error updating check status:", error));

@@ -1,11 +1,10 @@
-"use client";
+'use client'
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import InputComponent from "@/component/inputComponent";
 import TextAreaComponent from "@/component/textAreaComponent";
 import FileComponent from "@/component/fileComponent";
 
-//style
 import "./addServiceForm.scss";
 
 interface Service {
@@ -20,16 +19,16 @@ interface AddServiceFormProps {
   onServiceUpdate: () => void;
 }
 
-export default function AddServiceForm({ selectedService, onServiceUpdate }: AddServiceFormProps) {
+const AddServiceForm: React.FC<AddServiceFormProps> = ({ selectedService, onServiceUpdate }) => {
   const [formData, setFormData] = useState({
-    id: "", // Gizli ID inputu
+    id: "",
     serviceName: "",
     description: "",
     imageFile: null as File | null,
-    imageUrl: "", // Mevcut resmi göstermek için
+    imageUrl: ""
   });
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -39,32 +38,31 @@ export default function AddServiceForm({ selectedService, onServiceUpdate }: Add
         serviceName: selectedService.name,
         description: selectedService.description,
         imageFile: null,
-        imageUrl: selectedService.image,
+        imageUrl: selectedService.image
       });
     }
   }, [selectedService]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
-      [name]: value,
+      [name]: value
     }));
   };
 
   const handleFileChange = (file: File | null) => {
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
-      imageFile: file,
+      imageFile: file
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
 
-    // Zorunlu alan kontrolü
     if (!formData.serviceName.trim() || !formData.description.trim()) {
       setMessage("Service Name and Description are required.");
       setLoading(false);
@@ -80,9 +78,9 @@ export default function AddServiceForm({ selectedService, onServiceUpdate }: Add
     }
 
     try {
-      const response = await fetch("https://viviacademy.de/vivi_Adminbackend/add_service.php", {
+      const response = await fetch("https://viviacademy.de/admin/vivi_Adminbackend/add_service.php", {
         method: "POST",
-        body: formDataToSend,
+        body: formDataToSend
       });
 
       const data = await response.json();
@@ -94,7 +92,7 @@ export default function AddServiceForm({ selectedService, onServiceUpdate }: Add
           serviceName: "",
           description: "",
           imageFile: null,
-          imageUrl: "",
+          imageUrl: ""
         });
         onServiceUpdate();
       }
@@ -136,4 +134,6 @@ export default function AddServiceForm({ selectedService, onServiceUpdate }: Add
       {message && <p className="responseMessage">{message}</p>}
     </div>
   );
-}
+};
+
+export default AddServiceForm;

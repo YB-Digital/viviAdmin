@@ -1,7 +1,8 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
+
 import "./serviceTable.scss";
 
 interface Service {
@@ -16,7 +17,7 @@ interface ServiceTableProps {
     refreshServices: () => void;
 }
 
-export default function ServiceTable({ services, refreshServices }: ServiceTableProps) {
+const ServiceTable: React.FC<ServiceTableProps> = ({ services, refreshServices }) => {
     const [error, setError] = useState<string>("");
     const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
     const [selectedService, setSelectedService] = useState<Service | null>(null);
@@ -25,7 +26,12 @@ export default function ServiceTable({ services, refreshServices }: ServiceTable
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewImage, setPreviewImage] = useState<string>("");
 
-    // Servisi düzenleme işlemi
+    useEffect(() => {
+        if (error) {
+            console.error("ServiceTable Error:", error);
+        }
+    }, [error]);
+
     const handleEditClick = (service: Service) => {
         setSelectedService(service);
         setTitle(service.name);
@@ -35,8 +41,8 @@ export default function ServiceTable({ services, refreshServices }: ServiceTable
     };
 
     const handleUpdate = async () => {
-        if (!selectedService || !title || !contents) {
-            setError("Valid ID, title, and contents are required for update.");
+        if (!selectedService || !title.trim() || !contents.trim()) {
+            setError("Valid title and contents are required for update.");
             return;
         }
 
@@ -50,7 +56,7 @@ export default function ServiceTable({ services, refreshServices }: ServiceTable
         }
 
         try {
-            const response = await fetch("https://viviacademy.de/vivi_Adminbackend/update_service.php", {
+            const response = await fetch("https://viviacademy.de/admin/vivi_Adminbackend/update_service.php", {
                 method: "POST",
                 body: formData,
             });
@@ -59,6 +65,8 @@ export default function ServiceTable({ services, refreshServices }: ServiceTable
             if (data.status === "success") {
                 refreshServices();
                 setEditModalOpen(false);
+                setSelectedService(null);
+                setError("");
             } else {
                 setError(`Error: ${data.message}`);
             }
@@ -67,32 +75,30 @@ export default function ServiceTable({ services, refreshServices }: ServiceTable
         }
     };
 
-    // Servisi silme işlemi
     const handleDelete = async (serviceId: string) => {
         const confirmDelete = window.confirm("Are you sure you want to delete this service?");
         if (!confirmDelete) return;
 
         try {
-            const response = await fetch("https://viviacademy.de/vivi_Adminbackend/delete_service.php", {
+            const response = await fetch("https://viviacademy.de/admin/vivi_Adminbackend/delete_service.php", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ id: serviceId }),
             });
 
             const data = await response.json();
             if (data.status === "success") {
                 refreshServices();
+                setError("");
             } else {
                 setError(`Error: ${data.message}`);
             }
-        } catch (error) {
+        } catch {
             setError("Error deleting service.");
         }
     };
 
-    const truncateText = (text: string, maxLength: number) => {
+    const truncateText = (text: string, maxLength: number): string => {
         return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
     };
 
@@ -141,10 +147,11 @@ export default function ServiceTable({ services, refreshServices }: ServiceTable
                         <label>Current Image:</label>
                         <img src={previewImage} alt="Preview" className="previewImage" />
                         <label>Upload New Image:</label>
-                        <input type="file" accept="image/*" onChange={(e) => {
-                            if (e.target.files) {
-                                setSelectedFile(e.target.files[0]);
-                                setPreviewImage(URL.createObjectURL(e.target.files[0]));
+                        <input type="file" accept="image/*" onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                            const files = e.target.files;
+                            if (files && files[0]) {
+                                setSelectedFile(files[0]);
+                                setPreviewImage(URL.createObjectURL(files[0]));
                             }
                         }} />
                         <div className="modalActions">

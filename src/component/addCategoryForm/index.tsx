@@ -22,7 +22,7 @@ export default function AddCategoryForm() {
     setMessage("");
     try {
       const response = await fetch(
-        "https://viviacademy.de/vivi_Adminbackend/category_registration.php",
+        "https://viviacademy.de/admin/vivi_Adminbackend/category_registration.php",
         {
           method: "POST",
           headers: {
@@ -45,11 +45,16 @@ export default function AddCategoryForm() {
         setMessage("✅ Category added successfully!");
         setCategoryName("");
       } else {
-        setMessage(` Error: ${data.message || "Unknown error occurred."}`);
+        setMessage(`Error: ${data.message || "Unknown error occurred."}`);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Category submission failed:", error);
-      setMessage(`Submission error: ${error.message}`);
+
+      if (error instanceof Error) {
+        setMessage(`Submission error: ${error.message}`);
+      } else {
+        setMessage("An unexpected error occurred.");
+      }
     } finally {
       setLoading(false);
     }

@@ -3,12 +3,19 @@ import Image from 'next/image'
 //style
 import './informationBoxe.scss'
 
-export default function InformationBoxe(props:any) {
-    return (
-        <div className={`informationBoxe ${props.class}`}>
-            <Image src={props.img} alt='icon'/>
-            <p className='text font-inter'>{props.text}</p>
-            <p className='data font-inter'>{props.data}</p>
-        </div>
-    )
+interface InformationBoxeProps {
+  class?: string;
+  img: string; 
+  text: string; 
+  data: string; 
+}
+
+export default function InformationBoxe({ class: className, img, text, data }: InformationBoxeProps) {
+  return (
+    <div className={`informationBoxe ${className}`}>
+      <Image src={img} alt="icon" width={50} height={50} />
+      <p className="text font-inter">{text}</p>
+      <p className="data font-inter">{data}</p>
+    </div>
+  );
 }
