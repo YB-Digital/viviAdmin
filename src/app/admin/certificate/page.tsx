@@ -1,8 +1,8 @@
 "use client";
 
-export const dynamic = "force-dynamic"; // ✅ Prevents SSR issues by enforcing dynamic rendering.
+export const dynamic = "force-dynamic"; // ✅ Ensures dynamic rendering, preventing SSR issues.
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import SendCertificateForm from "@/component/sendCertificateForm";
 import SendCertificateTable from "@/component/sendCertificateTable";
@@ -25,6 +25,20 @@ export default function SendCertificatePage() {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null); // ✅ Store email from localStorage safely
+  const [isClient, setIsClient] = useState<boolean>(false); // ✅ Prevents SSR errors
+
+  // ✅ Ensure localStorage is accessed only in the browser
+  useEffect(() => {
+    setIsClient(true); // ✅ Ensures the component is running on the client
+
+    if (typeof window !== "undefined") {
+      const storedEmail = localStorage.getItem("userEmail");
+      if (storedEmail) {
+        setUserEmail(storedEmail);
+      }
+    }
+  }, []);
 
   const handleFormSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -81,6 +95,9 @@ export default function SendCertificatePage() {
       setLoading(false);
     }
   };
+
+  // ✅ Prevents server-side rendering errors
+  if (!isClient) return null;
 
   return (
     <div className="sendCertificatePage">
