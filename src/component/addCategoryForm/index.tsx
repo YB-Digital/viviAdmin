@@ -1,14 +1,23 @@
 "use client";
 
-import { useState } from "react";
-
-//style
-import "./addCategoryFrom.scss";
+import { useState, useEffect } from "react";
+import "./addCategoryForm.scss";
 
 export default function AddCategoryForm() {
   const [categoryName, setCategoryName] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [userId, setUserId] = useState<string | null>(null);
+
+  // ✅ Ensure `localStorage` is accessed only on the client
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedUserId = localStorage.getItem("userId");
+      if (storedUserId) {
+        setUserId(storedUserId);
+      }
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,16 +37,9 @@ export default function AddCategoryForm() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ name: categoryName }),
+          body: JSON.stringify({ name: categoryName, userId }), // ✅ Send `userId` if available
         }
       );
-
-      const contentType = response.headers.get("content-type");
-
-      // Ensure the response is JSON
-      if (!contentType || !contentType.includes("application/json")) {
-        throw new Error("Invalid response format. Expected JSON.");
-      }
 
       const data = await response.json();
 
@@ -47,14 +49,9 @@ export default function AddCategoryForm() {
       } else {
         setMessage(`Error: ${data.message || "Unknown error occurred."}`);
       }
-    } catch (error: unknown) {
+    } catch (error) {
       console.error("Category submission failed:", error);
-
-      if (error instanceof Error) {
-        setMessage(`Submission error: ${error.message}`);
-      } else {
-        setMessage("An unexpected error occurred.");
-      }
+      setMessage("An unexpected error occurred.");
     } finally {
       setLoading(false);
     }
