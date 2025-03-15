@@ -1,9 +1,9 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react';
-import Swal from 'sweetalert2';
-import SendCertificateForm from '@/component/sendCertificateForm';
-import SendCertificateTable from '@/component/sendCertificateTable';
+import React, { useState } from "react";
+import Swal from "sweetalert2";
+import SendCertificateForm from "@/component/sendCertificateForm";
+import SendCertificateTable from "@/component/sendCertificateTable";
 
 // Define the types for your form state
 interface FormData {
@@ -26,6 +26,8 @@ export default function SendCertificatePage() {
 
   const handleFormSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    if (typeof window === "undefined") return; // ✅ Ensure it runs only on client-side
+
     setLoading(true);
     setMessage(null);
 
@@ -43,30 +45,35 @@ export default function SendCertificatePage() {
         body: formDataToSend,
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
       const data = await response.json();
+
       if (data.status === "success") {
         Swal.fire({
-          title: 'Success!',
-          text: 'Certificate sent successfully!',
-          icon: 'success',
-          confirmButtonText: 'OK'
+          title: "Success!",
+          text: "Certificate sent successfully!",
+          icon: "success",
+          confirmButtonText: "OK",
         });
         setFormData({ email: "", course_id: "", user_id: "", certificateFile: null });
       } else {
         Swal.fire({
-          title: 'Error!',
-          text: data.message || 'Error while sending certificate.',
-          icon: 'error',
-          confirmButtonText: 'OK'
+          title: "Error!",
+          text: data.message || "Error while sending certificate.",
+          icon: "error",
+          confirmButtonText: "OK",
         });
       }
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error("Error submitting form:", error);
       Swal.fire({
-        title: 'Unexpected Error',
-        text: 'An unexpected error occurred.',
-        icon: 'error',
-        confirmButtonText: 'OK'
+        title: "Unexpected Error",
+        text: "An unexpected error occurred.",
+        icon: "error",
+        confirmButtonText: "OK",
       });
     } finally {
       setLoading(false);
