@@ -14,16 +14,23 @@ interface User {
 export default function DashboardUserTable() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [adminId, setAdminId] = useState<string | null>(null);
 
   useEffect(() => {
+    // ✅ Ensure localStorage is accessed only in the browser
+    if (typeof window !== "undefined") {
+      const storedAdminId = localStorage.getItem("adminId") || null;
+      setAdminId(storedAdminId);
+    }
+
     fetch("https://ybdigitalx.com/vivi_backend/dashboard_table.php")
       .then((response) => response.json())
       .then((data) => {
-        if (data.status === "success" && Array.isArray(data.contacts) && data.contacts.length > 0) {
+        if (data.status === "success" && Array.isArray(data.contacts)) {
           setUsers(
             data.contacts.map((user: { id: number; name: string; email: string; message: string; check: string }) => ({
               ...user,
-              check: user.check === "✔" || user.check === "1", // converting check to boolean
+              check: user.check === "✔" || user.check === "1", // Convert check to boolean
             }))
           );
         } else {
