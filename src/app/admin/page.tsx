@@ -25,17 +25,19 @@ export default function Page() {
       const storedAdminId = localStorage.getItem("adminId");
       setAdminId(storedAdminId);
 
-      if (!storedAdminId) {
+      if (storedAdminId) {
+        fetchProfileData(storedAdminId);
+      } else {
         setError("Unauthorized access. Redirecting to login...");
         setTimeout(() => router.push("/login"), 2000);
-      } else {
-        fetchProfileData(storedAdminId);
       }
     }
   }, []);
 
   const fetchProfileData = async (adminId: string) => {
     try {
+      if (!adminId) return;
+
       const response = await fetch("https://ybdigitalx.com/vivi_backend/profile.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
