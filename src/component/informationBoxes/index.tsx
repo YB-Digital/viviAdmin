@@ -38,10 +38,10 @@ export default function InformationBoxes() {
 
   return (
     <div className="informationBoxes">
-      <InformationBoxe img={revenue} text={"Total Revenue"} data={`$ ${stats.total_revenue}`} class={"revenue"} />
-      <InformationBoxe img={user} text={"User"} data={stats.total_users} class={"user"} />
-      <InformationBoxe img={service} text={"Total Service"} data={stats.total_services} class={"service"} />
-      <InformationBoxe img={video} text={"Total Video"} data={stats.total_video} class={"video"} />
+      <InformationBoxe img={revenue} text={"Total Revenue"} data={`$ ${stats.total_revenue}`} className={"revenue"} />
+      <InformationBoxe img={user} text={"User"} data={stats.total_users} className={"user"} />
+      <InformationBoxe img={service} text={"Total Service"} data={stats.total_services} className={"service"} />
+      <InformationBoxe img={video} text={"Total Video"} data={stats.total_video} className={"video"} />
     </div>
   );
 }
