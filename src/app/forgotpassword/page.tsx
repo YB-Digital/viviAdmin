@@ -1,4 +1,6 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
+'use client'
+
+import { useState, useEffect, ChangeEvent } from 'react';
 import InputComponent from '@/component/inputComponent';
 import VerifyResetPasswordCode from '@/component/verifyResetPasswordCode';
 
