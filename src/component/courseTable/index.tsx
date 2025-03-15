@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
@@ -48,7 +48,8 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
       } else {
         setError("Failed to delete the course.");
       }
-    } catch (error) {
+    } catch (err) {
+      console.error("Error deleting course:", err);
       setError("An error occurred while deleting the course.");
     }
   };
@@ -82,7 +83,8 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
       } else {
         setError("Failed to update the course.");
       }
-    } catch (error) {
+    } catch (err) {
+      console.error("Error updating course:", err);
       setError("An error occurred while updating the course.");
     }
   };
