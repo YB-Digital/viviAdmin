@@ -34,9 +34,9 @@ export default function Page() {
   }, []);
 
   const fetchProfileData = async (adminId: string) => {
-    try {
-      if (!adminId) return;
+    if (!adminId) return; // Prevent running if no adminId
 
+    try {
       const response = await fetch("https://ybdigitalx.com/vivi_backend/profile.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
