@@ -18,7 +18,7 @@ const Page: React.FC = () => {
         }
     }, []);
 
-    const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const newEmail = e.target.value.trim();
         setEmail(newEmail);
 
@@ -47,10 +47,10 @@ const Page: React.FC = () => {
             const response = await fetch('https://viviacademy.de/admin/vivi_Adminbackend/send_reset_code.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email }),
+                body: JSON.stringify({ email: email }),
             });
 
-            const data: { success: boolean; error?: string } = await response.json();
+            const data = await response.json();
 
             if (data.success) {
                 localStorage.setItem('adminEmail', email);
@@ -58,13 +58,13 @@ const Page: React.FC = () => {
             } else {
                 setError(data.error || 'Error sending reset code. Please try again.');
             }
-        } catch (err) {
-            if (err instanceof Error) {
-                setError(err.message || 'Server error. Please try again later.');
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                setError(error.message || 'Server error. Please try again later.');
             } else {
                 setError('An unexpected error occurred. Please try again later.');
             }
-            console.error('Error:', err);
+            console.error('Error:', error);
         } finally {
             setLoading(false);
         }
@@ -87,7 +87,7 @@ const Page: React.FC = () => {
             {error && <p className="error text-red-600">{error}</p>}
 
             <button className="font-inter" onClick={handleSendClick} disabled={loading}>
-                {loading ? "Sending..." : "Send."}
+                {loading ? "Sending..." : "Send"}
             </button>
 
             {showVerifyCode && <VerifyResetPasswordCode onClose={() => setShowVerifyCode(false)} />}
