@@ -13,6 +13,7 @@ interface Course {
   price: string;
   image: string;
   videos: string;
+  category: string;
 }
 
 interface CourseTableProps {

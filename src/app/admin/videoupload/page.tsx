@@ -14,6 +14,15 @@ interface Category {
   id: number;
   name: string;
 }
+interface Course {
+  id: string;
+  course_name: string;
+  description: string;
+  price: string;
+  image: string;
+  videos: string;
+  category:string;
+}
 
 // Define the structure for the form data
 interface FormData {
@@ -37,7 +46,7 @@ export default function Page() {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [courses, setCourses] = useState<any[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
