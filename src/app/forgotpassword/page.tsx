@@ -87,7 +87,7 @@ const Page: React.FC = () => {
             {error && <p className="error text-red-600">{error}</p>}
 
             <button className="font-inter" onClick={handleSendClick} disabled={loading}>
-                {loading ? "Sending..." : "Send"}
+                {loading ? "Sending..." : "Send."}
             </button>
 
             {showVerifyCode && <VerifyResetPasswordCode onClose={() => setShowVerifyCode(false)} />}
