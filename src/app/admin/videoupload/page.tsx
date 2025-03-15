@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import InputComponent from "@/component/inputComponent";
@@ -9,7 +9,6 @@ import CourseTable from "@/component/courseTable";
 
 import "./videoUpload.scss";
 
-// Define the structure for the category data
 interface Category {
   id: number;
   name: string;
@@ -21,10 +20,9 @@ interface Course {
   price: string;
   image: string;
   videos: string;
-  category:string;
+  category: string;
 }
 
-// Define the structure for the form data
 interface FormData {
   title: string;
   price: string;
@@ -50,13 +48,20 @@ export default function Page() {
   const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
-    fetchCourses();
-    fetchCategories();
+    if (typeof window !== "undefined") {
+      fetchCourses();
+      fetchCategories();
+    }
   }, []);
 
   const fetchCourses = async () => {
     try {
       const response = await fetch("https://ybdigitalx.com/vivi_backend/course_table.php");
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
       const data = await response.json();
       setCourses(data);
     } catch (error) {
@@ -68,6 +73,11 @@ export default function Page() {
   const fetchCategories = async () => {
     try {
       const response = await fetch("https://ybdigitalx.com/vivi_backend/category_table.php");
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
       const data = await response.json();
       setCategories(data);
     } catch (error) {
