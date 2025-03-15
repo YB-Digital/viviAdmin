@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic"; // ✅ Ensures dynamic rendering, preventing static export errors.
+
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import InputComponent from "@/component/inputComponent";
@@ -20,6 +22,7 @@ export default function Page() {
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
+  // ✅ Get adminId from localStorage *only* in the browser
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedAdminId = localStorage.getItem("adminId");
