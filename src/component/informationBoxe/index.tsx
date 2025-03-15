@@ -1,6 +1,4 @@
 import Image from "next/image";
-
-//style
 import "./informationBoxe.scss";
 
 interface InformationBoxeProps {

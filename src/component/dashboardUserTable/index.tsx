@@ -14,8 +14,13 @@ interface User {
 export default function DashboardUserTable() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [adminId, setAdminId] = useState<string | null>(null);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedAdminId = localStorage.getItem("adminId") || null;
+      setAdminId(storedAdminId);
+    }
 
     fetch("https://ybdigitalx.com/vivi_backend/dashboard_table.php")
       .then((response) => response.json())

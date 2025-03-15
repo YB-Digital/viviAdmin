@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import InformationBoxe from "../informationBoxe";
-
-//style
 import "./informationBoxes.scss";
 
 //image
@@ -21,19 +19,21 @@ export default function InformationBoxes() {
   });
 
   useEffect(() => {
-    fetch("https://ybdigitalx.com/vivi_backend/dashboard_box.php")
-      .then((response) => response.json())
-      .then((data) => {
-        if (data) {
-          setStats({
-            total_revenue: data.total_revenue || "0",
-            total_users: data.total_users || "0",
-            total_services: data.total_services || "0",
-            total_video: data.total_video || "0",
-          });
-        }
-      })
-      .catch((error) => console.error("Error fetching dashboard data:", error));
+    if (typeof window !== "undefined") {
+      fetch("https://ybdigitalx.com/vivi_backend/dashboard_box.php")
+        .then((response) => response.json())
+        .then((data) => {
+          if (data) {
+            setStats({
+              total_revenue: data.total_revenue || "0",
+              total_users: data.total_users || "0",
+              total_services: data.total_services || "0",
+              total_video: data.total_video || "0",
+            });
+          }
+        })
+        .catch((error) => console.error("Error fetching dashboard data:", error));
+    }
   }, []);
 
   return (
