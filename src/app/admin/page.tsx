@@ -1,6 +1,6 @@
 "use client";
 
-export const dynamic = "force-dynamic"; // ✅ Ensures dynamic rendering, preventing static export errors.
+export const dynamic = "force-dynamic"; // ✅ Forces dynamic rendering, preventing static export errors.
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -21,11 +21,8 @@ export default function Page() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [isClient, setIsClient] = useState<boolean>(false); // ✅ Ensure component is running in the browser
 
   useEffect(() => {
-    setIsClient(true); // ✅ This makes sure the component runs only on the client.
-
     if (typeof window !== "undefined") {
       const storedAdminId = localStorage.getItem("adminId");
       if (storedAdminId) {
@@ -114,9 +111,6 @@ export default function Page() {
       setSuccess(null);
     }
   };
-
-  // ✅ Prevent rendering on the server to avoid `localStorage` issues.
-  if (!isClient) return null;
 
   return (
     <div className="profilePage">
