@@ -34,7 +34,7 @@ export default function AddCategoryForm() {
 
       const contentType = response.headers.get("content-type");
 
-      // Yanıtın JSON formatında olup olmadığını kontrol et
+      // Ensure the response is JSON
       if (!contentType || !contentType.includes("application/json")) {
         throw new Error("Invalid response format. Expected JSON.");
       }

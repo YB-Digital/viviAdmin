@@ -1,8 +1,7 @@
-'use client'
+"use client";
 
-import  { useEffect, useState, ChangeEvent } from "react";
+import { useEffect, useState, ChangeEvent } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
-
 import "./categoryTable.scss";
 
 interface Category {
