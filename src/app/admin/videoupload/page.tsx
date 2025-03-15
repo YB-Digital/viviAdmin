@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = "force-dynamic"; // ✅ Ensures dynamic rendering, preventing static export errors.
+
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import InputComponent from "@/component/inputComponent";
 import TextAreaComponent from "@/component/textAreaComponent";
@@ -55,6 +57,8 @@ export default function Page() {
   }, []);
 
   const fetchCourses = async () => {
+    if (typeof window === "undefined") return; // ✅ Ensures this runs only in the browser
+
     try {
       const response = await fetch("https://ybdigitalx.com/vivi_backend/course_table.php");
 
@@ -71,6 +75,8 @@ export default function Page() {
   };
 
   const fetchCategories = async () => {
+    if (typeof window === "undefined") return;
+
     try {
       const response = await fetch("https://ybdigitalx.com/vivi_backend/category_table.php");
 
