@@ -12,10 +12,8 @@ export default function AddCategoryForm() {
   // ✅ Ensure `localStorage` is accessed only on the client
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const storedUserId = localStorage.getItem("userId");
-      if (storedUserId) {
-        setUserId(storedUserId);
-      }
+      const storedUserId = localStorage.getItem("userId") || null;
+      setUserId(storedUserId);
     }
   }, []);
 
