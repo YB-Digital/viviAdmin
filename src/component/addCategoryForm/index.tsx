@@ -11,9 +11,8 @@ export default function AddCategoryForm() {
   const [isClient, setIsClient] = useState<boolean>(false); // ✅ Ensure component is running in the browser
 
   useEffect(() => {
-    setIsClient(true); // ✅ Prevents SSR errors
-
     if (typeof window !== "undefined") {
+      setIsClient(true); // ✅ Prevents SSR errors
       const storedUserId = localStorage.getItem("userId") || null;
       setUserId(storedUserId);
     }
