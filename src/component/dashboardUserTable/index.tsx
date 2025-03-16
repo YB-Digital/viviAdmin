@@ -24,6 +24,7 @@ export default function DashboardUserTable() {
       const storedAdminId = localStorage.getItem("adminId");
       if (storedAdminId) {
         setAdminId(storedAdminId);
+        console.log(adminId)
       }
     }
 
