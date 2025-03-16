@@ -13,27 +13,28 @@ const CategoryList: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [isClient, setIsClient] = useState<boolean>(false); // ✅ Prevents SSR errors
+  const [isClient, setIsClient] = useState(false); // ✅ Prevent SSR issues
 
   useEffect(() => {
-    setIsClient(true); // ✅ Ensure this runs only on the client
-
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch("https://ybdigitalx.com/vivi_backend/category_table.php");
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        const data: Category[] = await response.json();
-        setCategories(data);
-      } catch (error) {
-        alert("Failed to fetch categories.");
-        console.error("Fetch error:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCategories();
+    if (typeof window !== "undefined") {
+      setIsClient(true); // ✅ Prevents `localStorage` SSR issues
+      fetchCategories();
+    }
   }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch("https://ybdigitalx.com/vivi_backend/category_table.php");
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      const data: Category[] = await response.json();
+      setCategories(data);
+    } catch (error) {
+      alert("Failed to fetch categories.");
+      console.error("Fetch error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleDelete = async (categoryId: number) => {
     if (!confirm("Are you sure you want to delete this category?")) return;
@@ -87,7 +88,7 @@ const CategoryList: React.FC = () => {
   };
 
   // ✅ Prevents rendering on the server
-  if (!isClient) return null;
+  if (!isClient) return <p>Loading...</p>;
 
   return (
     <div className="categoryList">

@@ -1,19 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import "./addCategoryFrom.scss";
+import "./addCategoryForm.scss";
 
 export default function AddCategoryForm() {
   const [categoryName, setCategoryName] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [userId, setUserId] = useState<string | null>(null);
-  const [isClient, setIsClient] = useState(false); // ✅ Prevent SSR errors
+  const [isClient, setIsClient] = useState(false); // ✅ Prevents SSR issues
 
-  // ✅ UseEffect to ensure the component is mounted before accessing localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setIsClient(true);
+      setIsClient(true); // ✅ Ensures the component is mounted before accessing localStorage
       const storedUserId = localStorage.getItem("userId") || null;
       setUserId(storedUserId);
     }
