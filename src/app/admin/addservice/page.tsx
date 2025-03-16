@@ -21,6 +21,15 @@ export default function Page() {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
+  const [isClient, setIsClient] = useState<boolean>(false); // ✅ Ensures this runs only on the client
+
+  useEffect(() => {
+    setIsClient(true); // ✅ Prevents SSR errors
+
+    if (typeof window !== "undefined") {
+      fetchServices();
+    }
+  }, []);
 
   const handleServiceUpdate = () => {
     setSelectedService(null);
@@ -54,9 +63,8 @@ export default function Page() {
     }
   };
 
-  useEffect(() => {
-    fetchServices();
-  }, []);
+  // ✅ Prevent rendering on the server to avoid `localStorage` issues.
+  if (!isClient) return null;
 
   return (
     <div className='addService'>
