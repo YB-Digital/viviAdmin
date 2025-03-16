@@ -1,20 +1,22 @@
 'use client';
 
-export const dynamic = "force-dynamic"; // ✅ Ensures dynamic rendering, preventing static export errors.
 
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import InputComponent from "@/component/inputComponent";
-import TextAreaComponent from "@/component/textAreaComponent";
-import FileComponent from "@/component/fileComponent";
-import SelectComponent from "@/component/selectComponent";
-import CourseTable from "@/component/courseTable";
-
+import dynamic from "next/dynamic";
 import "./videoUpload.scss";
+
+// ✅ Dynamically importing components to avoid server-side errors
+const InputComponent = dynamic(() => import("@/component/inputComponent"), { ssr: false });
+const TextAreaComponent = dynamic(() => import("@/component/textAreaComponent"), { ssr: false });
+const FileComponent = dynamic(() => import("@/component/fileComponent"), { ssr: false });
+const SelectComponent = dynamic(() => import("@/component/selectComponent"), { ssr: false });
+const CourseTable = dynamic(() => import("@/component/courseTable"), { ssr: false });
 
 interface Category {
   id: number;
   name: string;
 }
+
 interface Course {
   id: string;
   course_name: string;
@@ -49,7 +51,6 @@ export default function Page() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
 
-  // ✅ Ensure fetch calls only run on the client
   useEffect(() => {
     if (typeof window !== "undefined") {
       fetchCourses();
@@ -58,8 +59,6 @@ export default function Page() {
   }, []);
 
   const fetchCourses = async () => {
-    if (typeof window === "undefined") return;
-
     try {
       const response = await fetch("https://ybdigitalx.com/vivi_backend/course_table.php");
 
@@ -76,8 +75,6 @@ export default function Page() {
   };
 
   const fetchCategories = async () => {
-    if (typeof window === "undefined") return;
-
     try {
       const response = await fetch("https://ybdigitalx.com/vivi_backend/category_table.php");
 
