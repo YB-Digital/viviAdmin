@@ -21,7 +21,7 @@ export default function DashboardUserTable() {
     setIsClient(true); // ✅ Prevents server-side rendering issues.
 
     if (typeof window !== "undefined") {
-      const storedAdminId = localStorage.getItem("adminId");
+      const storedAdminId = localStorage.getItem("adminId") || null;
       if (storedAdminId) {
         setAdminId(storedAdminId);
         console.log(adminId)

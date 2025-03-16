@@ -20,7 +20,7 @@ export default function VerifyResetPasswordCode({ onClose }: VerifyCodeProps) {
     const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        const storedEmail = localStorage.getItem("userEmail");
+        const storedEmail = localStorage.getItem("userEmail") || null;
         if (storedEmail) {
             setEmail(storedEmail);
         }

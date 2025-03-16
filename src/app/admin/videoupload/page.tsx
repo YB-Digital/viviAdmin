@@ -1,11 +1,10 @@
-'use client';
-
+"use client";
 
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import dynamic from "next/dynamic";
 import "./videoUpload.scss";
 
-// ✅ Dynamically importing components to avoid server-side errors
+// ✅ Dinamik olarak bileşenleri import ediyoruz (SSR devre dışı)
 const InputComponent = dynamic(() => import("@/component/inputComponent"), { ssr: false });
 const TextAreaComponent = dynamic(() => import("@/component/textAreaComponent"), { ssr: false });
 const FileComponent = dynamic(() => import("@/component/fileComponent"), { ssr: false });
@@ -50,9 +49,11 @@ export default function Page() {
   const [message, setMessage] = useState<string | null>(null);
   const [courses, setCourses] = useState<Course[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [isClient, setIsClient] = useState<boolean>(false); // ✅ SSR önleme için
 
   useEffect(() => {
     if (typeof window !== "undefined") {
+      setIsClient(true); // ✅ Sadece tarayıcıda çalıştır
       fetchCourses();
       fetchCategories();
     }
@@ -156,6 +157,8 @@ export default function Page() {
       setLoading(false);
     }
   };
+
+  if (!isClient) return null; // ✅ Sunucu tarafında render edilmesini önler
 
   return (
     <div className="videoUpload">

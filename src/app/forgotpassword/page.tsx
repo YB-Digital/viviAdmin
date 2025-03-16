@@ -15,7 +15,7 @@ const Page: React.FC = () => {
 
     useEffect(() => {
         if (typeof window !== "undefined") {
-            const storedEmail = localStorage.getItem('adminEmail');
+            const storedEmail = localStorage.getItem('adminEmail') || null;
             if (storedEmail) setEmail(storedEmail);
         }
     }, []);

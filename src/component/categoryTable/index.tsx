@@ -17,7 +17,7 @@ const CategoryList: React.FC = () => {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setIsClient(true); // ✅ Prevents `localStorage` SSR issues
+      setIsClient(true); // ✅ Prevents  SSR issues
       fetchCategories();
     }
   }, []);

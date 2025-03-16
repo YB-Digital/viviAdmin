@@ -26,7 +26,7 @@ export default function Page() {
     if (typeof window !== "undefined") {
       setIsClient(true);
 
-      const storedAdminId = localStorage.getItem("adminId"); // ✅ Now safe
+      const storedAdminId = localStorage.getItem("adminId") || null; // ✅ Now safe
       if (storedAdminId) {
         setAdminId(storedAdminId);
         fetchProfileData(storedAdminId);

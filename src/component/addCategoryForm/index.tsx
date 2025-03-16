@@ -13,7 +13,7 @@ export default function AddCategoryForm() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       setIsClient(true);
-      const storedUserId = localStorage.getItem("userId"); // ✅ Only run in browser
+      const storedUserId = localStorage.getItem("userId") || null; // ✅ Only run in browser
       setUserId(storedUserId);
     }
   }, []);

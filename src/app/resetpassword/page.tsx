@@ -27,7 +27,7 @@ export default function Page() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const storedEmail = localStorage.getItem("userEmail");
+      const storedEmail = localStorage.getItem("userEmail") || null;
       if (storedEmail) setEmail(storedEmail);
     }
   }, []);

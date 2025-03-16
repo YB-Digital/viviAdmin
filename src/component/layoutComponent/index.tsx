@@ -18,7 +18,7 @@ import certificate from '@/image/certificate.svg'
 export default function LayoutComponent() {
     const pathname = usePathname();
     const [userName, setUserName] = useState('');
-    const [userId, setUserId] = useState(localStorage.getItem('userId'));  
+    const [userId, setUserId] = useState(localStorage.getItem('userId') || null);  
 
     useEffect(() => {
         const fetchUserData = async () => {
