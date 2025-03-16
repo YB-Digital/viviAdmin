@@ -1,13 +1,12 @@
-"use client";
+"use client"; // ✅ Ensures this page only runs on the client
 
-export const dynamic = "force-dynamic"; // ✅ Ensures dynamic rendering, preventing SSR issues.
+export const dynamic = "force-dynamic"; // ✅ Prevents SSR issues by ensuring the page is always dynamically rendered
 
 import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import SendCertificateForm from "@/component/sendCertificateForm";
 import SendCertificateTable from "@/component/sendCertificateTable";
 
-// Define the types for your form state
 interface FormData {
   email: string;
   course_id: string;
@@ -25,17 +24,17 @@ export default function SendCertificatePage() {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [isClient, setIsClient] = useState<boolean>(false); // ✅ Prevents SSR errors
+  const [isClient, setIsClient] = useState<boolean>(false); // ✅ Prevents SSR issues
 
-  // ✅ Ensure localStorage is accessed only in the browser
   useEffect(() => {
-    setIsClient(true); // ✅ Ensures the component is running on the client
-
+    if (typeof window !== "undefined") {
+      setIsClient(true);
+    }
   }, []);
 
   const handleFormSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (typeof window === "undefined") return; // ✅ Ensure it runs only on client-side
+    if (typeof window === "undefined") return; // ✅ Ensures it runs only on client-side
 
     setLoading(true);
     setMessage(null);
@@ -60,24 +59,17 @@ export default function SendCertificatePage() {
 
       const data = await response.json();
 
+      Swal.fire({
+        title: data.status === "success" ? "Success!" : "Error!",
+        text: data.message || (data.status === "success" ? "Certificate sent successfully!" : "Error while sending certificate."),
+        icon: data.status === "success" ? "success" : "error",
+        confirmButtonText: "OK",
+      });
+
       if (data.status === "success") {
-        Swal.fire({
-          title: "Success!",
-          text: "Certificate sent successfully!",
-          icon: "success",
-          confirmButtonText: "OK",
-        });
         setFormData({ email: "", course_id: "", user_id: "", certificateFile: null });
-      } else {
-        Swal.fire({
-          title: "Error!",
-          text: data.message || "Error while sending certificate.",
-          icon: "error",
-          confirmButtonText: "OK",
-        });
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
       Swal.fire({
         title: "Unexpected Error",
         text: "An unexpected error occurred.",
