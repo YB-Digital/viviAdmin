@@ -21,13 +21,14 @@ export default function Page() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [isClient, setIsClient] = useState<boolean>(false); // ✅ Ensure component is running in the browser
+  const [isClient, setIsClient] = useState<boolean>(false); // ✅ Ensures component is running in the browser
 
   useEffect(() => {
-    setIsClient(true); // ✅ Prevents SSR errors
-
+    // ✅ Ensures this runs only on the client
     if (typeof window !== "undefined") {
+      setIsClient(true);
       const storedAdminId = localStorage.getItem("adminId");
+
       if (storedAdminId) {
         setAdminId(storedAdminId);
         fetchProfileData(storedAdminId);
@@ -115,7 +116,7 @@ export default function Page() {
     }
   };
 
-  // ✅ Prevents rendering on the server to avoid `localStorage` issues.
+  // ✅ Prevent rendering on the server to avoid `localStorage` issues.
   if (!isClient) return null;
 
   return (
