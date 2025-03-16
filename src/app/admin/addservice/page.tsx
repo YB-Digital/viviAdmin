@@ -1,71 +1,99 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import AddServiceForm from '@/component/addServiceForm';
-import ServiceTable from '@/component/serviceTable';
+export const dynamic = "force-dynamic"; // ✅ Ensures dynamic rendering, preventing SSR issues.
 
-//style
-import './addService.scss';
+import { useState, useEffect } from "react";
+import Swal from "sweetalert2";
+import SendCertificateForm from "@/component/sendCertificateForm";
+import SendCertificateTable from "@/component/sendCertificateTable";
 
-interface Service {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
+// Define the types for form state
+interface FormData {
+  email: string;
+  course_id: string;
+  user_id: string;
+  certificateFile: File | null;
 }
 
-export default function Page() {
-  const [selectedService, setSelectedService] = useState<Service | null>(null);
-  const [services, setServices] = useState<Service[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isClient, setIsClient] = useState<boolean>(false);
+export default function SendCertificatePage() {
+  const [formData, setFormData] = useState<FormData>({
+    email: "",
+    course_id: "",
+    user_id: "",
+    certificateFile: null,
+  });
+
+  const [loading, setLoading] = useState<boolean>(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState<boolean>(false); // ✅ Prevents SSR issues
 
   useEffect(() => {
-    setIsClient(true); // ✅ Ensures client-side rendering
-    fetchServices();
+    if (typeof window !== "undefined") {
+      setIsClient(true);
+    }
   }, []);
 
-  const handleServiceUpdate = () => {
-    setSelectedService(null);
-    fetchServices();
-  };
+  const handleFormSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!isClient) return; // ✅ Ensures it runs only on client-side
 
-  const fetchServices = async () => {
-    if (typeof window === "undefined") return; // ✅ Ensures this runs only in the browser
+    setLoading(true);
+    setMessage(null);
+
+    const formDataToSend = new FormData();
+    formDataToSend.append("email", formData.email);
+    formDataToSend.append("course_id", formData.course_id);
+    formDataToSend.append("user_id", formData.user_id);
+    if (formData.certificateFile) {
+      formDataToSend.append("pdf", formData.certificateFile);
+    }
 
     try {
-      setLoading(true);
-      setError(null);
-      const response = await fetch("https://ybdigitalx.com/vivi_backend/service_table.php");
+      const response = await fetch("https://ybdigitalx.com/vivi_backend/send_certificate.php", {
+        method: "POST",
+        body: formDataToSend,
+      });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch data.");
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
       const data = await response.json();
 
-      if (!data || !Array.isArray(data)) {
-        throw new Error("Invalid API response.");
-      }
+      Swal.fire({
+        title: data.status === "success" ? "Success!" : "Error!",
+        text: data.message || (data.status === "success" ? "Certificate sent successfully!" : "Error while sending certificate."),
+        icon: data.status === "success" ? "success" : "error",
+        confirmButtonText: "OK",
+      });
 
-      setServices(data);
-    } catch (err) {
-      console.error("Error fetching services:", err);
-      setError("Error fetching services. Please try again later.");
+      if (data.status === "success") {
+        setFormData({ email: "", course_id: "", user_id: "", certificateFile: null });
+      }
+    } catch (error) {
+      Swal.fire({
+        title: "Unexpected Error",
+        text: "An unexpected error occurred.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  if (!isClient) return null; // ✅ Prevents rendering on the server
+  if (!isClient) return null; // ✅ Prevents SSR issues
 
   return (
-    <div className='addService'>
-      {error && <div className='error'>{error}</div>}
-      <AddServiceForm selectedService={selectedService} onServiceUpdate={handleServiceUpdate} />
-      <ServiceTable services={services} refreshServices={fetchServices} />
-      {loading && <div className='loading'>Loading services...</div>}
+    <div className="sendCertificatePage">
+      <SendCertificateForm 
+        formData={formData} 
+        setFormData={setFormData} 
+        handleFormSubmit={handleFormSubmit} 
+        loading={loading} 
+        message={message} 
+      />
+      <SendCertificateTable setFormData={setFormData} />
     </div>
   );
 }
