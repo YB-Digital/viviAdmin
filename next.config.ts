@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   env: {
     API_BASE_URL:
       process.env.NODE_ENV === "development"
-        ? "https://ybdigitalx.com/vivi_front/"
+        ? "https://ybdigitalx.com/vivi_backend/"
         : "http://localhost/vivi_backend/",
   },
 
