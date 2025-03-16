@@ -1,7 +1,5 @@
 'use client';
 
-export const dynamic = "force-dynamic"; // ✅ Ensures dynamic rendering, preventing SSR errors
-
 import { useState, useEffect } from 'react';
 import AddServiceForm from '@/component/addServiceForm';
 import ServiceTable from '@/component/serviceTable';
@@ -21,13 +19,11 @@ export default function Page() {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [isClient, setIsClient] = useState<boolean>(false); // ✅ Ensures this runs only in the client
+  const [isClient, setIsClient] = useState<boolean>(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setIsClient(true); // ✅ Prevents SSR errors
-      fetchServices();
-    }
+    setIsClient(true); // ✅ Ensures client-side rendering
+    fetchServices();
   }, []);
 
   const handleServiceUpdate = () => {
@@ -62,8 +58,7 @@ export default function Page() {
     }
   };
 
-  // ✅ Prevent rendering on the server to avoid `localStorage` issues.
-  if (!isClient) return null;
+  if (!isClient) return null; // ✅ Prevents rendering on the server
 
   return (
     <div className='addService'>
