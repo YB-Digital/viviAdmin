@@ -8,11 +8,9 @@ export default function AddCategoryForm() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [userId, setUserId] = useState<string | null>(null);
-  const [isClient, setIsClient] = useState(false); // ✅ Prevents SSR issues
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setIsClient(true); // ✅ Ensures the component is mounted before accessing localStorage
       const storedUserId = localStorage.getItem("userId") || null;
       setUserId(storedUserId);
     }
@@ -55,9 +53,6 @@ export default function AddCategoryForm() {
       setLoading(false);
     }
   };
-
-  // ✅ Prevents rendering on the server to avoid `localStorage` issues.
-  if (!isClient) return <p>Loading...</p>;
 
   return (
     <div className="addCategoryForm">
