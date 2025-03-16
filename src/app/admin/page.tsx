@@ -1,4 +1,4 @@
-"use client";
+"use client"; // ✅ Ensures this page only runs on the client
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -19,14 +19,14 @@ export default function Page() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isClient, setIsClient] = useState(false); // ✅ Prevent SSR issues
+  const [isClient, setIsClient] = useState(false); // ✅ Prevents SSR issues
 
   useEffect(() => {
-    // ✅ Ensure code runs ONLY in the browser
+    // ✅ Ensure this runs ONLY in the browser
     if (typeof window !== "undefined") {
       setIsClient(true);
 
-      const storedAdminId = localStorage.getItem("adminId");
+      const storedAdminId = localStorage.getItem("adminId"); // ✅ Now safe
       if (storedAdminId) {
         setAdminId(storedAdminId);
         fetchProfileData(storedAdminId);
@@ -114,8 +114,8 @@ export default function Page() {
     }
   };
 
-  // ✅ Prevent rendering on the server to avoid `localStorage` issues.
-  if (!isClient) return null; // Ensures no SSR issue
+  // ✅ Prevent rendering on the server to avoid SSR issues.
+  if (!isClient) return null; // ✅ Prevents the build error
 
   return (
     <div className="profilePage">
