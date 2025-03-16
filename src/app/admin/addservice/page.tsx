@@ -1,6 +1,6 @@
 'use client';
 
-export const dynamic = "force-dynamic"; // ✅ Ensures the page is dynamically rendered
+export const dynamic = "force-dynamic"; // ✅ Ensures dynamic rendering, preventing SSR errors
 
 import { useState, useEffect } from 'react';
 import AddServiceForm from '@/component/addServiceForm';
@@ -20,13 +20,12 @@ export default function Page() {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
-  const [isClient, setIsClient] = useState<boolean>(false); // ✅ Ensures this runs only on the client
+  const [error, setError] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState<boolean>(false); // ✅ Ensures this runs only in the client
 
   useEffect(() => {
-    setIsClient(true); // ✅ Prevents SSR errors
-
     if (typeof window !== "undefined") {
+      setIsClient(true); // ✅ Prevents SSR errors
       fetchServices();
     }
   }, []);
@@ -41,7 +40,7 @@ export default function Page() {
 
     try {
       setLoading(true);
-      setError("");
+      setError(null);
       const response = await fetch("https://ybdigitalx.com/vivi_backend/service_table.php");
 
       if (!response.ok) {
