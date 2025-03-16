@@ -49,6 +49,7 @@ export default function Page() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
 
+  // ✅ Ensure fetch calls only run on the client
   useEffect(() => {
     if (typeof window !== "undefined") {
       fetchCourses();
