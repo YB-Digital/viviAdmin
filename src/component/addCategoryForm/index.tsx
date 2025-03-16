@@ -1,3 +1,5 @@
+"use client"; // ✅ Ensures this page only renders on the client
+
 import { useState, useEffect } from "react";
 import "./addCategoryForm.scss";
 
@@ -6,17 +8,18 @@ export default function AddCategoryForm() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [userId, setUserId] = useState<string | null>(null);
-  const [isClient, setIsClient] = useState(false);
+  const [isClient, setIsClient] = useState(false); // ✅ Prevents SSR issues
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       setIsClient(true);
-      const storedUserId = localStorage.getItem("userId");
+      const storedUserId = localStorage.getItem("userId"); // ✅ Only run in browser
       setUserId(storedUserId);
     }
   }, []);
 
-  if (!isClient) return <p>Loading...</p>; // Prevent SSR issue
+  // ✅ Prevent SSR errors by returning nothing on the server
+  if (!isClient) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,7 +40,7 @@ export default function AddCategoryForm() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ name: categoryName, userId }), // ✅ Ensure `userId` is only sent if available
+          body: JSON.stringify({ name: categoryName, userId: userId ?? "" }), // ✅ Ensure `userId` is only sent if available
         }
       );
 
