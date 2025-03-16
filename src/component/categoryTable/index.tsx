@@ -13,8 +13,11 @@ const CategoryList: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [isClient, setIsClient] = useState<boolean>(false); // ✅ Prevents SSR errors
 
   useEffect(() => {
+    setIsClient(true); // ✅ Ensure this runs only on the client
+
     const fetchCategories = async () => {
       try {
         const response = await fetch("https://ybdigitalx.com/vivi_backend/category_table.php");
@@ -82,6 +85,9 @@ const CategoryList: React.FC = () => {
       console.error("Update error:", error);
     }
   };
+
+  // ✅ Prevents rendering on the server
+  if (!isClient) return null;
 
   return (
     <div className="categoryList">
