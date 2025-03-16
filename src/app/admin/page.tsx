@@ -1,7 +1,5 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import InputComponent from "@/component/inputComponent";
@@ -21,13 +19,14 @@ export default function Page() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isClient, setIsClient] = useState(false); // ✅ Ensures client-side rendering
+  const [isClient, setIsClient] = useState(false); // ✅ Prevent SSR issues
 
   useEffect(() => {
+    // ✅ Ensure code runs ONLY in the browser
     if (typeof window !== "undefined") {
       setIsClient(true);
-      const storedAdminId = localStorage.getItem("adminId");
 
+      const storedAdminId = localStorage.getItem("adminId");
       if (storedAdminId) {
         setAdminId(storedAdminId);
         fetchProfileData(storedAdminId);
@@ -116,7 +115,7 @@ export default function Page() {
   };
 
   // ✅ Prevent rendering on the server to avoid `localStorage` issues.
-  if (!isClient) return <p>Loading...</p>;
+  if (!isClient) return null; // Ensures no SSR issue
 
   return (
     <div className="profilePage">
