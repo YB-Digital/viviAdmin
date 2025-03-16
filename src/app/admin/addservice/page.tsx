@@ -1,13 +1,12 @@
 "use client";
 
-export const dynamic = "force-dynamic"; // ✅ Ensures dynamic rendering, preventing SSR issues.
+export const dynamic = "force-dynamic"; // ✅ Prevents pre-rendering issues
 
 import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import SendCertificateForm from "@/component/sendCertificateForm";
 import SendCertificateTable from "@/component/sendCertificateTable";
 
-// Define the types for form state
 interface FormData {
   email: string;
   course_id: string;
@@ -82,7 +81,8 @@ export default function SendCertificatePage() {
     }
   };
 
-  if (!isClient) return null; // ✅ Prevents SSR issues
+  // ✅ Prevent rendering on the server to avoid SSR issues.
+  if (!isClient) return null; // Prevents SSR errors
 
   return (
     <div className="sendCertificatePage">
