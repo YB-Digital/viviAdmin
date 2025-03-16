@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import "./addCategoryForm.scss";
 
@@ -8,13 +6,17 @@ export default function AddCategoryForm() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [userId, setUserId] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const storedUserId = localStorage.getItem("userId") || null;
+      setIsClient(true);
+      const storedUserId = localStorage.getItem("userId");
       setUserId(storedUserId);
     }
   }, []);
+
+  if (!isClient) return <p>Loading...</p>; // Prevent SSR issue
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,6 +28,7 @@ export default function AddCategoryForm() {
 
     setLoading(true);
     setMessage("");
+
     try {
       const response = await fetch(
         "https://ybdigitalx.com/vivi_backend/category_registration.php",
@@ -34,7 +37,7 @@ export default function AddCategoryForm() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ name: categoryName, userId }), // ✅ Send `userId` if available
+          body: JSON.stringify({ name: categoryName, userId }), // ✅ Ensure `userId` is only sent if available
         }
       );
 
