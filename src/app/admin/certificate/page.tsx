@@ -25,19 +25,12 @@ export default function SendCertificatePage() {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [userEmail, setUserEmail] = useState<string | null>(null); // ✅ Store email from localStorage safely
   const [isClient, setIsClient] = useState<boolean>(false); // ✅ Prevents SSR errors
 
   // ✅ Ensure localStorage is accessed only in the browser
   useEffect(() => {
     setIsClient(true); // ✅ Ensures the component is running on the client
 
-    if (typeof window !== "undefined") {
-      const storedEmail = localStorage.getItem("userEmail");
-      if (storedEmail) {
-        setUserEmail(storedEmail);
-      }
-    }
   }, []);
 
   const handleFormSubmit = async (e?: React.FormEvent) => {
