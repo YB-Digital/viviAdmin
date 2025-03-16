@@ -15,12 +15,16 @@ export default function DashboardUserTable() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [adminId, setAdminId] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState<boolean>(false); // ✅ Ensures the component is running on the client.
 
   useEffect(() => {
+    setIsClient(true); // ✅ Prevents server-side rendering issues.
+
     if (typeof window !== "undefined") {
-      const storedAdminId = localStorage.getItem("adminId") || null;
-      setAdminId(storedAdminId);
-      console.log(adminId)
+      const storedAdminId = localStorage.getItem("adminId");
+      if (storedAdminId) {
+        setAdminId(storedAdminId);
+      }
     }
 
     fetch("https://ybdigitalx.com/vivi_backend/dashboard_table.php")
@@ -42,6 +46,9 @@ export default function DashboardUserTable() {
       })
       .finally(() => setLoading(false));
   }, []);
+
+  // ✅ Prevents rendering on the server
+  if (!isClient) return null;
 
   return (
     <div className="dashboardUserTable">

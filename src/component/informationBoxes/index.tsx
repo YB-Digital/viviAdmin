@@ -18,7 +18,11 @@ export default function InformationBoxes() {
     total_video: "0",
   });
 
+  const [isClient, setIsClient] = useState<boolean>(false); // ✅ Prevents SSR errors.
+
   useEffect(() => {
+    setIsClient(true);
+
     if (typeof window !== "undefined") {
       fetch("https://ybdigitalx.com/vivi_backend/dashboard_box.php")
         .then((response) => response.json())
@@ -35,6 +39,9 @@ export default function InformationBoxes() {
         .catch((error) => console.error("Error fetching dashboard data:", error));
     }
   }, []);
+
+  // ✅ Prevents rendering on the server
+  if (!isClient) return null;
 
   return (
     <div className="informationBoxes">
