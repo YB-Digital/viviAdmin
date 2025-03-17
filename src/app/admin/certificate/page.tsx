@@ -1,60 +1,99 @@
-'use client'
+"use client"; // ✅ Ensures this page only runs on the client
 
-import { useState, useEffect } from 'react';
-import AddServiceForm from '@/component/addServiceForm';
-import ServiceTable from '@/component/serviceTable';
+export const dynamic = "force-dynamic"; // ✅ Prevents SSR issues by ensuring the page is always dynamically rendered
 
-//style
-import './addService.scss';
+import { useState, useEffect } from "react";
+import Swal from "sweetalert2";
+import SendCertificateForm from "@/component/sendCertificateForm";
+import SendCertificateTable from "@/component/sendCertificateTable";
 
-interface Service {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
+interface FormData {
+  email: string;
+  course_id: string;
+  user_id: string;
+  certificateFile: File | null;
 }
 
-export default function Page() {
-  const [selectedService, setSelectedService] = useState<Service | null>(null);
-  const [services, setServices] = useState<Service[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
+export default function SendCertificatePage() {
+  const [formData, setFormData] = useState<FormData>({
+    email: "",
+    course_id: "",
+    user_id: "",
+    certificateFile: null,
+  });
 
-  const handleServiceUpdate = () => {
-    setSelectedService(null);
-    fetchServices();
-  };
+  const [loading, setLoading] = useState<boolean>(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState<boolean>(false); // ✅ Prevents SSR issues
 
-  const fetchServices = async () => {
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsClient(true);
+    }
+  }, []);
+
+  const handleFormSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (typeof window === "undefined") return; // ✅ Ensures it runs only on client-side
+
+    setLoading(true);
+    setMessage(null);
+
+    const formDataToSend = new FormData();
+    formDataToSend.append("email", formData.email);
+    formDataToSend.append("course_id", formData.course_id);
+    formDataToSend.append("user_id", formData.user_id);
+    if (formData.certificateFile) {
+      formDataToSend.append("pdf", formData.certificateFile);
+    }
+
     try {
-      setLoading(true);
-      setError("");
-      const response = await fetch("https://viviacademy.de/admin/vivi_Adminbackend/service_table.php");
+      const response = await fetch("https://ybdigitalx.com/vivi_backend/send_certificate.php", {
+        method: "POST",
+        body: formDataToSend,
+      });
+
       if (!response.ok) {
-        throw new Error("Failed to fetch data.");
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
+
       const data = await response.json();
-      if (Array.isArray(data)) {
-        setServices(data);
+
+      Swal.fire({
+        title: data.status === "success" ? "Success!" : "Error!",
+        text: data.message || (data.status === "success" ? "Certificate sent successfully!" : "Error while sending certificate."),
+        icon: data.status === "success" ? "success" : "error",
+        confirmButtonText: "OK",
+      });
+
+      if (data.status === "success") {
+        setFormData({ email: "", course_id: "", user_id: "", certificateFile: null });
       }
-    } catch (err) {
-      console.error("Error fetching services:", err);
-      setError("Error fetching services. Please try again later.");
+    } catch (error) {
+      Swal.fire({
+        title: "Unexpected Error",
+        text: "An unexpected error occurred.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchServices();
-  }, []);
+  // ✅ Prevents server-side rendering errors
+  if (!isClient) return null;
 
   return (
-    <div className='addService'>
-      {error && <div className='error'>{error}</div>}
-      <AddServiceForm selectedService={selectedService} onServiceUpdate={handleServiceUpdate} />
-      <ServiceTable services={services} refreshServices={fetchServices} />
-      {loading && <div className='loading'>Loading services...</div>}
+    <div className="sendCertificatePage">
+      <SendCertificateForm 
+        formData={formData} 
+        setFormData={setFormData} 
+        handleFormSubmit={handleFormSubmit} 
+        loading={loading} 
+        message={message} 
+      />
+      <SendCertificateTable setFormData={setFormData} />
     </div>
   );
 }
