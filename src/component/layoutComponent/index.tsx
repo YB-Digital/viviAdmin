@@ -9,16 +9,24 @@ import { useEffect, useState } from 'react';
 import './layoutComponent.scss';
 
 // image
-import dashboard from '@/image/dahsboard.svg'
-import video from '@/image/videoManagament.svg'
-import services from '@/image/services.svg'
-import logout from '@/image/logOut.svg'
-import certificate from '@/image/certificate.svg'
+import dashboard from '@/image/dahsboard.svg';
+import video from '@/image/videoManagament.svg';
+import services from '@/image/services.svg';
+import logout from '@/image/logOut.svg';
+import certificate from '@/image/certificate.svg';
 
 export default function LayoutComponent() {
     const pathname = usePathname();
     const [userName, setUserName] = useState('');
-    const [userId, setUserId] = useState(localStorage.getItem('userId') || null);  
+    const [userId, setUserId] = useState<string | null>(null);  
+
+    // Ensure localStorage is accessed only in the client
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const storedUserId = localStorage.getItem('userId');
+            setUserId(storedUserId || null);
+        }
+    }, []);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -50,9 +58,11 @@ export default function LayoutComponent() {
     }, [userId]);  
 
     const handleLogout = async () => {
-        localStorage.removeItem('userId');
-        setUserId(null); 
-        window.location.reload();
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem('userId');
+            setUserId(null); 
+            window.location.reload();
+        }
     };
 
     return (
@@ -69,15 +79,15 @@ export default function LayoutComponent() {
                     <Image src={video} alt="icon" />
                     <p className="font-inter">Video Management</p>
                 </Link>
-                <Link href='/admin/addcategory' className={pathname === '/profile/addservice' ? 'active' : ''}>
+                <Link href='/admin/addcategory' className={pathname === '/admin/addcategory' ? 'active' : ''}>
                     <Image src={services} alt="icon" />
                     <p className="font-inter">Category</p>
                 </Link>
-                <Link href='/admin/addservice' className={pathname === '/profile/addservice' ? 'active' : ''}>
+                <Link href='/admin/addservice' className={pathname === '/admin/addservice' ? 'active' : ''}>
                     <Image src={services} alt="icon" />
                     <p className="font-inter">Services</p>
                 </Link>
-                <Link href='/admin/certificate' className={pathname === '/profile/services' ? 'active' : ''}>
+                <Link href='/admin/certificate' className={pathname === '/admin/certificate' ? 'active' : ''}>
                     <Image src={certificate} alt="icon" />
                     <p className="font-inter">Certificate</p>
                 </Link>
