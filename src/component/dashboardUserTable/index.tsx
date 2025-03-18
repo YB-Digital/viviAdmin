@@ -24,7 +24,7 @@ export default function DashboardUserTable() {
       const storedAdminId = localStorage.getItem("adminId") || null;
       if (storedAdminId) {
         setAdminId(storedAdminId);
-        console.log(adminId)
+        console.log(adminId);
       }
     }
 
@@ -48,6 +48,35 @@ export default function DashboardUserTable() {
       .finally(() => setLoading(false));
   }, []);
 
+  // Function to handle the check update
+  const handleCheckUpdate = async (userId: number, newCheckStatus: boolean) => {
+    try {
+      const response = await fetch("https://ybdigitalx.com/vivi_backend/update_check_status.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: userId,
+          check: newCheckStatus ? "1" : "0", // Send "1" for checked, "0" for unchecked
+        }),
+      });
+      const data = await response.json();
+      if (data.status === "success") {
+        // Update the local state with the new check status
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.id === userId ? { ...user, check: newCheckStatus } : user
+          )
+        );
+      } else {
+        console.error("Failed to update check status:", data.message);
+      }
+    } catch (error) {
+      console.error("Error updating check status:", error);
+    }
+  };
+
   // ✅ Prevents rendering on the server
   if (!isClient) return null;
 
@@ -70,7 +99,10 @@ export default function DashboardUserTable() {
             <div className="userName font-inter">{user.name}</div>
             <div className="userEmail font-inter">{user.email}</div>
             <div className="userMessage font-inter">{user.message}</div>
-            <div className={`userCheck font-inter ${user.check ? "checked" : "unchecked"}`}>
+            <div
+              className={`userCheck font-inter ${user.check ? "checked" : "unchecked"}`}
+              onClick={() => handleCheckUpdate(user.id, !user.check)} // Toggle check status on click
+            >
               {user.check ? "✔" : "✖"}
             </div>
           </div>
