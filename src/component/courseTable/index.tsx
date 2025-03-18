@@ -107,7 +107,7 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
           <div className="column no">{index + 1}</div>
           <div className="column image">
             <img
-              src={course.image ? `https://ybdigitalx.com/${course.image}` : ''}
+              src={`https://ybdigitalx.com/${course.image}`}
               alt="Course Image"
             />
           </div>
