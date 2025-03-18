@@ -150,8 +150,19 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
               value={editingCourse.price}
               onChange={(e) => setEditingCourse({ ...editingCourse, price: e.target.value })}
             />
+            
+            <div>
+              <label>Current Image:</label>
+              <span>{editingCourse.image}</span>
+            </div>
             <FileComponent label="New Image" accept="image/*" onFileChange={setImageFile} />
+            
+            <div>
+              <label>Current Video:</label>
+              <span>{editingCourse.videos}</span>
+            </div>
             <FileComponent label="New Video" accept="video/*" onFileChange={setVideoFile} />
+
             <div className="modalActions">
               <button className="saveBtn" onClick={handleSaveEdit}>Save</button>
               <button className="cancelBtn" onClick={() => setEditingCourse(null)}>Cancel</button>
