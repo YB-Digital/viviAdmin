@@ -119,12 +119,9 @@ const ServiceTable: React.FC<ServiceTableProps> = ({ services, refreshServices }
                 <div key={service.id} className="serviceRow">
                     <div className="column no">{index + 1}</div>
                     <div className="column image">
-                        <Image
-                            src={`https://ybdigitalx.com/vivi_backend/${service.image}`}
+                        <img
+                            src={`https://ybdigitalx.com/${service.image}`}
                             alt={service.name}
-                            width={50}
-                            height={50}
-                            priority
                         />
                     </div>
                     <div className="column serviceName" title={service.name}>
