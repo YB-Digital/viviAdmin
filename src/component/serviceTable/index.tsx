@@ -37,7 +37,7 @@ const ServiceTable: React.FC<ServiceTableProps> = ({ services, refreshServices }
         setSelectedService(service);
         setTitle(service.name);
         setContents(service.description);
-        setPreviewImage(`https://ybdigitalx.com/vivi_backend/${service.image}`);
+        setPreviewImage(`https://ybdigitalx.com/${service.image}`);
         setEditModalOpen(true);
     };
 
@@ -150,7 +150,7 @@ const ServiceTable: React.FC<ServiceTableProps> = ({ services, refreshServices }
                         <label>Description:</label>
                         <textarea value={contents} onChange={(e) => setContents(e.target.value)} />
                         <label>Current Image:</label>
-                        <img src={`https://ybdigitalx.com/${previewImage}`} alt="Preview" width={100} height={100} />
+                        <img src={previewImage} alt="Preview" width={100} height={100} />
                         <label>Upload New Image:</label>
                         <input type="file" accept="image/*" onChange={(e: ChangeEvent<HTMLInputElement>) => {
                             const files = e.target.files;
