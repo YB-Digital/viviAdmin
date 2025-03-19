@@ -14,7 +14,7 @@ import Link from 'next/link'
 export default function Header() {
   
   const handleLogout = () => {
-    localStorage.removeItem('userId');
+    localStorage.removeItem('adminId');
     window.location.reload();
   };
 

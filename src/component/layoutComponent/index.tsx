@@ -59,7 +59,7 @@ export default function LayoutComponent() {
 
     const handleLogout = async () => {
         if (typeof window !== 'undefined') {
-            localStorage.removeItem('userId');
+            localStorage.removeItem('adminId');
             setUserId(null); 
             window.location.reload();
         }
