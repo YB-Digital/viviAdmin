@@ -50,7 +50,10 @@ export default function Page() {
       } else {
         if (isClient) {
           // Set the adminId as a cookie with an expiry time (e.g., 1 day)
-          document.cookie = `adminId=${data.id}; path=/;`;
+          const expires = new Date();
+          expires.setTime(expires.getTime() + 24 * 60 * 60 * 1000); // Expires in 1 day
+          
+          document.cookie = `adminId=${data.id}; path=/; expires=${expires.toUTCString()}; secure; SameSite=Lax`;
           window.location.href = "/admin/dashboard"; 
         }
       }
