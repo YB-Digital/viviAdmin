@@ -2,7 +2,6 @@
 
 import { useState, useEffect, ChangeEvent } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import Image from "next/image"; // Import Next.js Image component
 
 import "./serviceTable.scss";
 
@@ -170,4 +169,4 @@ const ServiceTable: React.FC<ServiceTableProps> = ({ services, refreshServices }
     );
 };
 
-export default ServiceTable; // Ensure the component is properly exported
+export default ServiceTable; 

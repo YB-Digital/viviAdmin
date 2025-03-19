@@ -49,7 +49,8 @@ export default function Page() {
         setError(data.message);
       } else {
         if (isClient) {
-          window.localStorage.setItem("adminId", data.id); 
+          // Set the adminId as a cookie with an expiry time (e.g., 1 day)
+          document.cookie = `adminId=${data.id}; path=/; max-age=${60 * 60 * 24};`;
           window.location.href = "/admin/dashboard"; 
         }
       }
