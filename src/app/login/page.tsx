@@ -50,7 +50,7 @@ export default function Page() {
       } else {
         if (isClient) {
           // Set the adminId as a cookie with an expiry time (e.g., 1 day)
-          document.cookie = `adminId=${data.id}; path=/; max-age=${60 * 60 * 24};`;
+          document.cookie = `adminId=${data.id}; path=/;`;
           window.location.href = "/admin/dashboard"; 
         }
       }
