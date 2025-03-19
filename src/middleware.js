@@ -20,5 +20,5 @@ export function middleware(request) {
 
 // Apply middleware to routes starting with /admin or other restricted paths
 export const config = {
-  matcher: ['/:path*', '/', '/restricted', '/restricted/*'], // Adjust paths as needed
+  matcher: ['/:admin*', '/',], // Adjust paths as needed
 };
