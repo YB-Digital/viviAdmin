@@ -15,11 +15,6 @@ export default function Page() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(typeof window !== "undefined");
-  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,7 +22,7 @@ export default function Page() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(""); 
+    setError("");
     setLoading(true);
 
     try {
@@ -48,14 +43,12 @@ export default function Page() {
       if (data.status === "error") {
         setError(data.message);
       } else {
-        if (isClient) {
-          // Set the adminId as a cookie with an expiry time (e.g., 1 day)
-          const expires = new Date();
-          expires.setTime(expires.getTime() + 24 * 60 * 60 * 1000); // Expires in 1 day
-          
-          document.cookie = `adminId=${data.id}; path=/; expires=${expires.toUTCString()}; secure; SameSite=Lax`;
-          window.location.href = "/admin/dashboard"; 
-        }
+
+        const expires = new Date();
+        expires.setTime(expires.getTime() + 24 * 60 * 60 * 1000); // Expires in 1 day
+
+        document.cookie = `adminId=${data.id}; path=/; expires=${expires.toUTCString()}; secure; SameSite=Lax`;
+        window.location.href = "/admin/dashboard";
       }
     } catch (error) {
       setError("Network error. Please try again later.");
