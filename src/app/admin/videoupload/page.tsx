@@ -54,17 +54,17 @@ export default function Page() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       setIsClient(true); // ✅ Sadece tarayıcıda çalıştır
-      fetchCourses();
+      //fetchCourses();
       fetchCategories();
     }
   }, []);
 
-  const fetchCourses = async () => {
+  /*const fetchCourses = async () => {
     try {
       const response = await fetch("https://ybdigitalx.com/vivi_backend/course_table.php");
 
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        throw new Error(HTTP error! Status: ${response.status});
       }
 
       const data = await response.json();
@@ -73,7 +73,7 @@ export default function Page() {
       console.error("Error fetching courses:", error);
       setMessage("Failed to load courses.");
     }
-  };
+  };*/
 
   const fetchCategories = async () => {
     try {
@@ -146,7 +146,7 @@ export default function Page() {
           imageFile: null,
           videoFile: null,
         });
-        fetchCourses();
+        //fetchCourses();
       } else {
         setMessage(data.message || "Error while uploading video.");
       }
@@ -210,7 +210,6 @@ export default function Page() {
       </form>
       {message && <p className="responseMessage">{message}</p>}
 
-      <CourseTable courses={courses} refreshCourses={fetchCourses} />
     </div>
   );
 }
