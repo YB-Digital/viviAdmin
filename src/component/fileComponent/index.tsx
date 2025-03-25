@@ -8,38 +8,44 @@ import "./fileComponent.scss";
 interface FileComponentProps {
   label: string;
   accept: string;
-  onFileChange: (file: File | null) => void;
+  multiple?: boolean; // Allow multiple files to be selected
+  onFileChange: (files: File[]) => void; // Changed to handle an array of files
 }
 
-export default function FileComponent({ label, accept, onFileChange }: FileComponentProps) {
-  const [fileName, setFileName] = useState<string | null>(null);
-  const [filePreview, setFilePreview] = useState<string | null>(null);
+export default function FileComponent({ label, accept, multiple = false, onFileChange }: FileComponentProps) {
+  const [fileNames, setFileNames] = useState<string[]>([]); // Array to hold file names
+  const [filePreviews, setFilePreviews] = useState<string[]>([]); // Array to hold preview URLs
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
+    const files = e.target.files;
 
-    if (file) {
-      setFileName(file.name);
-      onFileChange(file);
+    if (files) {
+      const fileArray = Array.from(files); // Convert FileList to an array
+      const newFileNames = fileArray.map((file) => file.name); // Extract file names
+      const newFilePreviews = fileArray.map((file) => URL.createObjectURL(file)); // Generate file previews
 
-      const fileURL = URL.createObjectURL(file);
-      setFilePreview(fileURL);
-    } else {
-      setFileName(null);
-      setFilePreview(null);
+      setFileNames(newFileNames);
+      setFilePreviews(newFilePreviews);
+
+      // Pass the files to the parent component
+      onFileChange(fileArray); // Send array of files to parent
     }
   };
 
   return (
     <div className="fileComponent">
       <label className="fileDropArea">
-        <input type="file" accept={accept} onChange={handleFileChange} hidden />
-        {filePreview ? (
-          accept.startsWith("image") ? (
-            <img src={filePreview} alt="Preview" className="filePreview" />
-          ) : accept.startsWith("video") ? (
-            <video src={filePreview} controls className="filePreview" />
-          ) : null
+        <input
+          type="file"
+          accept={accept}
+          onChange={handleFileChange}
+          hidden
+          multiple={multiple} // Enable multiple file selection
+        />
+        {filePreviews.length > 0 ? (
+          filePreviews.map((filePreview, index) => (
+            <video key={index} src={filePreview} controls className="filePreview" />
+          ))
         ) : (
           <p className="placeholderText">
             Drag & Drop {label} Here
@@ -48,7 +54,13 @@ export default function FileComponent({ label, accept, onFileChange }: FileCompo
           </p>
         )}
       </label>
-      {fileName && <p className="fileName">{fileName}</p>}
+      {fileNames.length > 0 && (
+        <div className="fileNames">
+          {fileNames.map((fileName, index) => (
+            <p key={index} className="fileName">{fileName}</p>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

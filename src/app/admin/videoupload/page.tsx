@@ -3,8 +3,8 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import dynamic from "next/dynamic";
 import "./videoUpload.scss";
+import ImageComponent from "@/component/imageComponent";
 
-// ✅ Dinamik olarak bileşenleri import ediyoruz (SSR devre dışı)
 const InputComponent = dynamic(() => import("@/component/inputComponent"), { ssr: false });
 const TextAreaComponent = dynamic(() => import("@/component/textAreaComponent"), { ssr: false });
 const FileComponent = dynamic(() => import("@/component/fileComponent"), { ssr: false });
@@ -32,7 +32,7 @@ interface FormData {
   contents: string;
   category: string;
   imageFile: File | null;
-  videoFile: File | null;
+  videoFiles: File[]; // changed to array
 }
 
 export default function Page() {
@@ -42,49 +42,41 @@ export default function Page() {
     contents: "",
     category: "",
     imageFile: null,
-    videoFile: null,
+    videoFiles: [],
   });
 
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string | null>(null);
   const [courses, setCourses] = useState<Course[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [isClient, setIsClient] = useState<boolean>(false); // ✅ SSR önleme için
+  const [isClient, setIsClient] = useState<boolean>(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setIsClient(true); // ✅ Sadece tarayıcıda çalıştır
-      //fetchCourses();
+      setIsClient(true);
+      fetchCourses();
       fetchCategories();
     }
   }, []);
 
-  /*const fetchCourses = async () => {
+  const fetchCourses = async () => {
     try {
       const response = await fetch("https://ybdigitalx.com/vivi_backend/course_table.php");
-
-      if (!response.ok) {
-        throw new Error(HTTP error! Status: ${response.status});
-      }
-
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
       const data = await response.json();
-      setCourses(data);
+      setCourses(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching courses:", error);
       setMessage("Failed to load courses.");
     }
-  };*/
+  };
 
   const fetchCategories = async () => {
     try {
       const response = await fetch("https://ybdigitalx.com/vivi_backend/category_table.php");
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
       const data = await response.json();
-      setCategories(data);
+      setCategories(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching categories:", error);
       setMessage("Failed to load categories.");
@@ -93,22 +85,25 @@ export default function Page() {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-
-    if (name === "price" && !/^\d*$/.test(value)) {
-      return;
-    }
-
+    if (name === "price" && !/^\d*$/.test(value)) return;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const handleFileChange = (file: File | null, type: "imageFile" | "videoFile") => {
-    setFormData((prev) => ({
-      ...prev,
-      [type]: file,
-    }));
+  const handleFileChange = (file: File | File[] | null, type: "imageFile" | "videoFiles") => {
+    if (type === "videoFiles" && Array.isArray(file)) {
+      setFormData((prev) => ({
+        ...prev,
+        videoFiles: file,
+      }));
+    } else if (type === "imageFile" && !Array.isArray(file)) {
+      setFormData((prev) => ({
+        ...prev,
+        imageFile: file,
+      }));
+    }
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -117,16 +112,19 @@ export default function Page() {
     setMessage(null);
 
     const formDataToSend = new FormData();
-    formDataToSend.append("title", formData.title);
+    formDataToSend.append("courseName", formData.title);
     formDataToSend.append("price", formData.price);
-    formDataToSend.append("contents", formData.contents);
-    formDataToSend.append("category", formData.category);
+    formDataToSend.append("description", formData.contents);
+    formDataToSend.append("categoryId", formData.category);
 
     if (formData.imageFile) {
       formDataToSend.append("imageFile", formData.imageFile);
     }
-    if (formData.videoFile) {
-      formDataToSend.append("videoFile", formData.videoFile);
+
+    if (formData.videoFiles.length > 0) {
+      formData.videoFiles.forEach((file) => {
+        formDataToSend.append("videoFiles[]", file);
+      });
     }
 
     try {
@@ -137,18 +135,18 @@ export default function Page() {
 
       const data = await response.json();
       if (data.status === "success") {
-        setMessage("Video uploaded successfully!");
+        setMessage("Course and videos uploaded successfully!");
         setFormData({
           title: "",
           price: "",
           contents: "",
           category: "",
           imageFile: null,
-          videoFile: null,
+          videoFiles: [],
         });
-        //fetchCourses();
+        fetchCourses();
       } else {
-        setMessage(data.message || "Error while uploading video.");
+        setMessage(data.message || "Error while uploading course.");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -158,7 +156,7 @@ export default function Page() {
     }
   };
 
-  if (!isClient) return null; // ✅ Sunucu tarafında render edilmesini önler
+  if (!isClient) return null;
 
   return (
     <div className="videoUpload">
@@ -166,21 +164,15 @@ export default function Page() {
         <div>
           <div className="inputComponents">
             <div className="formGroup">
-              <label className="font-inter" htmlFor="title">
-                Title
-              </label>
+              <label className="font-inter" htmlFor="title">Title</label>
               <InputComponent name="title" value={formData.title} onChange={handleChange} />
             </div>
             <div className="formGroup">
-              <label className="font-inter" htmlFor="price">
-                Price
-              </label>
+              <label className="font-inter" htmlFor="price">Price</label>
               <InputComponent name="price" value={formData.price} onChange={handleChange} />
             </div>
             <div className="formGroup">
-              <label className="font-inter" htmlFor="category">
-                Category Name
-              </label>
+              <label className="font-inter" htmlFor="category">Category</label>
               <SelectComponent
                 name="category"
                 value={formData.category}
@@ -192,24 +184,31 @@ export default function Page() {
               />
             </div>
             <div className="formGroup">
-              <label className="font-inter" htmlFor="contents">
-                Contents
-              </label>
+              <label className="font-inter" htmlFor="contents">Description</label>
               <TextAreaComponent name="contents" value={formData.contents} onChange={handleChange} />
             </div>
           </div>
 
           <div className="files">
-            <FileComponent label="Video" accept="video/*" onFileChange={(file) => handleFileChange(file, "videoFile")} />
-            <FileComponent label="Image" accept="image/*" onFileChange={(file) => handleFileChange(file, "imageFile")} />
+            <FileComponent
+              label="Videos"
+              accept="video/*"
+              multiple={true}
+              onFileChange={(files: File[]) => handleFileChange(files, "videoFiles")}
+            />
+
+            <ImageComponent label="Image" accept="image/*" onFileChange={(file) => handleFileChange(file, "imageFile")} />
+
           </div>
         </div>
         <button type="submit" disabled={loading}>
           {loading ? "Uploading..." : "Save"}
         </button>
       </form>
+
       {message && <p className="responseMessage">{message}</p>}
 
+      <CourseTable courses={Array.isArray(courses) ? courses : []} refreshCourses={fetchCourses} />
     </div>
   );
 }

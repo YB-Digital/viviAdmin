@@ -23,9 +23,8 @@ export default function LayoutComponent() {
     // Ensure localStorage is accessed only in the client
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            const storedUserId = localStorage.getItem('adminId');
+            const storedUserId = localStorage.getItem('admin');
             setUserId(storedUserId || null);
-            console.log(storedUserId);
         }
     }, []);
 
