@@ -49,11 +49,9 @@ export default function Page() {
   const [message, setMessage] = useState<string | null>(null);
   const [courses, setCourses] = useState<Course[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [isClient, setIsClient] = useState<boolean>(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setIsClient(true);
       fetchCourses();
       fetchCategories();
     }
@@ -85,7 +83,6 @@ export default function Page() {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    if (name === "price" && !/^\d*$/.test(value)) return;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -98,7 +95,7 @@ export default function Page() {
         ...prev,
         videoFiles: file,
       }));
-    } else if (type === "imageFile" && !Array.isArray(file)) {
+    } else if (type === "imageFile" && file instanceof File) {
       setFormData((prev) => ({
         ...prev,
         imageFile: file,
@@ -156,8 +153,6 @@ export default function Page() {
     }
   };
 
-  if (!isClient) return null;
-
   return (
     <div className="videoUpload">
       <form onSubmit={handleSubmit}>
@@ -198,7 +193,6 @@ export default function Page() {
             />
 
             <ImageComponent label="Image" accept="image/*" onFileChange={(file) => handleFileChange(file, "imageFile")} />
-
           </div>
         </div>
         <button type="submit" disabled={loading}>
