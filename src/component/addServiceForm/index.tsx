@@ -6,6 +6,7 @@ import TextAreaComponent from "@/component/textAreaComponent";
 import FileComponent from "@/component/fileComponent";
 
 import "./addServiceForm.scss";
+import ImageComponent from "../imageComponent";
 
 interface Service {
   id: string;
@@ -128,7 +129,7 @@ const AddServiceForm: React.FC<AddServiceFormProps> = ({ selectedService, onServ
 
         <div className="imageUpload">
           {formData.imageUrl && <img src={formData.imageUrl} alt="Service" className="previewImage" />}
-          <FileComponent label="Drag & Drop or Upload Photo" accept="image/*" onFileChange={handleFileChange} />
+          <ImageComponent label="Drag & Drop or Upload Photo" accept="image/*" onFileChange={handleFileChange} />
         </div>
       </form>
       {message && <p className="responseMessage">{message}</p>}

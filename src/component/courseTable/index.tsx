@@ -5,6 +5,8 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import FileComponent from "@/component/fileComponent";
 
 import "./courseTable.scss";
+import ImageComponent from "../imageComponent";
+import VideoComponent from "../videoComponent";
 
 interface Course {
   id: string;
@@ -155,13 +157,13 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
               <label>Current Image:</label>
               <span>{editingCourse.image}</span>
             </div>
-            <FileComponent label="New Image" accept="image/*" onFileChange={setImageFile} />
+            <ImageComponent label="New Image" accept="image/*" onFileChange={setImageFile} />
             
             <div>
               <label>Current Video:</label>
               <span>{editingCourse.videos}</span>
             </div>
-            <FileComponent label="New Video" accept="video/*" onFileChange={setVideoFile} />
+            <VideoComponent label="New Video" accept="video/*" onFileChange={setVideoFile} />
 
             <div className="modalActions">
               <button className="saveBtn" onClick={handleSaveEdit}>Save</button>
