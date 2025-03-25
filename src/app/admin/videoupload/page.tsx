@@ -32,7 +32,7 @@ interface FormData {
   contents: string;
   category: string;
   imageFile: File | null;
-  videoFiles: File[]; // changed to array
+  videoFiles: File[];
 }
 
 export default function Page() {
