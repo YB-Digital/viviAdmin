@@ -2,10 +2,10 @@
 
 import React from "react";
 import InputComponent from "@/component/inputComponent";
-import FileComponent from "@/component/fileComponent";
 
 //style
 import "./sendCertificateForm.scss";
+import VideoComponent from "../videoComponent";
 
 interface SendCertificateFormProps {
   formData: {
@@ -39,7 +39,7 @@ export default function SendCertificateForm({ formData, setFormData, handleFormS
           <InputComponent name="email" value={formData.email} onChange={handleChange} required />
         </div>
         <div className="fileUpload">
-          <FileComponent label="Drag & Drop or Click to Upload" accept="application/pdf" onFileChange={handleFileChange} />
+          <VideoComponent label="Drag & Drop or Click to Upload" accept="application/pdf" onFileChange={handleFileChange} />
         </div>
         <button type="submit" disabled={loading} className="sendButton">
           {loading ? "Sending..." : "Send"}
