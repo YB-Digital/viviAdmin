@@ -58,7 +58,7 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
       if (data.status === "success") {
         refreshCourses();
       } else {
-        setError("Failed to delete the course.");
+        setError(data.message || "Failed to delete the course.");
       }
     } catch (err) {
       console.error("Error deleting course:", err);
@@ -68,49 +68,45 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
 
   const handleSaveEdit = async () => {
     if (!editingCourse) return;
-  
+
     const formData = new FormData();
     formData.append("id", editingCourse.id);
     formData.append("course_name", editingCourse.course_name);
     formData.append("description", editingCourse.description);
     formData.append("price", editingCourse.price);
-  
+
     if (imageFile) {
       formData.append("image", imageFile);
     }
-  
+
     Object.entries(videoFiles).forEach(([order, file]) => {
       if (file) {
-        formData.append(`video_order[${order}]`, order);
-        formData.append(`video_files[${order}]`, file);
+        formData.append("video_order[]", order);
+        formData.append("video_files[]", file);
       }
     });
-  
-    console.log("🧾 FormData içeriği:");
-    for (let pair of formData.entries()) {
-      console.log(`${pair[0]}:`, pair[1]);
-    }
-  
+
     try {
       const response = await fetch("https://ybdigitalx.com/vivi_backend/update_course.php", {
         method: "POST",
         body: formData,
       });
-  
+
       const data = await response.json();
+
       if (data.status === "success") {
         refreshCourses();
         setEditingCourse(null);
         setVideoFiles({});
         setImageFile(null);
       } else {
-        setError("Failed to update the course.");
+        setError(data.message || "Failed to update course.");
       }
     } catch (err) {
       console.error("Error updating course:", err);
       setError("An error occurred while updating the course.");
     }
-  };  
+  };
 
   const handleVideoChange = (order: number, file: File | null) => {
     setVideoFiles((prev) => ({
