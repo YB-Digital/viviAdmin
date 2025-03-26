@@ -45,44 +45,44 @@ export default function FileComponent({ label, accept, multiple = false, onFileC
   };
 
   return (
-<div>
-<div className="fileComponent">
-      <label className="fileDropArea">
-        <input
-          type="file"
-          accept={accept}
-          onChange={(e) => handleFileChange(e, selectedVideoIndex !== null ? selectedVideoIndex : 0)}
-          hidden
-          multiple={multiple} // Enable multiple file selection
-        />
-        {fileInputs.length > 0 && (
-          <div>
-            {fileInputs.map((files, index) => (
-              <div key={index}>
-                <p>Selected Files for Video {index + 1}</p>
-                {files.map((file, fileIndex) => (
-                  <div key={fileIndex}>
-                    {/* Display video name with the desired format and make it clickable */}
-                    <p onClick={() => handleVideoClick(index)}>{index + 1}) {file.name}</p>
-                  </div>
-                ))}
-                {/* Add new input for more videos */}
-                <button type="button" onClick={addFileInput}>Add another video</button>
-              </div>
-            ))}
-          </div>
-        )}
-        {!fileInputs.length && (
-          <p className="placeholderText">
-            Drag & Drop {label} Here
-            <br /> or <br />
-            Click to Upload
-          </p>
-        )}
-      </label>
-      <p>1.video</p>
-      <p>2.video</p>
+    <div className="file">
+      <div className="fileComponent">
+        <label className="fileDropArea">
+          <input
+            type="file"
+            accept={accept}
+            onChange={(e) => handleFileChange(e, selectedVideoIndex !== null ? selectedVideoIndex : 0)}
+            hidden
+            multiple={multiple} // Enable multiple file selection
+          />
+          {fileInputs.length > 0 && (
+            <div>
+              {fileInputs.map((files, index) => (
+                <div key={index}>
+                  <p>Selected Files for Video {index + 1}</p>
+                  {files.map((file, fileIndex) => (
+                    <div key={fileIndex}>
+                      {/* Display video name with the desired format and make it clickable */}
+                      <p onClick={() => handleVideoClick(index)}>{index + 1}) {file.name}</p>
+                    </div>
+                  ))}
+                  {/* Add new input for more videos */}
+                  <button type="button" onClick={addFileInput}>Add another video</button>
+                </div>
+              ))}
+            </div>
+          )}
+          {!fileInputs.length && (
+            <p className="placeholderText">
+              Drag & Drop {label} Here
+              <br /> or <br />
+              Click to Upload
+            </p>
+          )}
+        </label>
+        <p>1.video</p>
+        <p>2.video</p>
+      </div>
     </div>
-</div>
   );
 }
