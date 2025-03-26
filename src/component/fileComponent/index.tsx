@@ -13,23 +13,29 @@ interface FileComponentProps {
 }
 
 export default function FileComponent({ label, accept, multiple = false, onFileChange }: FileComponentProps) {
-  const [fileNames, setFileNames] = useState<string[]>([]); // Array to hold file names
-  const [filePreviews, setFilePreviews] = useState<string[]>([]); // Array to hold preview URLs
+  const [fileInputs, setFileInputs] = useState<File[][]>([]); // Array to store multiple file arrays
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle the file input change event
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const files = e.target.files;
 
     if (files) {
       const fileArray = Array.from(files); // Convert FileList to an array
-      const newFileNames = fileArray.map((file) => file.name); // Extract file names
-      const newFilePreviews = fileArray.map((file) => URL.createObjectURL(file)); // Generate file previews
 
-      setFileNames((prev) => [...prev, ...newFileNames]); // Append new file names to the existing list
-      setFilePreviews((prev) => [...prev, ...newFilePreviews]); // Append new previews to the existing list
+      // Update the corresponding file input index with the new files
+      const updatedFileInputs = [...fileInputs];
+      updatedFileInputs[index] = fileArray;
 
-      // Pass the files to the parent component
-      onFileChange(fileArray); // Send array of files to parent
+      setFileInputs(updatedFileInputs);
+
+      // Pass the updated list of files to the parent component
+      onFileChange(updatedFileInputs.flat()); // Flatten the file arrays and pass to parent
     }
+  };
+
+  // Add a new file input box when a file is selected
+  const addFileInput = () => {
+    setFileInputs((prev) => [...prev, []]); // Add a new empty array for new file input
   };
 
   return (
@@ -38,15 +44,32 @@ export default function FileComponent({ label, accept, multiple = false, onFileC
         <input
           type="file"
           accept={accept}
-          onChange={handleFileChange}
+          onChange={(e) => handleFileChange(e, 0)}
           hidden
           multiple={multiple} // Enable multiple file selection
         />
-        {filePreviews.length > 0 ? (
-          filePreviews.map((filePreview, index) => (
-            <video key={index} src={filePreview} controls className="filePreview" />
-          ))
-        ) : (
+        {fileInputs.length > 0 && (
+          <div>
+            {fileInputs.map((files, index) => (
+              <div key={index}>
+                <p>Selected Files for Video {index + 1}</p>
+                {files.map((file, fileIndex) => (
+                  <p key={fileIndex}>{file.name}</p>
+                ))}
+                {/* Add new input for more videos */}
+                <button type="button" onClick={addFileInput}>Add another video</button>
+                <input
+                  type="file"
+                  accept={accept}
+                  onChange={(e) => handleFileChange(e, index + 1)}
+                  hidden
+                  multiple={multiple}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+        {!fileInputs.length && (
           <p className="placeholderText">
             Drag & Drop {label} Here
             <br /> or <br />
@@ -54,13 +77,6 @@ export default function FileComponent({ label, accept, multiple = false, onFileC
           </p>
         )}
       </label>
-      {fileNames.length > 0 && (
-        <div className="fileNames">
-          {fileNames.map((fileName, index) => (
-            <p key={index} className="fileName">{fileName}</p>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
