@@ -223,7 +223,7 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
                             target="_blank"
                             rel="noreferrer"
                           >
-                            Video {order} – {existingVideo.video_path.split("/").pop()}
+                            Video {order}
                           </a>
                         </p>
                       ) : (
@@ -238,13 +238,6 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
                   );
                 })}
               </ul>
-              <button
-                type="button"
-                className="addVideoBtn"
-                onClick={() => setVideoSlotCount((prev) => prev + 1)}
-              >
-                + Add Video
-              </button>
             </div>
 
             <div className="modalActions">
