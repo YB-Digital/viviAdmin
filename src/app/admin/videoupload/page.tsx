@@ -16,14 +16,19 @@ interface Category {
   name: string;
 }
 
+interface Video {
+  video_order: number;
+  video_path: string;
+}
+
 interface Course {
   id: string;
   course_name: string;
   description: string;
   price: string;
   image: string;
-  videos: string;
-  category: string;
+  videos: Video[];
+  category_name: string;
 }
 
 interface FormData {
@@ -175,7 +180,8 @@ export default function Page() {
                 options={categories.map((cat) => ({
                   value: cat.id.toString(),
                   label: cat.name,
-                }))} />
+                }))}
+              />
             </div>
             <div className="formGroup">
               <label className="font-inter" htmlFor="contents">Description</label>
@@ -191,7 +197,11 @@ export default function Page() {
               onFileChange={(files: File[]) => handleFileChange(files, "videoFiles")}
             />
 
-            <ImageComponent label="Image" accept="image/*" onFileChange={(file) => handleFileChange(file, "imageFile")} />
+            <ImageComponent
+              label="Image"
+              accept="image/*"
+              onFileChange={(file) => handleFileChange(file, "imageFile")}
+            />
           </div>
         </div>
         <button type="submit" disabled={loading}>
