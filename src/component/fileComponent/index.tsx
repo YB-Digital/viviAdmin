@@ -24,10 +24,11 @@ export default function FileComponent({ label, accept, multiple = false, onFileC
       const newFileNames = fileArray.map((file) => file.name); // Extract file names
       const newFilePreviews = fileArray.map((file) => URL.createObjectURL(file)); // Generate file previews
 
-      setFileNames((prev) => [...prev, ...newFileNames]); // Add new file names to the list
-      setFilePreviews((prev) => [...prev, ...newFilePreviews]); // Add new previews to the list
+      setFileNames((prev) => [...prev, ...newFileNames]); // Append new file names to the existing list
+      setFilePreviews((prev) => [...prev, ...newFilePreviews]); // Append new previews to the existing list
 
       // Pass the files to the parent component
+      onFileChange(fileArray); // Send array of files to parent
     }
   };
 
