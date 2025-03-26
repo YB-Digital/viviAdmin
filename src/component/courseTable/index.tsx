@@ -126,7 +126,6 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
         <div className="column description">Description</div>
         <div className="column price">Price</div>
         <div className="column category">Category</div>
-        <div className="column videos">Videos</div>
         <div className="column actions">Actions</div>
       </div>
 
@@ -142,7 +141,7 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
           <div className="column description" title={course.description}>
             {truncateText(course.description, 20)}
           </div>
-          <div className="column price">${course.price}</div>
+          <div className="column price">€{course.price}</div>
           <div className="column category">{course.category_name}</div>
           <div className="column actions">
             <button className="editBtn" onClick={() => setEditingCourse(course)} title="Edit">
