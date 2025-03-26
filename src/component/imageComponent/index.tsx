@@ -8,7 +8,7 @@ import "./fileComponent.scss";
 interface FileComponentProps {
   label: string;
   accept: string;
-  onFileChange: (files: File[]) => void; // Pass file as an array
+  onFileChange: (file: File | null) => void;
 }
 
 export default function ImageComponent({ label, accept, onFileChange }: FileComponentProps) {
@@ -16,11 +16,11 @@ export default function ImageComponent({ label, accept, onFileChange }: FileComp
   const [filePreview, setFilePreview] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null; // Only one file for ImageComponent
+    const file = e.target.files?.[0] || null;
 
     if (file) {
       setFileName(file.name);
-      onFileChange([file]); // Pass the file as an array to the parent
+      onFileChange(file);
 
       const fileURL = URL.createObjectURL(file);
       setFilePreview(fileURL);
@@ -35,7 +35,11 @@ export default function ImageComponent({ label, accept, onFileChange }: FileComp
       <label className="fileDropArea">
         <input type="file" accept={accept} onChange={handleFileChange} hidden />
         {filePreview ? (
-          <img src={filePreview} alt="Preview" className="filePreview" />
+          accept.startsWith("image") ? (
+            <img src={filePreview} alt="Preview" className="filePreview" />
+          ) : accept.startsWith("video") ? (
+            <video src={filePreview} controls className="filePreview" />
+          ) : null
         ) : (
           <p className="placeholderText">
             Drag & Drop {label} Here
