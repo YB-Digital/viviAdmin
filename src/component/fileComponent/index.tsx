@@ -61,7 +61,7 @@ export default function FileComponent({
                 onChange={(e) => handleFileChange(e, index)}
                 hidden
                 multiple={multiple} // Enable multiple file selection
-                ref={(el) => (fileInputRefs.current[index] = el)} // Attach ref to each input
+                ref={(el: any) => (fileInputRefs.current[index] = el)} // Attach ref to each input
               />
               {fileInputs[index].length > 0 ? (
                 <p onClick={() => handleVideoClick(index)}>{index + 1}) {fileInputs[index][0].name}</p>
