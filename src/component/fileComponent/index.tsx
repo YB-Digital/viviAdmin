@@ -1,9 +1,7 @@
-"use client";
-
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 //style
-import "./fileComponent.scss";  // You can optionally keep your custom styling here or remove it completely when using Tailwind.
+import "./fileComponent.scss";
 
 interface FileComponentProps {
   label: string;
@@ -12,9 +10,14 @@ interface FileComponentProps {
   onFileChange: (files: File[]) => void; // Changed to handle an array of files
 }
 
-export default function FileComponent({ label, accept, multiple = false, onFileChange }: FileComponentProps) {
+export default function FileComponent({
+  label,
+  accept,
+  multiple = false,
+  onFileChange,
+}: FileComponentProps) {
   const [fileInputs, setFileInputs] = useState<File[][]>([]); // Array to store multiple file arrays
-  const [selectedVideoIndex, setSelectedVideoIndex] = useState<number | null>(null); // Track selected video index
+  const fileInputRefs = useRef<(HTMLInputElement | null)[]>([]); // Refs to each input
 
   // Handle the file input change event
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
@@ -41,53 +44,43 @@ export default function FileComponent({ label, accept, multiple = false, onFileC
 
   // Handle video name click to trigger file input
   const handleVideoClick = (index: number) => {
-    setSelectedVideoIndex(index); // Update the index of the clicked video
+    // Trigger file input selection for the clicked index
+    fileInputRefs.current[index]?.click(); // Manually trigger the file input
   };
 
   return (
-    <div className="flex flex-col space-y-4 items-center">
-      <label className="fileDropArea bg-gray-100 p-6 rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-500 cursor-pointer transition-colors">
-        <input
-          type="file"
-          accept={accept}
-          onChange={(e) => handleFileChange(e, selectedVideoIndex !== null ? selectedVideoIndex : 0)}
-          hidden
-          multiple={multiple} // Enable multiple file selection
-        />
-        {fileInputs.length > 0 ? (
-          <div className="space-y-2">
-            {fileInputs.map((files, index) => (
-              <div key={index} className="flex flex-col items-center">
-                {/* Display the video names below the input box */}
-                <p
-                  onClick={() => handleVideoClick(index)}
-                  className="text-center text-sm text-gray-700 cursor-pointer hover:text-blue-500"
-                >
-                  {index + 1}) {files.length > 0 ? files[0].name : "No file selected"}
-                </p>
-                <button
-                  type="button"
-                  onClick={addFileInput}
-                  className="text-blue-500 text-sm hover:text-blue-700 mt-2"
-                >
-                  Add another video
-                </button>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-center text-gray-500 text-sm">
-            Drag & Drop {label} Here
-            <br /> or <br />
-            Click to Upload
-          </p>
-        )}
-      </label>
+    <div>
+      <div className="fileComponent">
+        <label className="fileDropArea">
+          {/* Render each input field for files */}
+          {fileInputs.map((_, index) => (
+            <div key={index}>
+              <input
+                type="file"
+                accept={accept}
+                onChange={(e) => handleFileChange(e, index)}
+                hidden
+                multiple={multiple} // Enable multiple file selection
+                ref={(el) => (fileInputRefs.current[index] = el)} // Attach ref to each input
+              />
+              {fileInputs[index].length > 0 ? (
+                <p onClick={() => handleVideoClick(index)}>{index + 1}) {fileInputs[index][0].name}</p>
+              ) : (
+                <p onClick={() => handleVideoClick(index)}>{index + 1}) No video selected</p>
+              )}
+            </div>
+          ))}
+          <button type="button" onClick={addFileInput}>Add another video</button>
+        </label>
+      </div>
 
       {/* Display all selected video names below the boxes */}
-      <div className="space-y-2 mt-4">
+      <div className="videoNames">
         {fileInputs.map((files, index) => (
-          <p key={index} className="text-sm text-gray-700 cursor-pointer hover:text-blue-500" onClick={() => handleVideoClick(index)}>
+          <p
+            key={index}
+            onClick={() => handleVideoClick(index)} // Trigger the file input for the clicked index
+          >
             {index + 1}) {files[0]?.name || "No video selected"}
           </p>
         ))}
