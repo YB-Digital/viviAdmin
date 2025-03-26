@@ -8,7 +8,7 @@ import "./fileComponent.scss";
 interface FileComponentProps {
   label: string;
   accept: string;
-  onFileChange: (file: File | null) => void; // Single file change handler
+  onFileChange: (files: File[]) => void; // Pass file as an array
 }
 
 export default function ImageComponent({ label, accept, onFileChange }: FileComponentProps) {
@@ -20,7 +20,7 @@ export default function ImageComponent({ label, accept, onFileChange }: FileComp
 
     if (file) {
       setFileName(file.name);
-      onFileChange(file); // Call the parent handler with a single file
+      onFileChange([file]); // Pass the file as an array to the parent
 
       const fileURL = URL.createObjectURL(file);
       setFilePreview(fileURL);

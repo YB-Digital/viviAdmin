@@ -89,16 +89,16 @@ export default function Page() {
     }));
   };
 
-  const handleFileChange = (file: File | File[] | null, type: "imageFile" | "videoFiles") => {
-    if (type === "videoFiles" && Array.isArray(file)) {
+  const handleFileChange = (files: File[], type: "imageFile" | "videoFiles") => {
+    if (type === "videoFiles") {
       setFormData((prev) => ({
         ...prev,
-        videoFiles: file,
+        videoFiles: [...prev.videoFiles, ...files], // Add new files to the existing list
       }));
-    } else if (type === "imageFile" && file instanceof File) {
+    } else if (type === "imageFile" && files.length > 0) {
       setFormData((prev) => ({
         ...prev,
-        imageFile: file,
+        imageFile: files[0], // Assuming you only select one image
       }));
     }
   };
@@ -114,13 +114,15 @@ export default function Page() {
     formDataToSend.append("description", formData.contents);
     formDataToSend.append("categoryId", formData.category);
 
+    // Append image file if it exists
     if (formData.imageFile) {
       formDataToSend.append("imageFile", formData.imageFile);
     }
 
+    // Append all video files
     if (formData.videoFiles.length > 0) {
       formData.videoFiles.forEach((file) => {
-        formDataToSend.append("videoFiles[]", file);
+        formDataToSend.append("videoFiles[]", file); // Append each file
       });
     }
 
