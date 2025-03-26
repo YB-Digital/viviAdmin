@@ -86,6 +86,11 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
       }
     });
 
+    console.log("🧾 FormData içeriği:");
+    for (let pair of formData.entries()) {
+      console.log(`${pair[0]}:`, pair[1]);
+    }
+
     try {
       const response = await fetch("https://ybdigitalx.com/vivi_backend/update_course.php", {
         method: "POST",
