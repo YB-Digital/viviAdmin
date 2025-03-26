@@ -198,33 +198,38 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
             <ImageComponent label="New Image" accept="image/*" onFileChange={setImageFile} />
 
             <div>
-              <label>Current Video(s):</label>
+              <label>Video(s):</label>
               <ul>
-                {editingCourse.videos.map((video, idx) => (
-                  <li key={idx}>
-                    <p>
-                      <a
-                        href={`https://ybdigitalx.com${video.video_path}`}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Video {video.video_order}
-                      </a>
-                    </p>
-                    <VideoComponent
-                      label={`Replace Video ${video.video_order}`}
-                      accept="video/*"
-                      onFileChange={(file) => handleVideoChange(video.video_order, file)}
-                    />
-                  </li>
-                ))}
+                {[1, 2, 3].map((order) => {
+                  const existingVideo = editingCourse.videos.find(v => v.video_order === order);
+                  return (
+                    <li key={order}>
+                      {existingVideo ? (
+                        <p>
+                          <a
+                            href={`https://ybdigitalx.com${existingVideo.video_path}`}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            Video {order}
+                          </a>
+                        </p>
+                      ) : (
+                        <p>No Video {order}</p>
+                      )}
+                      <VideoComponent
+                        label={existingVideo ? `Replace Video ${order}` : `Upload Video ${order}`}
+                        accept="video/*"
+                        onFileChange={(file) => handleVideoChange(order, file)}
+                      />
+                    </li>
+                  );
+                })}
               </ul>
             </div>
 
             <div className="modalActions">
-              <button className="saveBtn" onClick={handleSaveEdit}>
-                Save
-              </button>
+              <button className="saveBtn" onClick={handleSaveEdit}>Save</button>
               <button className="cancelBtn" onClick={() => {
                 setEditingCourse(null);
                 setVideoFiles({});
