@@ -144,25 +144,6 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
           </div>
           <div className="column price">${course.price}</div>
           <div className="column category">{course.category_name}</div>
-          <div className="column videos">
-            {course.videos.length > 0 ? (
-              <ul>
-                {course.videos.map((video, i) => (
-                  <li key={i}>
-                    <a
-                      href={`https://ybdigitalx.com${video.video_path}`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Video {video.video_order} – {video.video_path.split("/").pop()}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <span>No videos</span>
-            )}
-          </div>
           <div className="column actions">
             <button className="editBtn" onClick={() => setEditingCourse(course)} title="Edit">
               <FaEdit />
@@ -223,7 +204,7 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
                             target="_blank"
                             rel="noreferrer"
                           >
-                            Video {order}
+                            Video {order} – {existingVideo.video_path.split("/").pop()}
                           </a>
                         </p>
                       ) : (
