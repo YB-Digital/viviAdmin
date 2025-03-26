@@ -54,7 +54,10 @@ export default function FileComponent({ label, accept, multiple = false, onFileC
               <div key={index}>
                 <p>Selected Files for Video {index + 1}</p>
                 {files.map((file, fileIndex) => (
-                  <p key={fileIndex}>{file.name}</p>
+                  <div key={fileIndex}>
+                    {/* Display video name with the desired format */}
+                    <p>{index + 1}) {file.name}</p>
+                  </div>
                 ))}
                 {/* Add new input for more videos */}
                 <button type="button" onClick={addFileInput}>Add another video</button>
