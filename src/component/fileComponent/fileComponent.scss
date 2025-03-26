@@ -9,7 +9,7 @@
   text-align: center;
   cursor: pointer;
   transition: 0.3s;
-  overflow: hidden; // İçerik taşmasını önler
+  overflow: hidden; // Prevents overflow of content
   position: relative;
 
   &:hover {
@@ -53,5 +53,20 @@
     font-size: 14px;
     color: #888;
     text-align: center;
+  }
+
+  // Button Styling for adding more files
+  button {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  button:hover {
+    background-color: #45a049;
   }
 }
