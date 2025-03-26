@@ -14,6 +14,7 @@ interface FileComponentProps {
 
 export default function FileComponent({ label, accept, multiple = false, onFileChange }: FileComponentProps) {
   const [fileInputs, setFileInputs] = useState<File[][]>([]); // Array to store multiple file arrays
+  const [selectedVideoIndex, setSelectedVideoIndex] = useState<number | null>(null); // Track selected video index
 
   // Handle the file input change event
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
@@ -38,13 +39,19 @@ export default function FileComponent({ label, accept, multiple = false, onFileC
     setFileInputs((prev) => [...prev, []]); // Add a new empty array for new file input
   };
 
+  // Handle video name click to trigger file input
+  const handleVideoClick = (index: number) => {
+    setSelectedVideoIndex(index);
+  };
+
   return (
-    <div className="fileComponent">
+<div>
+<div className="fileComponent">
       <label className="fileDropArea">
         <input
           type="file"
           accept={accept}
-          onChange={(e) => handleFileChange(e, fileInputs.length - 1)} // Ensure it updates the last index
+          onChange={(e) => handleFileChange(e, selectedVideoIndex !== null ? selectedVideoIndex : 0)}
           hidden
           multiple={multiple} // Enable multiple file selection
         />
@@ -52,9 +59,13 @@ export default function FileComponent({ label, accept, multiple = false, onFileC
           <div>
             {fileInputs.map((files, index) => (
               <div key={index}>
-                {/* Display the video names with sequential numbering */}
-                <p>{index + 1}) {files.map((file, fileIndex) => file.name).join(", ")}</p>
-                
+                <p>Selected Files for Video {index + 1}</p>
+                {files.map((file, fileIndex) => (
+                  <div key={fileIndex}>
+                    {/* Display video name with the desired format and make it clickable */}
+                    <p onClick={() => handleVideoClick(index)}>{index + 1}) {file.name}</p>
+                  </div>
+                ))}
                 {/* Add new input for more videos */}
                 <button type="button" onClick={addFileInput}>Add another video</button>
               </div>
@@ -69,13 +80,9 @@ export default function FileComponent({ label, accept, multiple = false, onFileC
           </p>
         )}
       </label>
-
-      {/* List of all selected videos */}
-      <div className="videoNames">
-        {fileInputs.map((files, index) => (
-          <p key={index}>{index + 1}) {files.map((file) => file.name).join(", ")}</p>
-        ))}
-      </div>
+      <p>1.video</p>
+      <p>2.video</p>
     </div>
+</div>
   );
 }
