@@ -14,6 +14,7 @@ interface FileComponentProps {
 
 export default function FileComponent({ label, accept, multiple = false, onFileChange }: FileComponentProps) {
   const [fileInputs, setFileInputs] = useState<File[][]>([]); // Array to store multiple file arrays
+  const [selectedVideoIndex, setSelectedVideoIndex] = useState<number | null>(null); // Track selected video index
 
   // Handle the file input change event
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
@@ -38,13 +39,18 @@ export default function FileComponent({ label, accept, multiple = false, onFileC
     setFileInputs((prev) => [...prev, []]); // Add a new empty array for new file input
   };
 
+  // Handle video name click to trigger file input
+  const handleVideoClick = (index: number) => {
+    setSelectedVideoIndex(index);
+  };
+
   return (
     <div className="fileComponent">
       <label className="fileDropArea">
         <input
           type="file"
           accept={accept}
-          onChange={(e) => handleFileChange(e, 0)}
+          onChange={(e) => handleFileChange(e, selectedVideoIndex !== null ? selectedVideoIndex : 0)}
           hidden
           multiple={multiple} // Enable multiple file selection
         />
@@ -54,17 +60,13 @@ export default function FileComponent({ label, accept, multiple = false, onFileC
               <div key={index}>
                 <p>Selected Files for Video {index + 1}</p>
                 {files.map((file, fileIndex) => (
-                  <p key={fileIndex}>{file.name}</p>
+                  <div key={fileIndex}>
+                    {/* Display video name with the desired format and make it clickable */}
+                    <p onClick={() => handleVideoClick(index)}>{index + 1}) {file.name}</p>
+                  </div>
                 ))}
                 {/* Add new input for more videos */}
                 <button type="button" onClick={addFileInput}>Add another video</button>
-                <input
-                  type="file"
-                  accept={accept}
-                  onChange={(e) => handleFileChange(e, index + 1)}
-                  hidden
-                  multiple={multiple}
-                />
               </div>
             ))}
           </div>
