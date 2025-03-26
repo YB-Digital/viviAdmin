@@ -93,14 +93,13 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
       });
 
       const data = await response.json();
-      console.log(data);
       if (data.status === "success") {
         refreshCourses();
         setEditingCourse(null);
         setVideoFiles({});
         setImageFile(null);
       } else {
-        setError(data.message || "Update failed.");
+        setError("Failed to update the course.");
       }
     } catch (err) {
       console.error("Error updating course:", err);
