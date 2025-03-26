@@ -149,8 +149,12 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
               <ul>
                 {course.videos.map((video, i) => (
                   <li key={i}>
-                    <a href={`https://ybdigitalx.com${video.video_path}`} target="_blank" rel="noreferrer">
-                      Video {video.video_order}
+                    <a
+                      href={`https://ybdigitalx.com${video.video_path}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Video {video.video_order} – {video.video_path.split("/").pop()}
                     </a>
                   </li>
                 ))}
@@ -219,7 +223,7 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
                             target="_blank"
                             rel="noreferrer"
                           >
-                            Video {order}
+                            Video {order} – {existingVideo.video_path.split("/").pop()}
                           </a>
                         </p>
                       ) : (
@@ -245,11 +249,14 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
 
             <div className="modalActions">
               <button className="saveBtn" onClick={handleSaveEdit}>Save</button>
-              <button className="cancelBtn" onClick={() => {
-                setEditingCourse(null);
-                setVideoFiles({});
-                setImageFile(null);
-              }}>
+              <button
+                className="cancelBtn"
+                onClick={() => {
+                  setEditingCourse(null);
+                  setVideoFiles({});
+                  setImageFile(null);
+                }}
+              >
                 Cancel
               </button>
             </div>
