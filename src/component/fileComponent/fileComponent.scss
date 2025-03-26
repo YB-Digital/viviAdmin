@@ -1,35 +1,57 @@
 .fileComponent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+  height: 150px;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+  overflow: hidden; // İçerik taşmasını önler
+  position: relative;
+
+  &:hover {
+    border-color: #007bff;
+  }
+
   .fileDropArea {
-    margin-bottom: 10px;
-    padding: 20px;
-    border: 2px dashed #ccc;
-    border-radius: 8px;
-    text-align: center;
-    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: #666;
+    position: relative;
+  }
+
+  .filePreview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
   }
 
   .fileName {
-    margin-top: 5px;
-    font-size: 14px;
-    color: #333;
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-size: 12px;
+    padding: 3px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
   }
 
   .placeholderText {
     font-size: 14px;
     color: #888;
-  }
-
-  button {
-    margin-top: 10px;
-    padding: 5px 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-
-  button:hover {
-    background-color: #45a049;
+    text-align: center;
   }
 }

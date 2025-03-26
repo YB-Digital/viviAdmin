@@ -40,36 +40,43 @@ export default function FileComponent({ label, accept, multiple = false, onFileC
 
   return (
     <div className="fileComponent">
-      {fileInputs.map((files, index) => (
-        <div key={index}>
-          <label className="fileDropArea">
-            <input
-              type="file"
-              accept={accept}
-              onChange={(e) => handleFileChange(e, index)} // Ensure correct index
-              hidden
-              multiple={multiple} // Enable multiple file selection
-            />
-            {files.length > 0 ? (
-              // Display the video names
-              files.map((file, fileIndex) => (
-                <div key={fileIndex}>
-                  <p>{index + 1}) {file.name}</p>
-                </div>
-              ))
-            ) : (
-              <p className="placeholderText">
-                Drag & Drop {label} Here
-                <br /> or <br />
-                Click to Upload
-              </p>
-            )}
-          </label>
-
-          {/* Add new input for more videos */}
-          <button type="button" onClick={addFileInput}>Add another video</button>
-        </div>
-      ))}
+      <label className="fileDropArea">
+        <input
+          type="file"
+          accept={accept}
+          onChange={(e) => handleFileChange(e, 0)}
+          hidden
+          multiple={multiple} // Enable multiple file selection
+        />
+        {fileInputs.length > 0 && (
+          <div>
+            {fileInputs.map((files, index) => (
+              <div key={index}>
+                <p>Selected Files for Video {index + 1}</p>
+                {files.map((file, fileIndex) => (
+                  <p key={fileIndex}>{file.name}</p>
+                ))}
+                {/* Add new input for more videos */}
+                <button type="button" onClick={addFileInput}>Add another video</button>
+                <input
+                  type="file"
+                  accept={accept}
+                  onChange={(e) => handleFileChange(e, index + 1)}
+                  hidden
+                  multiple={multiple}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+        {!fileInputs.length && (
+          <p className="placeholderText">
+            Drag & Drop {label} Here
+            <br /> or <br />
+            Click to Upload
+          </p>
+        )}
+      </label>
     </div>
   );
 }
