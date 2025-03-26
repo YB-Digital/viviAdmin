@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 //style
-import "./fileComponent.scss";
+import "./fileComponent.scss";  // You can optionally keep your custom styling here or remove it completely when using Tailwind.
 
 interface FileComponentProps {
   label: string;
@@ -45,8 +45,8 @@ export default function FileComponent({ label, accept, multiple = false, onFileC
   };
 
   return (
-    <div className="fileComponent">
-      <label className="fileDropArea">
+    <div className="flex flex-col space-y-4 items-center">
+      <label className="fileDropArea bg-gray-100 p-6 rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-500 cursor-pointer transition-colors">
         <input
           type="file"
           accept={accept}
@@ -54,25 +54,29 @@ export default function FileComponent({ label, accept, multiple = false, onFileC
           hidden
           multiple={multiple} // Enable multiple file selection
         />
-        {fileInputs.length > 0 && (
-          <div>
+        {fileInputs.length > 0 ? (
+          <div className="space-y-2">
             {fileInputs.map((files, index) => (
-              <div key={index}>
+              <div key={index} className="flex flex-col items-center">
                 {/* Display the video names below the input box */}
-                {files.length > 0 ? (
-                  <p onClick={() => handleVideoClick(index)}>{index + 1}) {files[0].name}</p> // Show the first file name of the video
-                ) : (
-                  <p>{index + 1}) No file selected</p>
-                )}
-
-                {/* Add new input for more videos */}
-                <button type="button" onClick={addFileInput}>Add another video</button>
+                <p
+                  onClick={() => handleVideoClick(index)}
+                  className="text-center text-sm text-gray-700 cursor-pointer hover:text-blue-500"
+                >
+                  {index + 1}) {files.length > 0 ? files[0].name : "No file selected"}
+                </p>
+                <button
+                  type="button"
+                  onClick={addFileInput}
+                  className="text-blue-500 text-sm hover:text-blue-700 mt-2"
+                >
+                  Add another video
+                </button>
               </div>
             ))}
           </div>
-        )}
-        {!fileInputs.length && (
-          <p className="placeholderText">
+        ) : (
+          <p className="text-center text-gray-500 text-sm">
             Drag & Drop {label} Here
             <br /> or <br />
             Click to Upload
@@ -81,9 +85,9 @@ export default function FileComponent({ label, accept, multiple = false, onFileC
       </label>
 
       {/* Display all selected video names below the boxes */}
-      <div className="videoNames">
+      <div className="space-y-2 mt-4">
         {fileInputs.map((files, index) => (
-          <p key={index} onClick={() => handleVideoClick(index)}>
+          <p key={index} className="text-sm text-gray-700 cursor-pointer hover:text-blue-500" onClick={() => handleVideoClick(index)}>
             {index + 1}) {files[0]?.name || "No video selected"}
           </p>
         ))}
