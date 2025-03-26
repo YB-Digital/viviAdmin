@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import "./courseTable.scss";
 import ImageComponent from "../imageComponent";
@@ -31,6 +31,13 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [videoFiles, setVideoFiles] = useState<Record<number, File | null>>({});
+  const [videoSlotCount, setVideoSlotCount] = useState<number>(1);
+
+  useEffect(() => {
+    if (editingCourse) {
+      setVideoSlotCount(editingCourse.videos.length || 1);
+    }
+  }, [editingCourse]);
 
   const truncateText = (text: string, maxLength: number): string => {
     return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
@@ -72,7 +79,6 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
       formData.append("image", imageFile);
     }
 
-    // Add changed videos with their order
     Object.entries(videoFiles).forEach(([order, file]) => {
       if (file) {
         formData.append(`video_order[${order}]`, order);
@@ -200,7 +206,8 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
             <div>
               <label>Video(s):</label>
               <ul>
-                {[1, 2, 3].map((order) => {
+                {[...Array(videoSlotCount)].map((_, index) => {
+                  const order = index + 1;
                   const existingVideo = editingCourse.videos.find(v => v.video_order === order);
                   return (
                     <li key={order}>
@@ -226,6 +233,13 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
                   );
                 })}
               </ul>
+              <button
+                type="button"
+                className="addVideoBtn"
+                onClick={() => setVideoSlotCount((prev) => prev + 1)}
+              >
+                + Add Video
+              </button>
             </div>
 
             <div className="modalActions">
