@@ -40,46 +40,56 @@ export default function FileComponent({ label, accept, multiple = false, onFileC
 
   return (
     <div className="fileComponent">
-      <label className="fileDropArea">
-        <input
-          type="file"
-          accept={accept}
-          onChange={(e) => handleFileChange(e, 0)}
-          hidden
-          multiple={multiple} // Enable multiple file selection
-        />
-        {fileInputs.length > 0 && (
-          <div>
-            {fileInputs.map((files, index) => (
-              <div key={index}>
-                <p>Selected Files for Video {index + 1}</p>
-                {files.map((file, fileIndex) => (
-                  <div key={fileIndex}>
-                    {/* Display video name with the desired format */}
-                    <p>{index + 1}) {file.name}</p>
-                  </div>
-                ))}
-                {/* Add new input for more videos */}
-                <button type="button" onClick={addFileInput}>Add another video</button>
+      {fileInputs.length > 0 && (
+        <div>
+          {fileInputs.map((files, index) => (
+            <div key={index} className="fileBox">
+              <div className="fileDropArea">
                 <input
                   type="file"
                   accept={accept}
-                  onChange={(e) => handleFileChange(e, index + 1)}
+                  onChange={(e) => handleFileChange(e, index)}
                   hidden
-                  multiple={multiple}
+                  multiple={multiple} // Enable multiple file selection
                 />
+                {files.length > 0 ? (
+                  files.map((file, fileIndex) => (
+                    <div key={fileIndex}>
+                      <p>{index + 1}) {file.name}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="placeholderText">
+                    Drag & Drop {label} Here
+                    <br /> or <br />
+                    Click to Upload
+                  </p>
+                )}
               </div>
-            ))}
+              {/* Add new input for more videos */}
+              <button type="button" onClick={addFileInput}>Add another video</button>
+            </div>
+          ))}
+        </div>
+      )}
+      {fileInputs.length === 0 && (
+        <div className="fileBox">
+          <div className="fileDropArea">
+            <input
+              type="file"
+              accept={accept}
+              onChange={(e) => handleFileChange(e, 0)}
+              hidden
+              multiple={multiple} // Enable multiple file selection
+            />
+            <p className="placeholderText">
+              Drag & Drop {label} Here
+              <br /> or <br />
+              Click to Upload
+            </p>
           </div>
-        )}
-        {!fileInputs.length && (
-          <p className="placeholderText">
-            Drag & Drop {label} Here
-            <br /> or <br />
-            Click to Upload
-          </p>
-        )}
-      </label>
+        </div>
+      )}
     </div>
   );
 }
