@@ -27,7 +27,7 @@ export default function Home() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(""); 
+    setError("");
     setLoading(true);
 
     try {
@@ -49,8 +49,8 @@ export default function Home() {
         setError(data.message);
       } else {
         if (isClient) {
-          window.localStorage.setItem("adminId", data.id); 
-          window.location.href = "/admin/dashboard"; 
+          window.localStorage.setItem("adminId", data.id);
+          window.location.href = "/admin/dashboard";
         }
       }
     } catch (error) {
@@ -83,9 +83,9 @@ export default function Home() {
             onChange={handleInputChange}
           />
           {error && <p className="error">{error}</p>}
-          <div className="forgotPass">
+          {/* <div className="forgotPass">
             <Link className="font-inter" href={'/forgotpassword'}>Forgot password</Link>
-          </div>
+          </div> */}
           <button type="submit" className="loginButton" disabled={loading}>
             {loading ? "Logging in..." : "Log In"}
           </button>

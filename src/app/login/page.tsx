@@ -83,9 +83,9 @@ export default function Page() {
             onChange={handleInputChange}
           />
           {error && <p className="error">{error}</p>}
-          <div className="forgotPass">
+          {/* <div className="forgotPass">
             <Link className="font-inter" href={'/forgotpassword'}>Forgot password</Link>
-          </div>
+          </div> */}
           <button type="submit" className="loginButton" disabled={loading}>
             {loading ? "Logging in..." : "Log In"}
           </button>
