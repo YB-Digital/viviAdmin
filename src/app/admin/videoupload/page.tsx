@@ -3,16 +3,27 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import dynamic from "next/dynamic";
 import "./videoUpload.scss";
-import ImageComponent from "@/component/imageComponent";
+import VideoTable from "@/component/videoTable";
 
-const InputComponent = dynamic(() => import("@/component/inputComponent"), { ssr: false });
-const TextAreaComponent = dynamic(() => import("@/component/textAreaComponent"), { ssr: false });
-const FileComponent = dynamic(() => import("@/component/fileComponent"), { ssr: false });
-const SelectComponent = dynamic(() => import("@/component/selectComponent"), { ssr: false });
-const CourseTable = dynamic(() => import("@/component/courseTable"), { ssr: false });
+const InputComponent = dynamic(() => import("@/component/inputComponent"), {
+  ssr: false,
+});
+const TextAreaComponent = dynamic(
+  () => import("@/component/textAreaComponent"),
+  { ssr: false }
+);
+const FileComponent = dynamic(() => import("@/component/fileComponent"), {
+  ssr: false,
+});
+const SelectComponent = dynamic(() => import("@/component/selectComponent"), {
+  ssr: false,
+});
+const CourseTable = dynamic(() => import("@/component/courseTable"), {
+  ssr: false,
+});
 
 interface Category {
-  id: number;
+  id: string;
   name: string;
 }
 
@@ -23,34 +34,35 @@ interface Video {
 
 interface Course {
   id: string;
-  course_name: string;
+  title: string;
   description: string;
-  price: string;
-  image: string;
+  price: number | string;
+  imagePath: string;
+  trainerName: string;
   videos: Video[];
-  category_name: string;
+  categoryName?: string;
 }
 
-interface FormData {
+interface FormDataType {
   title: string;
-  price: string;
-  contents: string;
-  category: string;
-  imageFile: File | null;
-  videoFiles: File[];
+  thumbnailUrl: string;
+  description: string;
+  categoryId: string;
+  file: File[];
+  videoSections: string;
 }
 
 export default function Page() {
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<FormDataType>({
     title: "",
-    price: "",
-    contents: "",
-    category: "",
-    imageFile: null,
-    videoFiles: [],
+    thumbnailUrl: "",
+    description: "",
+    categoryId: "",
+    file: [],
+    videoSections: "",
   });
 
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [courses, setCourses] = useState<Course[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -60,52 +72,83 @@ export default function Page() {
       fetchCourses();
       fetchCategories();
     }
+    console.log("Formdata:", formData);
   }, []);
 
   const fetchCourses = async () => {
     try {
-      const response = await fetch("https://ybdigitalx.com/vivi_backend/course_table.php");
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-      const data = await response.json();
-      setCourses(Array.isArray(data) ? data : []);
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token bulunamadı");
+
+      const response = await fetch("https://api.viviacademy.xyz/api/videos", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok)
+        throw new Error(`HTTP error! Status: ${response.status}`);
+
+      const result = await response.json();
+      const courseArray = (Array.isArray(result.data) ? result.data : []).map(
+        (item: any) => ({
+          id: item.id,
+          title: item.title,
+          description: item.description,
+          price: item.price || 0,
+          imagePath: item.thumbnailUrl || "",
+          trainerName: item.trainerName || "Unknown",
+          videos: item.videos || [],
+          categoryName: item.category?.name || "Unknown", // burada ekledik
+        })
+      );
+
+      setCourses(courseArray);
     } catch (error) {
-      console.error("Error fetching courses:", error);
+      console.error("❌ Error fetching courses:", error);
       setMessage("Failed to load courses.");
     }
   };
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch("https://ybdigitalx.com/vivi_backend/category_table.php");
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-      const data = await response.json();
-      setCategories(Array.isArray(data) ? data : []);
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token bulunamadı");
+
+      const response = await fetch(
+        "https://api.viviacademy.xyz/api/categories/getall",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok)
+        throw new Error(`HTTP error! Status: ${response.status}`);
+
+      const result = await response.json();
+      const categoryArray = (Array.isArray(result) ? result : [])
+        .filter((item: any) => item.success && item.data)
+        .map((item: any) => ({ id: item.data.id, name: item.data.name }));
+
+      setCategories(categoryArray);
     } catch (error) {
-      console.error("Error fetching categories:", error);
+      console.error("❌ Error fetching categories:", error);
       setMessage("Failed to load categories.");
     }
   };
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (file: File | File[] | null, type: "imageFile" | "videoFiles") => {
-    if (type === "videoFiles" && Array.isArray(file)) {
-      setFormData((prev) => ({
-        ...prev,
-        videoFiles: file,
-      }));
-    } else if (type === "imageFile" && file instanceof File) {
-      setFormData((prev) => ({
-        ...prev,
-        imageFile: file,
-      }));
-    }
+  const handleFileChange = (files: File[]) => {
+    setFormData((prev) => ({ ...prev, file: files }));
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -113,79 +156,107 @@ export default function Page() {
     setLoading(true);
     setMessage(null);
 
+    if (!formData.file.length) {
+      setMessage("Lütfen bir video dosyası seçin!");
+      setLoading(false);
+      return;
+    }
+
     const formDataToSend = new FormData();
-    formDataToSend.append("courseName", formData.title);
-    formDataToSend.append("price", formData.price);
-    formDataToSend.append("description", formData.contents);
-    formDataToSend.append("categoryId", formData.category);
+    formDataToSend.append("title", formData.title);
+    formDataToSend.append("description", formData.description);
+    formDataToSend.append("thumbnailUrl", formData.thumbnailUrl);
+    formDataToSend.append("categoryId", formData.categoryId);
+    formDataToSend.append("videoSections", formData.videoSections);
+    formDataToSend.append("file", formData.file[0]);
 
-    if (formData.imageFile) {
-      formDataToSend.append("imageFile", formData.imageFile);
-    }
-
-    if (formData.videoFiles.length > 0) {
-      formData.videoFiles.forEach((file) => {
-        formDataToSend.append("videoFiles[]", file);
-      });
-    }
+    console.log("formData:", formData);
 
     try {
-      const response = await fetch("https://ybdigitalx.com/vivi_backend/video_upload.php", {
-        method: "POST",
-        body: formDataToSend,
-      });
+      const response = await fetch(
+        `https://api.viviacademy.xyz/api/videos/upload`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: formDataToSend,
+        }
+      );
 
       const data = await response.json();
-      if (data.status === "success") {
-        setMessage("Course and videos uploaded successfully!");
+      console.log("UPLOAD RESPONSE:", data);
+
+      if (data.success) {
+        setMessage("Video başarıyla yüklendi!");
         setFormData({
           title: "",
-          price: "",
-          contents: "",
-          category: "",
-          imageFile: null,
-          videoFiles: [],
+          thumbnailUrl: "",
+          description: "",
+          categoryId: "",
+          file: [],
+          videoSections: "",
         });
-        fetchCourses();
       } else {
-        setMessage(data.message || "Error while uploading course.");
+        setMessage(data.message || "Yükleme başarısız!");
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
-      setMessage("An unexpected error occurred.");
+      console.error("Upload error:", error);
+      setMessage("Beklenmedik bir hata oluştu.");
     } finally {
       setLoading(false);
     }
   };
+  console.log("courses", courses);
 
   return (
     <div className="videoUpload">
       <form onSubmit={handleSubmit}>
-        <div>
+        <div className="formContainer">
           <div className="inputComponents">
             <div className="formGroup">
-              <label className="font-inter" htmlFor="title">Title</label>
-              <InputComponent name="title" value={formData.title} onChange={handleChange} />
+              <label>Title</label>
+              <InputComponent
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+              />
             </div>
             <div className="formGroup">
-              <label className="font-inter" htmlFor="price">Price</label>
-              <InputComponent name="price" value={formData.price} onChange={handleChange} />
+              <label>Thumbnail URL</label>
+              <InputComponent
+                name="thumbnailUrl"
+                value={formData.thumbnailUrl}
+                onChange={handleChange}
+              />
             </div>
             <div className="formGroup">
-              <label className="font-inter" htmlFor="category">Category</label>
+              <label>Category</label>
               <SelectComponent
-                name="category"
-                value={formData.category}
+                name="categoryId"
+                value={formData.categoryId}
                 onChange={handleChange}
                 options={categories.map((cat) => ({
-                  value: cat.id.toString(),
+                  value: cat.id,
                   label: cat.name,
                 }))}
               />
             </div>
             <div className="formGroup">
-              <label className="font-inter" htmlFor="contents">Description</label>
-              <TextAreaComponent name="contents" value={formData.contents} onChange={handleChange} />
+              <label>Description</label>
+              <TextAreaComponent
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="formGroup">
+              <label>Video Sections</label>
+              <TextAreaComponent
+                name="videoSections"
+                value={formData.videoSections}
+                onChange={handleChange}
+              />
             </div>
           </div>
 
@@ -193,17 +264,12 @@ export default function Page() {
             <FileComponent
               label="Videos"
               accept="video/*"
-              multiple={true}
-              onFileChange={(files: File[]) => handleFileChange(files, "videoFiles")}
-            />
-
-            <ImageComponent
-              label="Image"
-              accept="image/*"
-              onFileChange={(file) => handleFileChange(file, "imageFile")}
+              multiple
+              onFileChange={handleFileChange}
             />
           </div>
         </div>
+
         <button type="submit" disabled={loading}>
           {loading ? "Uploading..." : "Save"}
         </button>
@@ -211,7 +277,14 @@ export default function Page() {
 
       {message && <p className="responseMessage">{message}</p>}
 
-      <CourseTable courses={Array.isArray(courses) ? courses : []} refreshCourses={fetchCourses} />
+      {/* <CourseTable
+        courses={courses.map((course) => ({
+          ...course,
+          imagePath: course.imagePath || "/placeholder.png",
+        }))}
+        refreshCourses={fetchCourses}
+      /> */}
+      <VideoTable />
     </div>
   );
 }

@@ -48,7 +48,7 @@ export default function SendCertificatePage() {
     }
 
     try {
-      const response = await fetch("https://ybdigitalx.com/vivi_backend/send_certificate.php", {
+      const response = await fetch("/api/certificates/upload", {
         method: "POST",
         body: formDataToSend,
       });
@@ -61,13 +61,22 @@ export default function SendCertificatePage() {
 
       Swal.fire({
         title: data.status === "success" ? "Success!" : "Error!",
-        text: data.message || (data.status === "success" ? "Certificate sent successfully!" : "Error while sending certificate."),
+        text:
+          data.message ||
+          (data.status === "success"
+            ? "Certificate sent successfully!"
+            : "Error while sending certificate."),
         icon: data.status === "success" ? "success" : "error",
         confirmButtonText: "OK",
       });
 
       if (data.status === "success") {
-        setFormData({ email: "", course_id: "", user_id: "", certificateFile: null });
+        setFormData({
+          email: "",
+          course_id: "",
+          user_id: "",
+          certificateFile: null,
+        });
       }
     } catch (error) {
       Swal.fire({
@@ -86,12 +95,12 @@ export default function SendCertificatePage() {
 
   return (
     <div className="sendCertificatePage">
-      <SendCertificateForm 
-        formData={formData} 
-        setFormData={setFormData} 
-        handleFormSubmit={handleFormSubmit} 
-        loading={loading} 
-        message={message} 
+      <SendCertificateForm
+        formData={formData}
+        setFormData={setFormData}
+        handleFormSubmit={handleFormSubmit}
+        loading={loading}
+        message={message}
       />
       <SendCertificateTable setFormData={setFormData} />
     </div>

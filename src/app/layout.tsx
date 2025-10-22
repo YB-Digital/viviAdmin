@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import AuthGuard from "@/component/authGuard";
 
 // Global style
-import '@/style/globals.scss';
+import "@/style/globals.scss";
 
 export const metadata: Metadata = {
   title: "Create Next App",

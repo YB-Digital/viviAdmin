@@ -1,10 +1,11 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import "./courseTable.scss";
 import ImageComponent from "../imageComponent";
 import VideoComponent from "../videoComponent";
+import Image from "next/image";
 
 interface Video {
   video_order: number;
@@ -13,48 +14,56 @@ interface Video {
 
 interface Course {
   id: string;
-  course_name: string;
+  title: string;
   description: string;
-  price: string;
-  image: string;
-  videos: Video[];
-  category_name: string;
+  price: number | string; // ✅ her ikisini de kabul et
+  imagePath: string;
+  trainerName?: string; // ✅ optional yap
+  videos?: Video[];
+  categoryName?: string;
 }
 
 interface CourseTableProps {
   courses: Course[];
   refreshCourses: () => void;
 }
-
-const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) => {
+// const CourseTable: React.FC<CourseTableProps> = ({
+//   courses,
+//   refreshCourses,
+// })
+const CourseTable: React.FC<CourseTableProps> = ({}) => {
   const [error, setError] = useState<string | null>(null);
-  const [editingCourse, setEditingCourse] = useState<Course | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [videoFiles, setVideoFiles] = useState<Record<number, File | null>>({});
-  const [videoSlotCount, setVideoSlotCount] = useState<number>(1);
+  const [editingCourse, setEditingCourse] = useState<
+    (Course & { videos?: Video[] }) | null
+  >(null);
+  // const [imageFile, setImageFile] = useState<File | null>(null);
+  // const [videoFiles, setVideoFiles] = useState<Record<number, File | null>>({});
+  // const [videoSlotCount, setVideoSlotCount] = useState<number>(1);
 
   useEffect(() => {
     if (editingCourse) {
-      setVideoSlotCount(editingCourse.videos.length || 1);
+      // setVideoSlotCount(editingCourse.videos.length || 1);
     }
   }, [editingCourse]);
 
   const truncateText = (text: string, maxLength: number): string => {
-    return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+    return text.length > maxLength
+      ? `${text.substring(0, maxLength)}...`
+      : text;
   };
 
   const handleDelete = async (courseId: string) => {
     if (!confirm("Are you sure you want to delete this course?")) return;
-
+    console.log("courseId:", courseId);
     try {
-      const response = await fetch("https://ybdigitalx.com/vivi_backend/delete_course.php", {
+      const response = await fetch("https://api.viviacademy.xyz/api/courses/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: courseId }),
       });
 
       const data = await response.json();
-
+      console.log("data:", data);
       if (data.status === "success") {
         refreshCourses();
       } else {
@@ -66,54 +75,57 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
     }
   };
 
-  const handleSaveEdit = async () => {
-    if (!editingCourse) return;
+  // const handleSaveEdit = async () => {
+  //   if (!editingCourse) return;
 
-    const formData = new FormData();
-    formData.append("id", editingCourse.id);
-    formData.append("course_name", editingCourse.course_name);
-    formData.append("description", editingCourse.description);
-    formData.append("price", editingCourse.price);
+  //   const formData = new FormData();
+  //   formData.append("id", editingCourse.id);
+  //   formData.append("course_name", editingCourse.course_name);
+  //   formData.append("description", editingCourse.description);
+  //   formData.append("price", editingCourse.price);
 
-    if (imageFile) {
-      formData.append("image", imageFile);
-    }
+  //   if (imageFile) {
+  //     formData.append("image", imageFile);
+  //   }
 
-    Object.entries(videoFiles).forEach(([order, file]) => {
-      if (file) {
-        formData.append("video_order[]", order);
-        formData.append("video_files[]", file);
-      }
-    });
+  //   Object.entries(videoFiles).forEach(([order, file]) => {
+  //     if (file) {
+  //       formData.append("video_order[]", order);
+  //       formData.append("video_files[]", file);
+  //     }
+  //   });
 
-    try {
-      const response = await fetch("https://ybdigitalx.com/vivi_backend/update_course.php", {
-        method: "POST",
-        body: formData,
-      });
+  //   try {
+  //     const response = await fetch(
+  //       "https://ybdigitalx.com/vivi_backend/update_course.php",
+  //       {
+  //         method: "POST",
+  //         body: formData,
+  //       }
+  //     );
 
-      const data = await response.json();
+  //     const data = await response.json();
 
-      if (data.status === "success") {
-        refreshCourses();
-        setEditingCourse(null);
-        setVideoFiles({});
-        setImageFile(null);
-      } else {
-        setError(data.message || "Failed to update course.");
-      }
-    } catch (err) {
-      console.error("Error updating course:", err);
-      setError("An error occurred while updating the course.");
-    }
-  };
+  //     if (data.status === "success") {
+  //       refreshCourses();
+  //       setEditingCourse(null);
+  //       setVideoFiles({});
+  //       setImageFile(null);
+  //     } else {
+  //       setError(data.message || "Failed to update course.");
+  //     }
+  //   } catch (err) {
+  //     console.error("Error updating course:", err);
+  //     setError("An error occurred while updating the course.");
+  //   }
+  // };
 
-  const handleVideoChange = (order: number, file: File | null) => {
-    setVideoFiles((prev) => ({
-      ...prev,
-      [order]: file,
-    }));
-  };
+  // const handleVideoChange = (order: number, file: File | null) => {
+  //   setVideoFiles((prev) => ({
+  //     ...prev,
+  //     [order]: file,
+  //   }));
+  // };
 
   return (
     <div className="courseTable">
@@ -130,31 +142,39 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
       </div>
 
       {courses.map((course, index) => (
-        <div key={course.id} className="courseRow">
+        <div key={`${course.id}-${index}`} className="courseRow">
           <div className="column no">{index + 1}</div>
           <div className="column image">
-            <img src={`https://ybdigitalx.com${course.image}`} alt="Course Image" />
+            <Image src={course.imagePath} alt="image" width={100} height={60} />
           </div>
-          <div className="column courseName" title={course.course_name}>
-            {truncateText(course.course_name, 15)}
+          <div className="column courseName">
+            {truncateText(course.title, 15)}
           </div>
           <div className="column description" title={course.description}>
             {truncateText(course.description, 20)}
           </div>
           <div className="column price">€{course.price}</div>
-          <div className="column category">{course.category_name}</div>
+          <div className="column category">{course.title}</div>
           <div className="column actions">
-            <button className="editBtn" onClick={() => setEditingCourse(course)} title="Edit">
+            {/* <button
+              className="editBtn"
+              onClick={() => setEditingCourse(course)}
+              title="Edit"
+            >
               <FaEdit />
-            </button>
-            <button className="deleteBtn" onClick={() => handleDelete(course.id)} title="Delete">
+            </button> */}
+            <button
+              className="deleteBtn"
+              onClick={() => handleDelete(course.id)}
+              title="Delete"
+            >
               <FaTrash />
             </button>
           </div>
         </div>
       ))}
 
-      {editingCourse && (
+      {/* {editingCourse && (
         <div className="editModal">
           <div className="modalContent">
             <h3>Edit Course</h3>
@@ -163,14 +183,20 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
               type="text"
               value={editingCourse.course_name}
               onChange={(e) =>
-                setEditingCourse({ ...editingCourse, course_name: e.target.value })
+                setEditingCourse({
+                  ...editingCourse,
+                  course_name: e.target.value,
+                })
               }
             />
             <label>Description:</label>
             <textarea
               value={editingCourse.description}
               onChange={(e) =>
-                setEditingCourse({ ...editingCourse, description: e.target.value })
+                setEditingCourse({
+                  ...editingCourse,
+                  description: e.target.value,
+                })
               }
             />
             <label>Price:</label>
@@ -186,14 +212,20 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
               <label>Current Image:</label>
               <span>{editingCourse.image}</span>
             </div>
-            <ImageComponent label="New Image" accept="image/*" onFileChange={setImageFile} />
+            <ImageComponent
+              label="New Image"
+              accept="image/*"
+              onFileChange={setImageFile}
+            />
 
             <div>
               <label>Video(s):</label>
               <ul>
                 {[...Array(videoSlotCount)].map((_, index) => {
                   const order = index + 1;
-                  const existingVideo = editingCourse.videos.find(v => v.video_order === order);
+                  const existingVideo = editingCourse.videos.find(
+                    (v) => v.video_order === order
+                  );
                   return (
                     <li key={order}>
                       {existingVideo ? (
@@ -203,14 +235,19 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
                             target="_blank"
                             rel="noreferrer"
                           >
-                            Video {order} – {existingVideo.video_path.split("/").pop()}
+                            Video {order} –{" "}
+                            {existingVideo.video_path.split("/").pop()}
                           </a>
                         </p>
                       ) : (
                         <p>No Video {order}</p>
                       )}
                       <VideoComponent
-                        label={existingVideo ? `Replace Video ${order}` : `Upload Video ${order}`}
+                        label={
+                          existingVideo
+                            ? `Replace Video ${order}`
+                            : `Upload Video ${order}`
+                        }
                         accept="video/*"
                         onFileChange={(file) => handleVideoChange(order, file)}
                       />
@@ -221,7 +258,9 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
             </div>
 
             <div className="modalActions">
-              <button className="saveBtn" onClick={handleSaveEdit}>Save</button>
+              <button className="saveBtn" onClick={handleSaveEdit}>
+                Save
+              </button>
               <button
                 className="cancelBtn"
                 onClick={() => {
@@ -235,7 +274,7 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, refreshCourses }) =>
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

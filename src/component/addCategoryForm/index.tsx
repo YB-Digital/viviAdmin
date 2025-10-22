@@ -9,12 +9,15 @@ export default function AddCategoryForm() {
   const [message, setMessage] = useState("");
   const [userId, setUserId] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false); // ✅ Prevents SSR issues
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       setIsClient(true);
       const storedUserId = localStorage.getItem("userId") || null; // ✅ Only run in browser
       setUserId(storedUserId);
+      const storedToken = localStorage.getItem("token");
+      setToken(storedToken);
     }
   }, []);
 
@@ -34,11 +37,12 @@ export default function AddCategoryForm() {
 
     try {
       const response = await fetch(
-        "https://ybdigitalx.com/vivi_backend/category_registration.php",
+        "https://api.viviacademy.xyz/api/admin/category",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ name: categoryName, userId: userId ?? "" }), // ✅ Ensure `userId` is only sent if available
         }

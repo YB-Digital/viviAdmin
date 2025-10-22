@@ -1,90 +1,84 @@
-"use client"; // ✅ Ensures this page only runs on the client
+"use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import InputComponent from "@/component/inputComponent";
-
-//style
 import "./profile.scss";
 
 export default function Page() {
-  const router = useRouter();
   const [isEditable, setIsEditable] = useState(false);
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-  });
-
-  const [adminId, setAdminId] = useState<string | null>(null);
+  const [formData, setFormData] = useState({ fullName: "", email: "" });
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isClient, setIsClient] = useState(false); // ✅ Prevents SSR issues
+  const [isClient, setIsClient] = useState(false);
 
+  // Sayfa açıldığında kullanıcıyı çek
   useEffect(() => {
-    // ✅ Ensure this runs ONLY in the browser
     if (typeof window !== "undefined") {
       setIsClient(true);
-
-      const storedAdminId = localStorage.getItem("adminId") || null; // ✅ Now safe
-      if (storedAdminId) {
-        setAdminId(storedAdminId);
-        fetchProfileData(storedAdminId);
-      } else {
-        setError("Unauthorized access. Redirecting to login...");
-        setTimeout(() => router.push("/login"), 2000);
-      }
+      fetchProfileData();
     }
   }, []);
 
-  const fetchProfileData = async (adminId: string) => {
-    if (!adminId) return; // Prevent running if no adminId
-
+  const fetchProfileData = async () => {
     try {
-      const response = await fetch("https://ybdigitalx.com/vivi_backend/profile.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ adminId }),
+      const response = await fetch("https://api.viviacademy.xyz/api/users", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
 
-      if (!response.ok) {
+      if (!response.ok)
         throw new Error(`HTTP error! Status: ${response.status}`);
-      }
 
-      const data = await response.json();
+      const result = await response.json();
+      console.log("result:", result);
 
-      if (data.status === "success" && data.data) {
+      // Her elemandan data al
+      const userList = result.map((item: any) => item.data);
+      console.log(
+        "API emails:",
+        userList.map((u) => u.email)
+      );
+
+      const email = localStorage.getItem("email")?.trim().toLowerCase();
+      const foundUser = userList.find(
+        (user: any) => user.email?.trim().toLowerCase() === email
+      );
+      console.log("FounderUser:", foundUser);
+
+      if (foundUser) {
         setFormData({
-          fullName: data.data.fullName || "",
-          email: data.data.email || "",
+          fullName: foundUser.fullName || "",
+          email: foundUser.email || "",
         });
+        setError(null);
       } else {
-        setError(data.message || "Failed to load profile.");
+        setError("Kullanıcı bulunamadı.");
       }
-    } catch (error) {
-      console.error("Error fetching profile:", error);
-      setError("Network error. Please try again later.");
+    } catch (err) {
+      console.error(err);
+      setError("Ağ hatası. Lütfen tekrar deneyin.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleSave = async () => {
-    if (!adminId) {
-      setError("Unauthorized action.");
-      return;
-    }
-
     try {
-      const response = await fetch("https://ybdigitalx.com/vivi_backend/profile_update.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: adminId,
-          fullName: formData.fullName,
-          email: formData.email,
-        }),
-      });
+      const response = await fetch(
+        "https://ybdigitalx.com/vivi_backend/profile_update.php",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fullName: formData.fullName,
+            email: formData.email,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -95,12 +89,12 @@ export default function Page() {
       if (data.status === "success") {
         setIsEditable(false);
         setSuccess("Profile updated successfully!");
-        fetchProfileData(adminId);
+        fetchProfileData(); // güncel veriyi tekrar çek
       } else {
         setError(data.message || "Error updating profile.");
       }
-    } catch (error) {
-      console.error("Error saving profile:", error);
+    } catch (err) {
+      console.error(err);
       setError("Network error. Please try again later.");
     }
   };
@@ -114,8 +108,7 @@ export default function Page() {
     }
   };
 
-  // ✅ Prevent rendering on the server to avoid SSR issues.
-  if (!isClient) return null; // ✅ Prevents the build error
+  if (!isClient) return null; // SSR sorunlarını önler
 
   return (
     <div className="profilePage">
@@ -143,9 +136,12 @@ export default function Page() {
               value={formData.fullName}
               placeholder="Enter your full name"
               disabled={!isEditable}
-              onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, fullName: e.target.value })
+              }
             />
           </div>
+
           <div className="formGroup">
             <label htmlFor="email" className="font-inter">
               Email:
@@ -155,7 +151,9 @@ export default function Page() {
               value={formData.email}
               placeholder="Enter your email"
               disabled={!isEditable}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
             />
           </div>
 
