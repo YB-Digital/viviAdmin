@@ -1,52 +1,91 @@
 .videoUpload {
-    padding: 3.54vw 0;
+  padding: 3.54vw 0;
 
-    >form {
-        padding: 0 3.9vw;
-        width: 76.5625vw;
-        margin: auto;
+  > form {
+    padding: 0 3.9vw;
+    width: 76.5625vw;
+    margin: auto;
 
-        >div {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
+    // Form içeriği için container
+    .formContainer {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start; // ✅ üstten hizala
+      justify-content: space-between;
+      gap: 2vw; // ✅ araya boşluk
+      margin-bottom: 2vw; // ✅ button'dan önce boşluk
 
-            .inputComponents {
-                width: 31.25vw;
+      .inputComponents {
+        flex: 1; // ✅ esnek genişlik
+        max-width: 31.25vw;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25vw; // ✅ inputlar arası boşluk
 
-                .formGroup {
-                    label {
-                        display: block;
-                        padding: 0.52vw;
-                        margin-bottom: 1.25vw;
-                        font-weight: 700;
-                        font-size: 1.1458vw;
-                        line-height: 1.39vw;
-                    }
-                }
-            }
-
-            .files{
-                display: flex;
-                flex-direction: row;
-                gap: 1.875vw;
-            }
+        .formGroup {
+          label {
+            display: block;
+            padding: 0.52vw 0;
+            margin-bottom: 0.5vw; // ✅ azaltıldı
+            font-weight: 700;
+            font-size: 1.1458vw;
+            line-height: 1.39vw;
+          }
         }
+      }
 
-           
-    >button {
-        width: 10.4vw;
-        font-family: Inter;
-        font-size: 1.04vw;
-        font-weight: 700;
-        line-height: 1.26vw;
-        text-align: center;
-        color: #FFFFFF;
-        background: #E70BBB;
-        padding: 1.04vw;
-        border-radius: 0.4167vw;
-        margin-bottom: 1.77vw;
+      .files {
+        display: flex;
+        flex-direction: column; // ✅ alt alta
+        gap: 1.875vw;
+        flex: 1; // ✅ esnek genişlik
+      }
     }
+
+    > button {
+      width: 10.4vw;
+      font-family: Inter;
+      font-size: 1.04vw;
+      font-weight: 700;
+      line-height: 1.26vw;
+      text-align: center;
+      color: #ffffff;
+      background: #e70bbb;
+      padding: 1.04vw;
+      border-radius: 0.4167vw;
+      margin-top: 1.77vw;
+      cursor: pointer;
+      border: none;
+      transition: background 0.3s ease;
+
+      &:hover {
+        background: #c709a0;
+      }
+
+      &:disabled {
+        background: #cccccc;
+        cursor: not-allowed;
+      }
     }
+  }
+
+  // Response message
+  .responseMessage {
+    text-align: center;
+    padding: 1vw;
+    margin: 2vw 3.9vw;
+    border-radius: 0.4167vw;
+    font-size: 1.04vw;
+    font-weight: 600;
+
+    &.success {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    &.error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+  }
 }

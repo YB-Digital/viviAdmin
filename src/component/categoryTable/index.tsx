@@ -5,56 +5,102 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import "./categoryTable.scss";
 
 interface Category {
-  id: number;
+  id: string;
   name: string;
+  description?: string;
 }
 
 const CategoryList: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [isClient, setIsClient] = useState(false); // ✅ Prevent SSR issues
+  const [isClient, setIsClient] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setIsClient(true); // ✅ Prevents  SSR issues
-      fetchCategories();
+      setIsClient(true);
+      const storedToken = localStorage.getItem("token");
+      setToken(storedToken);
     }
   }, []);
 
+  useEffect(() => {
+    if (token) {
+      fetchCategories();
+    }
+  }, [token]);
+
   const fetchCategories = async () => {
     try {
-      const response = await fetch("https://ybdigitalx.com/vivi_backend/category_table.php");
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-      const data: Category[] = await response.json();
-      setCategories(data);
+      // console.log("📡 Token:", token);
+
+      const response = await fetch(
+        "https://api.viviacademy.xyz/api/categories/getall",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // ⚠️ Bu satırda backend’in ne döndürdüğünü aynen yazdırıyoruz
+      const text = await response.text();
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      // 🧭 metni tekrar JSON'a çeviriyoruz
+      const result = JSON.parse(text);
+
+      let categoriesData: any[] = [];
+
+      if (Array.isArray(result)) {
+        categoriesData = result.map((item: any) => item.data);
+      } else if (result.data && Array.isArray(result.data)) {
+        categoriesData = result.data;
+      } else {
+        console.warn("⚠️ Beklenen formatta veri dönmedi:", result);
+      }
+
+      setCategories(categoriesData);
     } catch (error) {
       alert("Failed to fetch categories.");
-      console.error("Fetch error:", error);
+      console.error("❌ Fetch error:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = async (categoryId: number) => {
+  const handleDelete = async (categoryId: string) => {
     if (!confirm("Are you sure you want to delete this category?")) return;
 
     try {
-      const response = await fetch("https://ybdigitalx.com/vivi_backend/category_delete.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: categoryId }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/category/${categoryId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       const data = await response.json();
-      if (data.status === "success") {
+      // console.log("🧭 Delete response:", data);
+
+      if (response.ok && (data.success || data.status === "success")) {
         setCategories((prev) => prev.filter((cat) => cat.id !== categoryId));
       } else {
-        alert(`Error: ${data.message}`);
+        alert(`Error: ${data.message || "Failed to delete."}`);
       }
     } catch (error) {
       alert("An error occurred while deleting the category.");
-      console.error("Delete error:", error);
+      console.error("❌ Delete error:", error);
     }
   };
 
@@ -66,24 +112,38 @@ const CategoryList: React.FC = () => {
     if (!editingCategory) return;
 
     try {
-      const response = await fetch("https://ybdigitalx.com/vivi_backend/category_update.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: editingCategory.id, name: editingCategory.name }),
-      });
+      const response = await fetch(
+        `/api/admin/category/${editingCategory.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            name: editingCategory.name,
+            description: editingCategory.description || "",
+          }),
+        }
+      );
 
       const data = await response.json();
-      if (data.status === "success") {
+      // console.log("🧭 Update response:", data);
+
+      if (response.ok && (data.success || data.status === "success")) {
+        // 🔄 Listedeki ilgili kategoriyi güncelle
         setCategories((prev) =>
-          prev.map((cat) => (cat.id === editingCategory.id ? editingCategory : cat))
+          prev.map((cat) =>
+            cat.id === editingCategory.id ? editingCategory : cat
+          )
         );
         setEditingCategory(null);
       } else {
-        alert(`Error: ${data.message}`);
+        alert(`Error: ${data.message || "Failed to update category."}`);
       }
     } catch (error) {
       alert("An error occurred while updating the category.");
-      console.error("Update error:", error);
+      console.error("❌ Update error:", error);
     }
   };
 
@@ -106,10 +166,16 @@ const CategoryList: React.FC = () => {
             <div className="column no">{index + 1}</div>
             <div className="column categoryName">{category.name}</div>
             <div className="column actions">
-              <button className="editBtn" onClick={() => handleEditClick(category)}>
+              <button
+                className="editBtn"
+                onClick={() => handleEditClick(category)}
+              >
                 <FaEdit />
               </button>
-              <button className="deleteBtn" onClick={() => handleDelete(category.id)}>
+              <button
+                className="deleteBtn"
+                onClick={() => handleDelete(category.id)}
+              >
                 <FaTrash />
               </button>
             </div>
