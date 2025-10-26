@@ -26,15 +26,15 @@ export default function InformationBoxes() {
 
     if (typeof window !== "undefined") {
       // Toplam Gelir
-      fetch("https://ybdigitalx.com/vivi_backend/total_revenue.php")
-        .then((res) => res.json())
-        .then((data) => {
-          setStats((prev) => ({
-            ...prev,
-            total_revenue: data.total_revenue || "0",
-          }));
-        })
-        .catch((err) => console.error("Gelir verisi alınamadı:", err));
+      // fetch("https://ybdigitalx.com/vivi_backend/total_revenue.php")
+      //   .then((res) => res.json())
+      //   .then((data) => {
+      //     setStats((prev) => ({
+      //       ...prev,
+      //       total_revenue: data.total_revenue || "0",
+      //     }));
+      //   })
+      //   .catch((err) => console.error("Gelir verisi alınamadı:", err));
 
       // Toplam Kullanıcı
       fetch("https://api.viviacademy.xyz/api/users", {
@@ -56,15 +56,15 @@ export default function InformationBoxes() {
         .catch((err) => console.error("Kullanıcı verisi alınamadı:", err));
 
       // Toplam Servis
-      fetch("https://ybdigitalx.com/vivi_backend/total_services.php")
-        .then((res) => res.json())
-        .then((data) => {
-          setStats((prev) => ({
-            ...prev,
-            total_services: data.total_services || "0",
-          }));
-        })
-        .catch((err) => console.error("Servis verisi alınamadı:", err));
+      // fetch("https://ybdigitalx.com/vivi_backend/total_services.php")
+      //   .then((res) => res.json())
+      //   .then((data) => {
+      //     setStats((prev) => ({
+      //       ...prev,
+      //       total_services: data.total_services || "0",
+      //     }));
+      //   })
+      //   .catch((err) => console.error("Servis verisi alınamadı:", err));
 
       // Toplam Video
       fetch("https://api.viviacademy.xyz/api/videos", {

@@ -39,7 +39,19 @@ const VideoTable = () => {
       if (!res.ok) throw new Error("Videolar çekilemedi");
 
       const data = await res.json();
-      setVideos(Array.isArray(data.data) ? data.data : []);
+      // Geçersiz URL'leri filtreleyip fallback ekle
+      const safeVideos = (Array.isArray(data.data) ? data.data : []).map(
+        (v: any) => ({
+          ...v,
+          thumbnailUrl:
+            typeof v.thumbnailUrl === "string" &&
+            v.thumbnailUrl.startsWith("http")
+              ? v.thumbnailUrl
+              : "/vivi1.png", // fallback
+        })
+      );
+
+      setVideos(safeVideos);
     } catch (err: any) {
       console.error(err);
       setError(err.message || "Videolar yüklenirken hata oluştu");
@@ -117,10 +129,11 @@ const VideoTable = () => {
             <div className="column no">{index + 1}</div>
             <div className="column thumbnail">
               <Image
-                src={video.thumbnailUrl || "/placeholder.png"}
+                src={video.thumbnailUrl}
                 width={100}
                 height={60}
                 alt="thumbnail"
+                unoptimized
               />
             </div>
             <div className="column title">{video.title}</div>

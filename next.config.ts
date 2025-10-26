@@ -51,14 +51,14 @@ const nextConfig: NextConfig = {
   //   ];
   // },
 
-  async rewrites() {
-    return [
-      {
-        source: "/api/:path*",
-        destination: "https://api.viviacademy.xyz/:path*",
-      },
-    ];
-  },
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: "/api/:path*",
+  //       destination: "https://api.viviacademy.xyz/:path*",
+  //     },
+  //   ];
+  // },
 };
 
 export default nextConfig;

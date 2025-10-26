@@ -95,19 +95,26 @@ export default function LayoutComponent() {
           <p className="font-inter">Category</p>
         </Link>
         <Link
+          href="/admin/addcourses"
+          className={pathname === "/admin/addcourses" ? "active" : ""}
+        >
+          <Image src={certificate} alt="icon" />
+          <p className="font-inter">Courses</p>
+        </Link>
+        {/* <Link
           href="/admin/addservice"
           className={pathname === "/admin/addservice" ? "active" : ""}
         >
           <Image src={services} alt="icon" />
           <p className="font-inter">Services</p>
-        </Link>
-        <Link
+        </Link> */}
+        {/* <Link
           href="/admin/certificate"
           className={pathname === "/admin/certificate" ? "active" : ""}
         >
           <Image src={certificate} alt="icon" />
           <p className="font-inter">Certificate</p>
-        </Link>
+        </Link> */}
         <button onClick={handleLogout} className="logoutButton">
           <Image src={logout} alt="icon" />
           <p className="font-inter">Log Out</p>

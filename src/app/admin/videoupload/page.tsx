@@ -55,7 +55,7 @@ interface FormDataType {
 export default function Page() {
   const [formData, setFormData] = useState<FormDataType>({
     title: "",
-    thumbnailUrl: "",
+    thumbnailUrl: "https://example.com/thumb.mp4",
     description: "",
     categoryId: "",
     file: [],
@@ -96,7 +96,7 @@ export default function Page() {
           title: item.title,
           description: item.description,
           price: item.price || 0,
-          imagePath: item.thumbnailUrl || "",
+          imagePath: item.thumbnailUrl || "https://example.com/thumb.mp4",
           trainerName: item.trainerName || "Unknown",
           videos: item.videos || [],
           categoryName: item.category?.name || "Unknown", // burada ekledik

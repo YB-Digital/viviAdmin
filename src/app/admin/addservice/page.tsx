@@ -1,11 +1,11 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react';
-import AddServiceForm from '@/component/addServiceForm';
-import ServiceTable from '@/component/serviceTable';
+import { useState, useEffect } from "react";
+import AddServiceForm from "@/component/addServiceForm";
+import ServiceTable from "@/component/serviceTable";
 
 //style
-import './addService.scss';
+import "./addService.scss";
 
 interface Service {
   id: string;
@@ -29,7 +29,9 @@ export default function Page() {
     try {
       setLoading(true);
       setError("");
-      const response = await fetch("https://ybdigitalx.com/vivi_backend/service_table.php");
+      const response = await fetch(
+        "https://ybdigitalx.com/vivi_backend/service_table.php"
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch data.");
       }
@@ -50,11 +52,14 @@ export default function Page() {
   }, []);
 
   return (
-    <div className='addService'>
-      {error && <div className='error'>{error}</div>}
-      <AddServiceForm selectedService={selectedService} onServiceUpdate={handleServiceUpdate} />
+    <div className="addService">
+      {error && <div className="error">{error}</div>}
+      <AddServiceForm
+        selectedService={selectedService}
+        onServiceUpdate={handleServiceUpdate}
+      />
       <ServiceTable services={services} refreshServices={fetchServices} />
-      {loading && <div className='loading'>Loading services...</div>}
+      {loading && <div className="loading">Loading services...</div>}
     </div>
   );
 }

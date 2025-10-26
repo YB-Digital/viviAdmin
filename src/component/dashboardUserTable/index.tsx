@@ -4,32 +4,25 @@ import { useEffect, useState } from "react";
 import "./dashboardUserTable.scss";
 
 interface User {
-  id: number;
+  id: string;
   name: string;
   email: string;
-  message: string;
-  check: boolean;
+  username: string;
+  city: string;
 }
 
 export default function DashboardUserTable() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [adminId, setAdminId] = useState<string | null>(null);
   const [isClient, setIsClient] = useState<boolean>(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   const token = localStorage.getItem("token");
 
-  // Component client-side olduğunda çalışacak
   useEffect(() => {
     setIsClient(true);
-
-    if (typeof window !== "undefined") {
-      const storedAdminId = localStorage.getItem("adminId") || null;
-      setAdminId(storedAdminId);
-    }
   }, []);
 
-  // adminId değiştiğinde kullanıcıları çek
   useEffect(() => {
     if (!token) return;
 
@@ -50,15 +43,14 @@ export default function DashboardUserTable() {
         }
 
         const rawData = await response.json();
-        // console.log("Raw API Data:", rawData);
+        console.log("Raw API Data:", rawData);
 
-        // API yanıtındaki data objesini parse et
-        const usersArray: User[] = rawData.map((item: any, index: number) => ({
-          id: index + 1,
+        const usersArray: User[] = rawData.map((item: any) => ({
+          id: item.data.id,
           name: item.data.fullName,
           email: item.data.email,
-          message: item.data.city || item.data.username, // istediğin alan
-          check: false, // default
+          username: item.data.username,
+          city: item.data.city || "-",
         }));
 
         setUsers(usersArray);
@@ -70,40 +62,41 @@ export default function DashboardUserTable() {
     };
 
     fetchUsers();
-  }, [adminId]);
+  }, [token]);
 
-  // Check durumunu toggle et ve backend’e gönder
-  const handleCheckUpdate = async (userId: number, newCheckStatus: boolean) => {
-    // try {
-    //   const response = await fetch(
-    //     "https://ybdigitalx.com/vivi_backend/update_check_status.php",
-    //     {
-    //       method: "POST",
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //       body: JSON.stringify({
-    //         id: userId,
-    //         check: newCheckStatus ? "1" : "0",
-    //       }),
-    //     }
-    //   );
-    //   const data = await response.json();
-    //   if (data.status === "success") {
-    //     setUsers((prevUsers) =>
-    //       prevUsers.map((user) =>
-    //         user.id === userId ? { ...user, check: newCheckStatus } : user
-    //       )
-    //     );
-    //   } else {
-    //     console.error("Check durumu güncellenemedi:", data.message);
-    //   }
-    // } catch (error) {
-    //   console.error("Check durumu güncelleme hatası:", error);
-    // }
+  const handleDelete = async (userId: string) => {
+    if (!confirm("Bu kullanıcıyı silmek istediğinize emin misiniz?")) return;
+
+    setDeleting(userId);
+
+    try {
+      const response = await fetch(
+        `https://api.viviacademy.xyz/api/users/${userId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Silme işlemi başarısız");
+      }
+
+      // Kullanıcıyı listeden kaldır
+      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+      alert("✅ Kullanıcı başarıyla silindi!");
+    } catch (error) {
+      console.error("Silme hatası:", error);
+      alert("❌ Hata: " + (error as Error).message);
+    } finally {
+      setDeleting(null);
+    }
   };
 
-  // Sunucu tarafında render olmasın
   if (!isClient) return null;
 
   return (
@@ -113,25 +106,34 @@ export default function DashboardUserTable() {
         <div className="userName font-inter">Name</div>
         <div className="userEmail font-inter">Email</div>
         <div className="userMessage font-inter">City</div>
-        <div className="userCheck font-inter">Check</div>
+        <div className="userCheck font-inter">Action</div>
       </div>
 
       {loading ? (
         <p className="loading font-inter">Loading...</p>
       ) : users.length > 0 ? (
-        users.map((user) => (
+        users.map((user, index) => (
           <div key={user.id} className="userRow">
-            <div className="userId font-inter">{user.id}</div>
+            <div className="userId font-inter">{index + 1}</div>
             <div className="userName font-inter">{user.name}</div>
             <div className="userEmail font-inter">{user.email}</div>
-            <div className="userMessage font-inter">{user.message}</div>
-            <div
-              className={`userCheck font-inter ${
-                user.check ? "checked" : "unchecked"
-              }`}
-              onClick={() => handleCheckUpdate(user.id, !user.check)}
-            >
-              {user.check ? "✔" : "✖"}
+            <div className="userMessage font-inter">{user.city}</div>
+            <div className="userCheck font-inter">
+              <button
+                onClick={() => handleDelete(user.id)}
+                disabled={deleting === user.id}
+                className="deleteButton"
+                style={{
+                  backgroundColor: deleting === user.id ? "#ccc" : "#e80cbc",
+                  color: "white",
+                  padding: "5px 15px",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: deleting === user.id ? "not-allowed" : "pointer",
+                }}
+              >
+                {deleting === user.id ? "Siliniyor..." : "Sil"}
+              </button>
             </div>
           </div>
         ))
