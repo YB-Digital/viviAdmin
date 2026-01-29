@@ -36,7 +36,7 @@ export default function AddCategoryForm() {
     setMessage("");
 
     try {
-      const response = await fetch(
+      const data = await fetch(
         "https://api.viviacademy.xyz/api/admin/category",
         {
           method: "POST",
@@ -46,11 +46,9 @@ export default function AddCategoryForm() {
           },
           body: JSON.stringify({ name: categoryName, userId: userId ?? "" }), // ✅ Ensure `userId` is only sent if available
         }
-      );
+      ).then(res => res.json());
 
-      const data = await response.json();
-
-      if (response.ok && data.status === "success") {
+      if (data.status === "success") {
         setMessage("✅ Category added successfully!");
         setCategoryName("");
       } else {

@@ -117,16 +117,15 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = await fetch(`https://api.viviacademy.xyz/api/auth/login`, {
+      const data = await fetch(`https://api.viviacademy.xyz/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
-      });
+      }).then(res => res.json());
 
-      const data = await res.json();
       console.log("Login response:", data);
 
-      if (!res.ok || !data.success) {
+      if (!data.success) {
         setError(data.message || "Email veya şifre hatalı!");
         return;
       }
