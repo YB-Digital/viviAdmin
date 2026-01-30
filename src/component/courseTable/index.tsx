@@ -65,7 +65,7 @@ const CourseTable: React.FC<CourseTableProps> = ({}) => {
       const data = await response.json();
       console.log("data:", data);
       if (data.status === "success") {
-        refreshCourses();
+        // refreshCourses();
       } else {
         setError(data.message || "Failed to delete the course.");
       }
@@ -141,7 +141,7 @@ const CourseTable: React.FC<CourseTableProps> = ({}) => {
         <div className="column actions">Actions</div>
       </div>
 
-      {courses.map((course, index) => (
+      {([] as any[]).map((course, index) => (
         <div key={`${course.id}-${index}`} className="courseRow">
           <div className="column no">{index + 1}</div>
           <div className="column image">

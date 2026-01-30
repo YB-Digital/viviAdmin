@@ -40,7 +40,7 @@ export default function Page() {
       const userList = result.map((item: any) => item.data);
       console.log(
         "API emails:",
-        userList.map((u) => u.email)
+        userList.map((u:any) => u.email)
       );
 
       const email = localStorage.getItem("email")?.trim().toLowerCase();
