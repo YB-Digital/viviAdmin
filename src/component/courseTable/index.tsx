@@ -39,7 +39,7 @@ const CourseTable: React.FC<CourseTableProps> = ({}) => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await fetch("/api/courses/getall");
+        const res = await fetch("https://api.viviacademy.xyz/api/courses/getall");
         if (!res.ok) throw new Error("Kurslar çekilemedi");
         const data = await res.json();
         setCourses(data.courses || []);

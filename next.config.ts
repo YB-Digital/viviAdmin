@@ -15,20 +15,7 @@ const nextConfig: NextConfig = {
   },
 
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "cdn.soloware.dev",
-      },
-      {
-        protocol: "https",
-        hostname: "example.com",
-      },
-      {
-        protocol: "https",
-        hostname: "api.viviacademy.xyz", // eğer görseller buradan geliyorsa bunu da ekle
-      },
-    ],
+    unoptimized: true,
   },
 
   // async headers() {

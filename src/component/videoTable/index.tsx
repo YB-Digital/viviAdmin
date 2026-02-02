@@ -112,12 +112,29 @@ const VideoTable = () => {
       {videos.map((video, index) => {
         const category =
           categories.find((c) => c.id === video.categoryId)?.name || "Unknown";
+        // Validate thumbnailUrl
+        let thumbnailSrc = "/placeholder.png";
+        if (video.thumbnailUrl) {
+          try {
+            const url = new URL(video.thumbnailUrl, window.location.origin);
+            // Only allow http/https URLs or relative paths
+            if (
+              url.protocol === "http:" ||
+              url.protocol === "https:" ||
+              url.origin === window.location.origin
+            ) {
+              thumbnailSrc = video.thumbnailUrl;
+            }
+          } catch (e) {
+            // Invalid URL, use placeholder
+          }
+        }
         return (
           <div key={video.id} className="videoRow">
             <div className="column no">{index + 1}</div>
             <div className="column thumbnail">
               <Image
-                src={video.thumbnailUrl || "/placeholder.png"}
+                src={thumbnailSrc}
                 width={100}
                 height={60}
                 alt="thumbnail"

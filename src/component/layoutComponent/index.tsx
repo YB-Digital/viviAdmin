@@ -88,8 +88,8 @@ export default function LayoutComponent() {
           <p className="font-inter">Video Management</p>
         </Link>
         <Link
-          href="/admin/videoupload"
-          className={pathname === "/admin/videoupload" ? "active courses-link" : "courses-link"}
+          href="/admin/courses"
+          className={pathname === "/admin/courses" ? "active courses-link" : "courses-link"}
         >
           <Image src={services} alt="icon" />
           <p className="font-inter">Courses</p>
