@@ -156,39 +156,41 @@ export default function Page() {
     setLoading(true);
     setMessage(null);
 
-    if (!formData.file.length) {
-      setMessage("Lütfen bir video dosyası seçin!");
-      setLoading(false);
-      return;
-    }
+    // Video dosyası zorunluysa kontrol edebilirsiniz
+    // if (!formData.file.length) {
+    //   setMessage("Lütfen bir video dosyası seçin!");
+    //   setLoading(false);
+    //   return;
+    // }
 
-    const formDataToSend = new FormData();
-    formDataToSend.append("title", formData.title);
-    formDataToSend.append("description", formData.description);
-    formDataToSend.append("thumbnailUrl", formData.thumbnailUrl);
-    formDataToSend.append("categoryId", formData.categoryId);
-    formDataToSend.append("videoSections", formData.videoSections);
-    formDataToSend.append("file", formData.file[0]);
+    // Video dosyası yükleme ayrı bir endpoint ile yapılmalı, burada sadece kurs oluşturulacak
+    // Video ID'leri, video yükleme sonrası alınarak eklenmeli
 
-    console.log("formData:", formData);
+    // Şimdilik videoIds alanı boş gönderilecek
+    const payload = {
+      title: formData.title,
+      shortDescription: formData.description.substring(0, 50),
+      description: formData.description,
+      price: 0, // Fiyat alanı eklenebilir
+      imagePath: formData.thumbnailUrl,
+      videoIds: [], // Video yükleme sonrası doldurulmalı
+      targetAudience: [], // İstenirse eklenebilir
+      categoryId: formData.categoryId,
+    };
 
     try {
-      const response = await fetch(
-        `https://api.viviacademy.xyz/api/videos/upload`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: formDataToSend,
-        }
-      );
+      const response = await fetch("/api/courses", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(payload),
+      });
 
       const data = await response.json();
-      console.log("UPLOAD RESPONSE:", data);
-
-      if (data.success) {
-        setMessage("Video başarıyla yüklendi!");
+      if (response.ok) {
+        setMessage("Kurs başarıyla oluşturuldu!");
         setFormData({
           title: "",
           thumbnailUrl: "",
@@ -198,10 +200,10 @@ export default function Page() {
           videoSections: "",
         });
       } else {
-        setMessage(data.message || "Yükleme başarısız!");
+        setMessage(data.message || "Kurs oluşturulamadı!");
       }
     } catch (error) {
-      console.error("Upload error:", error);
+      console.error("Kurs oluşturma hatası:", error);
       setMessage("Beklenmedik bir hata oluştu.");
     } finally {
       setLoading(false);
