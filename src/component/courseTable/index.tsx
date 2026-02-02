@@ -33,46 +33,35 @@ interface CourseTableProps {
 // })
 const CourseTable: React.FC<CourseTableProps> = ({}) => {
   const [error, setError] = useState<string | null>(null);
-  const [editingCourse, setEditingCourse] = useState<
-    (Course & { videos?: Video[] }) | null
-  >(null);
-  // const [imageFile, setImageFile] = useState<File | null>(null);
-  // const [videoFiles, setVideoFiles] = useState<Record<number, File | null>>({});
-  // const [videoSlotCount, setVideoSlotCount] = useState<number>(1);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    if (editingCourse) {
-      // setVideoSlotCount(editingCourse.videos.length || 1);
-    }
-  }, [editingCourse]);
+    const fetchCourses = async () => {
+      try {
+        const res = await fetch("/api/courses/getall");
+        if (!res.ok) throw new Error("Kurslar çekilemedi");
+        const data = await res.json();
+        setCourses(data.courses || []);
+      } catch (err: any) {
+        setError(err.message || "Kurslar yüklenirken hata oluştu");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCourses();
+  }, []);
+
+  // Kursları kategoriye göre gruplama
+  const groupedCourses = courses.reduce<{ [key: string]: Course[] }>((acc, course) => {
+    const category = course.categoryName || "Diğer";
+    if (!acc[category]) acc[category] = [];
+    acc[category].push(course);
+    return acc;
+  }, {});
 
   const truncateText = (text: string, maxLength: number): string => {
-    return text.length > maxLength
-      ? `${text.substring(0, maxLength)}...`
-      : text;
-  };
-
-  const handleDelete = async (courseId: string) => {
-    if (!confirm("Are you sure you want to delete this course?")) return;
-    console.log("courseId:", courseId);
-    try {
-      const response = await fetch("https://api.viviacademy.xyz/api/courses/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: courseId }),
-      });
-
-      const data = await response.json();
-      console.log("data:", data);
-      if (data.status === "success") {
-        // refreshCourses();
-      } else {
-        setError(data.message || "Failed to delete the course.");
-      }
-    } catch (err) {
-      console.error("Error deleting course:", err);
-      setError("An error occurred while deleting the course.");
-    }
+    return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
   };
 
   // const handleSaveEdit = async () => {
@@ -129,48 +118,36 @@ const CourseTable: React.FC<CourseTableProps> = ({}) => {
 
   return (
     <div className="courseTable">
+      {loading && <div>Loading...</div>}
       {error && <div className="error">{error}</div>}
 
-      <div className="titleRow">
-        <div className="column no">No.</div>
-        <div className="column image">Image</div>
-        <div className="column courseName">Course Name</div>
-        <div className="column description">Description</div>
-        <div className="column price">Price</div>
-        <div className="column category">Category</div>
-        <div className="column actions">Actions</div>
-      </div>
-
-      {([] as any[]).map((course, index) => (
-        <div key={`${course.id}-${index}`} className="courseRow">
-          <div className="column no">{index + 1}</div>
-          <div className="column image">
-            <Image src={course.imagePath} alt="image" width={100} height={60} />
+      {!loading && Object.entries(groupedCourses).map(([category, courses]) => (
+        <div key={category} className="courseCategoryBlock">
+          <h2 className="categoryTitle">{category}</h2>
+          <div className="titleRow">
+            <div className="column no">No.</div>
+            <div className="column image">Image</div>
+            <div className="column courseName">Course Name</div>
+            <div className="column description">Description</div>
+            <div className="column price">Price</div>
+            <div className="column actions">Actions</div>
           </div>
-          <div className="column courseName">
-            {truncateText(course.title, 15)}
-          </div>
-          <div className="column description" title={course.description}>
-            {truncateText(course.description, 20)}
-          </div>
-          <div className="column price">€{course.price}</div>
-          <div className="column category">{course.title}</div>
-          <div className="column actions">
-            {/* <button
-              className="editBtn"
-              onClick={() => setEditingCourse(course)}
-              title="Edit"
-            >
-              <FaEdit />
-            </button> */}
-            <button
-              className="deleteBtn"
-              onClick={() => handleDelete(course.id)}
-              title="Delete"
-            >
-              <FaTrash />
-            </button>
-          </div>
+          {courses.map((course, index) => (
+            <div key={course.id} className="courseRow">
+              <div className="column no">{index + 1}</div>
+              <div className="column image">
+                <Image src={course.imagePath} alt="image" width={100} height={60} />
+              </div>
+              <div className="column courseName">{truncateText(course.title, 15)}</div>
+              <div className="column description" title={course.description}>{truncateText(course.description, 20)}</div>
+              <div className="column price">€{course.price}</div>
+              <div className="column actions">
+                <button className="deleteBtn" title="Delete">
+                  <FaTrash />
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       ))}
 
